@@ -1,133 +1,117 @@
 package baubles.client.gui;
 
-import java.io.IOException;
+import baubles.client.ClientProxy;
+import baubles.common.Baubles;
+import baubles.common.container.ContainerPlayerExpanded;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiButtonImage;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.InventoryEffectRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import baubles.client.ClientProxy;
-import baubles.common.container.ContainerPlayerExpanded;
+
+import java.io.IOException;
 
 public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
-	public static final ResourceLocation background =
-			new ResourceLocation("baubles","textures/gui/expanded_inventory.png");
+    public static final ResourceLocation background =
+            new ResourceLocation(Baubles.MODID, "textures/gui/baubles_inventory.png");
 
-	/** The old x position of the mouse pointer */
-	private float oldMouseX;
-	/** The old y position of the mouse pointer */
-	private float oldMouseY;
+    private final EntityPlayer player;
 
-	public GuiPlayerExpanded(EntityPlayer player)
-	{
-		super(new ContainerPlayerExpanded(player.inventory, !player.getEntityWorld().isRemote, player));
-		this.allowUserInput = true;
-	}
+    protected GuiButtonImage recipeBook;
 
-	private void resetGuiLeft()
-	{
-		this.guiLeft = (this.width - this.xSize) / 2;
-	}
+    private float oldMouseX;
+    private float oldMouseY;
 
-	/**
-	 * Called from the main game loop to update the screen.
-	 */
-	@Override 
-	public void updateScreen()
-	{
-		((ContainerPlayerExpanded)inventorySlots).baubles.setEventBlock(false);
-		updateActivePotionEffects();
-		resetGuiLeft();
-	}
+    public GuiPlayerExpanded(EntityPlayer player) {
+        super(new ContainerPlayerExpanded(player.inventory, !player.getEntityWorld().isRemote, player));
+        this.allowUserInput = true;
+        this.player = player;
+    }
 
-	/**
-	 * Adds the buttons (and other controls) to the screen in question.
-	 */
-	@Override
-	public void initGui()
-	{
-		this.buttonList.clear();
-		super.initGui();
-		resetGuiLeft();
-	}
+    private void resetGuiLeft() {
+        this.guiLeft = (this.width - this.xSize) / 2;
+    }
 
-	/**
-	 * Draw the foreground layer for the GuiContainer (everything in front of the items)
-	 */
-	@Override
-	protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_)
-	{
-		this.fontRenderer.drawString(I18n.format("container.crafting", new Object[0]), 115, 8, 4210752);
-	}
+    @Override
+    public void updateScreen() {
+        ((ContainerPlayerExpanded) inventorySlots).baubles.setEventBlock(false);
+        updateActivePotionEffects();
+        resetGuiLeft();
+    }
 
-	/**
-	 * Draws the screen and all the components in it.
-	 */
-	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks)
-	{
-		this.drawDefaultBackground();
-		this.oldMouseX = (float) mouseX;
-		this.oldMouseY = (float) mouseY;
-		super.drawScreen(mouseX, mouseY, partialTicks);
-		this.renderHoveredToolTip(mouseX, mouseY);
-	}
+    @Override
+    public void initGui() {
+        this.buttonList.clear();
+        super.initGui();
+        this.recipeBook = new GuiButtonImage(10, this.guiLeft + 104, this.height / 2 - 22, 20, 18, 178, 0, 19, INVENTORY_BACKGROUND);
+        this.buttonList.add(this.recipeBook);
+        resetGuiLeft();
+    }
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_)
-	{
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		this.mc.getTextureManager().bindTexture(background);
-		int k = this.guiLeft;
-		int l = this.guiTop;
-		this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
+    @Override
+    protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
+        this.fontRenderer.drawString(I18n.format("container.crafting"), 97, 8, 4210752);
+    }
 
-		for (int i1 = 0; i1 < this.inventorySlots.inventorySlots.size(); ++i1)
-		{
-			Slot slot = (Slot)this.inventorySlots.inventorySlots.get(i1);
-			if (slot.getHasStack() && slot.getSlotStackLimit()==1)
-			{
-				this.drawTexturedModalRect(k+slot.xPos, l+slot.yPos, 200, 0, 16, 16);
-			}
-		}
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        this.drawDefaultBackground();
+        this.oldMouseX = (float) mouseX;
+        this.oldMouseY = (float) mouseY;
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
 
-		GuiInventory.drawEntityOnScreen(k + 51, l + 75, 30, (float)(k + 51) - this.oldMouseX, (float)(l + 75 - 50) - this.oldMouseY, this.mc.player);
-	}
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_) {
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        this.mc.getTextureManager().bindTexture(background);
+        int k = this.guiLeft;
+        int l = this.guiTop;
+        this.drawTexturedModalRect(k, l, 0, 18, this.xSize, this.ySize);
 
-	@Override
-	protected void actionPerformed(GuiButton button)
-	{
-		if (button.id == 0)
-		{
-			//this.mc.displayGuiScreen(new GuiAchievements(this, this.mc.player.getStatFileWriter()));
-		}
+        GuiInventory.drawEntityOnScreen(k + 51, l + 75, 30, (float) (k + 51) - this.oldMouseX, (float) (l + 75 - 50) - this.oldMouseY, this.mc.player);
+    }
 
-		if (button.id == 1)
-		{
-			this.mc.displayGuiScreen(new GuiStats(this, this.mc.player.getStatFileWriter()));
-		}
-	}
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        switch (button.id) {
+            case 1: // Stats button
+                this.mc.displayGuiScreen(new GuiStats(this, this.mc.player.getStatFileWriter()));
+                break;
+            case 10: // Recipe Book Button
+                openInventoryWithRecipeBook(new GuiInventory(this.player));
+                break;
+        }
+        /*if (button.id == 0) {
+            //this.mc.displayGuiScreen(new GuiAchievements(this, this.mc.player.getStatFileWriter()));
+        }*/
+    }
 
-	@Override
-	protected void keyTyped(char par1, int par2) throws IOException {
-		if (par2 == ClientProxy.KEY_BAUBLES.getKeyCode())
-		{
-			this.mc.player.closeScreen();
-		} else
-		super.keyTyped(par1, par2);
-	}
+    private void openInventoryWithRecipeBook(GuiInventory inventory) throws IOException {
+        this.mc.displayGuiScreen(inventory);
+        if (!inventory.func_194310_f().isVisible())
+            inventory.actionPerformed(recipeBook);
+    }
 
-	public void displayNormalInventory()
-	{
-		GuiInventory gui = new GuiInventory(this.mc.player);
-		ReflectionHelper.setPrivateValue(GuiInventory.class, gui, this.oldMouseX, "oldMouseX", "field_147048_u");
-		ReflectionHelper.setPrivateValue(GuiInventory.class, gui, this.oldMouseY, "oldMouseY", "field_147047_v");
-		this.mc.displayGuiScreen(gui);
-	}
+    @Override
+    protected void keyTyped(char par1, int par2) throws IOException {
+        if (par2 == ClientProxy.KEY_BAUBLES.getKeyCode()) {
+            this.mc.player.closeScreen();
+        } else
+            super.keyTyped(par1, par2);
+    }
+
+    public void displayNormalInventory() {
+        GuiInventory gui = new GuiInventory(this.mc.player);
+        ReflectionHelper.setPrivateValue(GuiInventory.class, gui, this.oldMouseX, "oldMouseX", "field_147048_u");
+        ReflectionHelper.setPrivateValue(GuiInventory.class, gui, this.oldMouseY, "oldMouseY", "field_147047_v");
+        this.mc.displayGuiScreen(gui);
+    }
 }
