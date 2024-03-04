@@ -1,5 +1,6 @@
 package baubles.client.gui;
 
+import baubles.api.cap.IBaublesItemHandler;
 import baubles.client.ClientProxy;
 import baubles.common.Baubles;
 import baubles.common.container.ContainerPlayerExpanded;
@@ -72,9 +73,24 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(background);
+
         int k = this.guiLeft;
         int l = this.guiTop;
+
+        IBaublesItemHandler baublesHandler = ((ContainerPlayerExpanded) this.inventorySlots).baubles;
+
         this.drawTexturedModalRect(k, l, 0, 18, this.xSize, this.ySize);
+
+        int size = Math.min(7, baublesHandler.getSlots());
+
+        this.drawTexturedModalRect(k - 27, l - 10, 0, 0, 27, 14);
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                this.drawTexturedModalRect(k - 27, l + 4 + (i * 18), 28, 0, 27, 18);
+            }
+        }
+
+        this.drawTexturedModalRect(k - 27, l + 4 + (18 * size), 56, 0, 27, 13);
 
         GuiInventory.drawEntityOnScreen(k + 51, l + 75, 30, (float) (k + 51) - this.oldMouseX, (float) (l + 75 - 50) - this.oldMouseY, this.mc.player);
     }

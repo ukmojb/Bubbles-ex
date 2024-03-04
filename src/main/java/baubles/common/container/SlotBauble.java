@@ -7,64 +7,68 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
+import javax.annotation.Nonnull;
+
 public class SlotBauble extends SlotItemHandler {
-    int baubleSlot;
-    EntityPlayer player;
+
+    private final IBaublesItemHandler baublesHandler;
+
+    private final EntityPlayer player;
 
     public SlotBauble(EntityPlayer player, IBaublesItemHandler itemHandler, int slot, int par4, int par5) {
         super(itemHandler, slot, par4, par5);
-        this.baubleSlot = slot;
+        this.baublesHandler = itemHandler;
         this.player = player;
     }
 
-    /**
-     * Check if the stack is a valid item for this slot.
-     */
     @Override
-    public boolean isItemValid(ItemStack stack) {
-        return ((IBaublesItemHandler) getItemHandler()).isItemValidForSlot(baubleSlot, stack, player);
-    }
-
-    @Override
-    public boolean canTakeStack(EntityPlayer player) {
-        ItemStack stack = getStack();
-        if (stack.isEmpty())
-            return false;
-
+    public boolean isItemValid(@Nonnull ItemStack stack) {
         IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-        return bauble.canUnequip(stack, player);
+        return bauble != null && baublesHandler.isItemValidForSlot(slotNumber, stack, player);
     }
 
     @Override
-    public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
-        if (!getHasStack() && !((IBaublesItemHandler) getItemHandler()).isEventBlocked() &&
-                stack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
-            stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(stack, playerIn);
+    public boolean canTakeStack(@Nonnull EntityPlayer player) {
+        ItemStack stack = getStack();
+        if (stack.isEmpty()) return false;
+        IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+        return bauble == null || bauble.canUnequip(stack, player);
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack onTake(@Nonnull EntityPlayer playerIn, @Nonnull ItemStack stack) {
+        if (!stack.isEmpty() && !baublesHandler.isEventBlocked()) {
+            IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+            if (bauble != null) bauble.onUnequipped(stack, playerIn);
         }
+
         super.onTake(playerIn, stack);
         return stack;
     }
 
     @Override
-    public void putStack(ItemStack stack) {
-        if (getHasStack() && !ItemStack.areItemStacksEqual(stack, getStack()) &&
-                !((IBaublesItemHandler) getItemHandler()).isEventBlocked() &&
-                getStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
-            getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(getStack(), player);
+    public void putStack(@Nonnull ItemStack stack) {
+        ItemStack slotStack = getStack();
+
+        if (!slotStack.isEmpty()) {
+            if (baublesHandler.isEventBlocked()) return;
+            IBauble bauble = slotStack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+            if (bauble != null) bauble.onUnequipped(slotStack, player);
         }
 
-        ItemStack oldstack = getStack().copy();
         super.putStack(stack);
 
-        if (getHasStack() && !ItemStack.areItemStacksEqual(oldstack, getStack())
-                && !((IBaublesItemHandler) getItemHandler()).isEventBlocked() &&
-                getStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
-            getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onEquipped(getStack(), player);
+        ItemStack slotStackNew = getStack();
+
+        if (!slotStackNew.isEmpty() && !ItemStack.areItemStacksEqual(slotStack, slotStackNew) && !baublesHandler.isEventBlocked()) {
+            IBauble bauble = slotStackNew.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+            if (bauble != null) bauble.onEquipped(slotStackNew, player);
         }
     }
 
     @Override
     public int getSlotStackLimit() {
-        return 1;
+        return 64;
     }
 }

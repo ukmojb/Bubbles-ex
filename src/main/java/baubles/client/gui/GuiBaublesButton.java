@@ -54,9 +54,9 @@ public class GuiBaublesButton extends GuiButton {
             GlStateManager.pushMatrix();
             GlStateManager.translate(0, 0, 200);
             if (k == 1) {
-                this.drawTexturedModalRect(x, this.y, 56, 0, 10, 10);
+                this.drawTexturedModalRect(x, this.y, 84, 0, 10, 10);
             } else {
-                this.drawTexturedModalRect(x, this.y, 66, 0, 10, 10);
+                this.drawTexturedModalRect(x, this.y, 94, 0, 10, 10);
                 this.drawCenteredString(fontrenderer, I18n.format(this.displayString), x + 5, this.y + this.height, 0xffffff);
             }
             GlStateManager.popMatrix();

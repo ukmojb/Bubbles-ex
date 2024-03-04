@@ -1,6 +1,6 @@
 package baubles.api;
 
-public enum BaubleType {
+public enum BaubleType implements IBaubleType {
     AMULET(0),
     RING(1, 2),
     BELT(3),
