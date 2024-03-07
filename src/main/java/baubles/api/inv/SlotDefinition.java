@@ -20,6 +20,10 @@ public class SlotDefinition {
         return id;
     }
 
+    public String getBackgroundTexture() {
+        return type.getBackgroundTexture();
+    }
+
     public IBaubleType getType() {
         return type;
     }

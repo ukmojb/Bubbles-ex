@@ -2,6 +2,7 @@ package baubles.common.container;
 
 import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
+import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
@@ -12,6 +13,7 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class ContainerPlayerExpanded extends Container {
     private static final EntityEquipmentSlot[] equipmentSlots = new EntityEquipmentSlot[]{EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
@@ -22,13 +24,8 @@ public class ContainerPlayerExpanded extends Container {
     public final InventoryCraftResult craftResult = new InventoryCraftResult();
     private final EntityPlayer thePlayer;
     public IBaublesItemHandler baubles;
-    /**
-     * Determines if inventory manipulation should be handled.
-     */
-    public boolean isLocalWorld;
 
-    public ContainerPlayerExpanded(InventoryPlayer playerInv, boolean par2, EntityPlayer player) {
-        this.isLocalWorld = par2;
+    public ContainerPlayerExpanded(InventoryPlayer playerInv, EntityPlayer player) {
         this.thePlayer = player;
         baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
 
@@ -49,12 +46,12 @@ public class ContainerPlayerExpanded extends Container {
                 }
 
                 @Override
-                public boolean isItemValid(ItemStack stack) {
+                public boolean isItemValid(@Nonnull ItemStack stack) {
                     return stack.getItem().isValidArmor(stack, slot, player);
                 }
 
                 @Override
-                public boolean canTakeStack(EntityPlayer playerIn) {
+                public boolean canTakeStack(@Nonnull EntityPlayer playerIn) {
                     ItemStack itemstack = this.getStack();
                     return (itemstack.isEmpty() || playerIn.isCreative() || !EnchantmentHelper.hasBindingCurse(itemstack)) && super.canTakeStack(playerIn);
                 }
@@ -66,13 +63,9 @@ public class ContainerPlayerExpanded extends Container {
             });
         }
 
-        this.addSlotToContainer(new SlotBauble(player, baubles, 0, -21, 5));
-        this.addSlotToContainer(new SlotBauble(player, baubles, 1, -21, 23));
-        this.addSlotToContainer(new SlotBauble(player, baubles, 2, -21, 41));
-        this.addSlotToContainer(new SlotBauble(player, baubles, 3, -21, 59));
-        this.addSlotToContainer(new SlotBauble(player, baubles, 4, -21, 77));
-        this.addSlotToContainer(new SlotBauble(player, baubles, 5, -21, 95));
-        this.addSlotToContainer(new SlotBauble(player, baubles, 5, -21, 113));
+        for (int i = 0; i < Math.min(7, Objects.requireNonNull(baubles).getSlots()); i++) {
+            this.addSlotToContainer(new SlotBauble(player, baubles, i, -21, 5 + (i * 18)));
+        }
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
@@ -103,7 +96,7 @@ public class ContainerPlayerExpanded extends Container {
      * Callback for when the crafting matrix is changed.
      */
     @Override
-    public void onCraftMatrixChanged(IInventory par1IInventory) {
+    public void onCraftMatrixChanged(@Nonnull IInventory par1IInventory) {
         this.slotChangedCraftingGrid(this.thePlayer.getEntityWorld(), this.thePlayer, this.craftMatrix, this.craftResult);
     }
 
@@ -111,8 +104,9 @@ public class ContainerPlayerExpanded extends Container {
      * Called when the container is closed.
      */
     @Override
-    public void onContainerClosed(EntityPlayer player) {
+    public void onContainerClosed(@Nonnull EntityPlayer player) {
         super.onContainerClosed(player);
+        ((BaublesContainer) this.baubles).resetOffset();
         this.craftResult.clear();
 
         if (!player.world.isRemote) {
@@ -121,15 +115,13 @@ public class ContainerPlayerExpanded extends Container {
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer par1EntityPlayer) {
+    public boolean canInteractWith(@Nonnull EntityPlayer par1EntityPlayer) {
         return true;
     }
 
-    /**
-     * Called when a player shift-clicks on a slot. You must override this or you will crash when someone does that.
-     */
+    @Nonnull
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+    public ItemStack transferStackInSlot(@Nonnull EntityPlayer playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
 
@@ -140,6 +132,7 @@ public class ContainerPlayerExpanded extends Container {
             EntityEquipmentSlot entityequipmentslot = EntityLiving.getSlotForItemStack(itemstack);
 
             int slotShift = baubles.getSlots();
+
 
             if (index == 0) {
                 if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, true)) {
@@ -155,17 +148,11 @@ public class ContainerPlayerExpanded extends Container {
                 if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, false)) {
                     return ItemStack.EMPTY;
                 }
-            }
-
-            // baubles -> inv
-            else if (index >= 9 && index < 9 + slotShift) {
+            } else if (index >= 9 && index < 9 + slotShift) { // baubles -> inv
                 if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, false)) {
                     return ItemStack.EMPTY;
                 }
-            }
-
-            // inv -> armor
-            else if (entityequipmentslot.getSlotType() == EntityEquipmentSlot.Type.ARMOR && !this.inventorySlots.get(8 - entityequipmentslot.getIndex()).getHasStack()) {
+            } else if (entityequipmentslot.getSlotType() == EntityEquipmentSlot.Type.ARMOR && !this.inventorySlots.get(8 - entityequipmentslot.getIndex()).getHasStack()) { // inv -> armor
                 int i = 8 - entityequipmentslot.getIndex();
 
                 if (!this.mergeItemStack(itemstack1, i, i + 1, false)) {
@@ -204,6 +191,7 @@ public class ContainerPlayerExpanded extends Container {
             if (itemstack1.isEmpty()) {
                 slot.putStack(ItemStack.EMPTY);
             } else {
+                slot.putStack(itemstack1);
                 slot.onSlotChanged();
             }
 
@@ -226,10 +214,8 @@ public class ContainerPlayerExpanded extends Container {
         return itemstack;
     }
 
-    //private void unequipBauble(ItemStack stack) { }
-
     @Override
-    public boolean canMergeSlot(ItemStack stack, Slot slot) {
+    public boolean canMergeSlot(@Nonnull ItemStack stack, Slot slot) {
         return slot.inventory != this.craftResult && super.canMergeSlot(stack, slot);
     }
 }

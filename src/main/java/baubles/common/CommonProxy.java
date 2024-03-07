@@ -1,5 +1,6 @@
 package baubles.common;
 
+import baubles.client.gui.GuiPlayerExpanded;
 import baubles.common.container.ContainerPlayerExpanded;
 import baubles.common.event.EventHandlerEntity;
 import baubles.common.event.EventHandlerItem;
@@ -12,14 +13,16 @@ public class CommonProxy implements IGuiHandler {
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        if (ID == Baubles.GUI) {
+            return new GuiPlayerExpanded(player);
+        }
         return null;
     }
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        switch (ID) {
-            case Baubles.GUI:
-                return new ContainerPlayerExpanded(player.inventory, !world.isRemote, player);
+        if (ID == Baubles.GUI) {
+            return new ContainerPlayerExpanded(player.inventory, player);
         }
         return null;
     }

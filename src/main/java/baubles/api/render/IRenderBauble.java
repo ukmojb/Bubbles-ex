@@ -36,6 +36,7 @@ public interface IRenderBauble {
         /**
          * Render Type for the player's body, translations apply on the player's rotation.
          * Sneaking is not handled and should be done during the render.
+         *
          * @see IRenderBauble.Helper
          */
         BODY,
@@ -43,6 +44,7 @@ public interface IRenderBauble {
         /**
          * Render Type for the player's body, translations apply on the player's head rotations.
          * Sneaking is not handled and should be done during the render.
+         *
          * @see IRenderBauble.Helper
          */
         HEAD

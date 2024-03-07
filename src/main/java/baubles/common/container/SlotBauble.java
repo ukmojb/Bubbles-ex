@@ -2,29 +2,33 @@ package baubles.common.container;
 
 import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
+import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class SlotBauble extends SlotItemHandler {
 
-    private final IBaublesItemHandler baublesHandler;
+    private final int slotIndex;
 
+    private final IBaublesItemHandler baublesHandler;
     private final EntityPlayer player;
 
     public SlotBauble(EntityPlayer player, IBaublesItemHandler itemHandler, int slot, int par4, int par5) {
         super(itemHandler, slot, par4, par5);
         this.baublesHandler = itemHandler;
         this.player = player;
+        this.slotIndex = slot;
     }
 
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack) {
         IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-        return bauble != null && baublesHandler.isItemValidForSlot(slotNumber, stack, player);
+        return bauble != null && baublesHandler.isItemValidForSlot(slotIndex, stack, player);
     }
 
     @Override
@@ -43,13 +47,29 @@ public class SlotBauble extends SlotItemHandler {
             if (bauble != null) bauble.onUnequipped(stack, playerIn);
         }
 
-        super.onTake(playerIn, stack);
-        return stack;
+        return super.onTake(playerIn, stack);
     }
 
     @Override
     public void putStack(@Nonnull ItemStack stack) {
+        if (getHasStack() && !ItemStack.areItemStacksEqual(stack, getStack()) &&
+                !((IBaublesItemHandler) getItemHandler()).isEventBlocked() &&
+                getStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
+            getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(getStack(), player);
+        }
+
+        ItemStack oldstack = getStack().copy();
+        super.putStack(stack);
+
+        if (getHasStack() && !ItemStack.areItemStacksEqual(oldstack, getStack())
+                && !((IBaublesItemHandler) getItemHandler()).isEventBlocked() &&
+                getStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
+            getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onEquipped(getStack(), player);
+        }
+        /*Logger l = LogManager.getLogger("test?");
         ItemStack slotStack = getStack();
+
+        l.info("{}, {}", stack.toString(), slotStack.toString());
 
         if (!slotStack.isEmpty()) {
             if (baublesHandler.isEventBlocked()) return;
@@ -61,10 +81,18 @@ public class SlotBauble extends SlotItemHandler {
 
         ItemStack slotStackNew = getStack();
 
+        l.info("{}, {}", stack.toString(), slotStackNew.toString());
+
         if (!slotStackNew.isEmpty() && !ItemStack.areItemStacksEqual(slotStack, slotStackNew) && !baublesHandler.isEventBlocked()) {
             IBauble bauble = slotStackNew.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
             if (bauble != null) bauble.onEquipped(slotStackNew, player);
-        }
+        }*/
+    }
+
+    @Nullable
+    @Override
+    public String getSlotTexture() {
+        return ((BaublesContainer) baublesHandler).getSlot(slotIndex).getBackgroundTexture();
     }
 
     @Override
