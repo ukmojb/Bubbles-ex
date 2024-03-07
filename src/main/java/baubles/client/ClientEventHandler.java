@@ -19,7 +19,7 @@ public class ClientEventHandler {
         if (!event.getItemStack().isEmpty() && event.getItemStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
             IBauble bauble = event.getItemStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
             BaubleType bt = bauble.getBaubleType(event.getItemStack());
-            event.getToolTip().add(TextFormatting.GOLD + I18n.format("name." + bt));
+            event.getToolTip().add(TextFormatting.GOLD + I18n.format("baubles.item.desc", I18n.format(bt.getTranslationKey())));
         }
     }
 
@@ -32,5 +32,6 @@ public class ClientEventHandler {
         map.registerSprite(new ResourceLocation(Baubles.MODID, "gui/slots/charm"));
         map.registerSprite(new ResourceLocation(Baubles.MODID, "gui/slots/head"));
         map.registerSprite(new ResourceLocation(Baubles.MODID, "gui/slots/ring"));
+        map.registerSprite(new ResourceLocation(Baubles.MODID, "gui/slots/trinket"));
     }
 }

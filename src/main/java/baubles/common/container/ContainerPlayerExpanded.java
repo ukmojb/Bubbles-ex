@@ -11,6 +11,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -167,14 +168,18 @@ public class ContainerPlayerExpanded extends Container {
                 }
             }
             // inv -> bauble
-            else if (itemstack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
-                IBauble bauble = itemstack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-                for (int baubleSlot : bauble.getBaubleType(itemstack).getValidSlots()) {
-                    if (bauble.canEquip(itemstack1, thePlayer) && !this.inventorySlots.get(baubleSlot + 9).getHasStack() &&
-                            !this.mergeItemStack(itemstack1, baubleSlot + 9, baubleSlot + 10, false)) {
-                        return ItemStack.EMPTY;
+            else if (itemstack1.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
+                IBauble bauble = itemstack1.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+                if (bauble.canEquip(itemstack1, playerIn)) {
+                    BaublesContainer container = (BaublesContainer) baubles;
+
+                    for (int i = 0; i < this.baubles.getSlots(); i++) {
+                        if (container.getStack(i).isEmpty() && container.isItemValidForSlot(i, itemstack1, playerIn)) {
+                            container.setStack(i, itemstack);
+                            itemstack1.setCount(0);
+                            return ItemStack.EMPTY;
+                        }
                     }
-                    if (itemstack1.getCount() == 0) break;
                 }
             } else if (index >= 9 + slotShift && index < 36 + slotShift) {
                 if (!this.mergeItemStack(itemstack1, 36 + slotShift, 45 + slotShift, false)) {

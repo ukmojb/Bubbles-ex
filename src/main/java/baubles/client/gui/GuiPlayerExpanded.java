@@ -1,9 +1,15 @@
 package baubles.client.gui;
 
+import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
+import baubles.api.inv.SlotDefinition;
 import baubles.client.ClientProxy;
 import baubles.common.Baubles;
 import baubles.common.container.ContainerPlayerExpanded;
+import baubles.common.network.PacketChangeOffset;
+import baubles.common.network.PacketHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiButtonImage;
 import net.minecraft.client.gui.achievement.GuiStats;
@@ -12,15 +18,21 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.InventoryEffectRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
+import org.apache.logging.log4j.LogManager;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 
 public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
@@ -83,8 +95,33 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         this.fontRenderer.drawString(I18n.format("container.crafting"), 97, 8, 4210752);
+        int xLoc = this.guiLeft - 22;
+        if (mouseX > xLoc && mouseX < xLoc + 18) {
+            int yLoc = this.guiTop + 4;
+            if (mouseY >= yLoc && mouseY < yLoc + (17 * baublesHandler.getSlots()) - 10) {
+                int slotIndex = (mouseY - yLoc) / 18;
+                BaublesContainer container = ((BaublesContainer) baublesHandler);
+
+                ItemStack stack = container.getStack(slotIndex);
+                if (!stack.isEmpty()) return;
+
+                SlotDefinition definition = container.getSlot(slotIndex);
+
+                FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
+                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                GlStateManager.enableBlend();
+                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(0, 0, 200);
+                String str = I18n.format(definition.getType().getTranslationKey());
+                GuiUtils.drawHoveringText(Collections.singletonList(str), mouseX - this.guiLeft, mouseY - this.guiTop + 7, width, height, 300, renderer);
+                GlStateManager.popMatrix();
+            }
+        }
     }
 
     @Override
@@ -94,6 +131,32 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         this.oldMouseY = (float) mouseY;
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
+    }
+
+    @Override
+    public void handleMouseInput() throws IOException {
+        super.handleMouseInput();
+        int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
+        int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+
+        int xLoc = this.guiLeft - 22;
+        if (mouseX > xLoc && mouseX < xLoc + 18) {
+            int yLoc = this.guiTop + 4;
+            if (mouseY >= yLoc && mouseY < yLoc + (17 * baublesHandler.getSlots()) - 10) {
+                int dWheel = Mouse.getDWheel();
+                if (dWheel != 0) {
+                    // TODO add a config option to reverse the thing
+                    int value = -(dWheel / 120);
+                    PacketHandler.INSTANCE.sendToServer(new PacketChangeOffset(value));
+                    ((BaublesContainer) baublesHandler).incrOffset(value);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
@@ -132,17 +195,6 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         }*/
     }
 
-    private void openInventoryWithRecipeBook(GuiInventory inventory) {
-        this.mc.displayGuiScreen(inventory);
-        if (!inventory.func_194310_f().isVisible()) {
-            try {
-                REF_ACTION_PERFORMED.invoke(inventory, recipeBook);
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     @Override
     protected void keyTyped(char par1, int par2) throws IOException {
         if (par2 == ClientProxy.KEY_BAUBLES.getKeyCode()) {
@@ -169,6 +221,13 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         }
     }
 
+    @Override
+    protected void drawActivePotionEffects() {
+        guiLeft -= 27;
+        super.drawActivePotionEffects();
+        guiLeft += 27;
+    }
+
     public void displayNormalInventory() {
         GuiInventory gui = new GuiInventory(this.mc.player);
 
@@ -182,10 +241,14 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         this.mc.displayGuiScreen(gui);
     }
 
-    @Override
-    protected void drawActivePotionEffects() {
-        guiLeft -= 27;
-        super.drawActivePotionEffects();
-        guiLeft += 27;
+    private void openInventoryWithRecipeBook(GuiInventory inventory) {
+        this.mc.displayGuiScreen(inventory);
+        if (!inventory.func_194310_f().isVisible()) {
+            try {
+                REF_ACTION_PERFORMED.invoke(inventory, recipeBook);
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

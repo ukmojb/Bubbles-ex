@@ -1,5 +1,7 @@
 package baubles.api;
 
+import baubles.common.Baubles;
+
 public enum BaubleType implements IBaubleType {
     AMULET("amulet", 0),
     RING("ring", 1, 2),
@@ -9,12 +11,19 @@ public enum BaubleType implements IBaubleType {
     BODY("body", 5),
     CHARM("charm", 6);
 
+    final String name;
     final String backgroundTexture;
     final int[] validSlots;
 
-    BaubleType(String backgroundTexture, int... validSlots) {
-        this.backgroundTexture = "baubles:gui/slots/" + backgroundTexture;
+    BaubleType(String name, int... validSlots) {
+        this.name = name;
+        this.backgroundTexture = "baubles:gui/slots/" + name;
         this.validSlots = validSlots;
+    }
+
+    @Override
+    public String getTranslationKey() {
+        return Baubles.MODID + ".type." + name;
     }
 
     @Override

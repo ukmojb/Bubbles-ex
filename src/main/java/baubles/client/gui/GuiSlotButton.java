@@ -32,8 +32,9 @@ public class GuiSlotButton extends GuiButton {
         boolean pressed = super.mousePressed(mc, mouseX, mouseY);
         if (pressed) {
             this.ticks = 10;
-            PacketHandler.INSTANCE.sendToServer(new PacketChangeOffset(isDown));
-            baublesHandler.incrOffset(isDown ? 1 : -1);
+            int amount = isDown ? 1 : -1;
+            PacketHandler.INSTANCE.sendToServer(new PacketChangeOffset(amount));
+            baublesHandler.incrOffset(amount);
         }
         return pressed;
     }

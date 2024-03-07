@@ -10,10 +10,12 @@ button.normal=Normal
 keybind.baublesinventory=Baubles Inventory
 #
 # Description
-name.AMULET=Bauble (Amulet)
-name.RING=Bauble (Ring)
-name.BELT=Bauble (Belt)
-name.TRINKET=Bauble (Any)
-name.HEAD=Bauble (Head)
-name.BODY=Bauble (Body)
-name.CHARM=Bauble (Charm)
+baubles.type.amulet=Amulet
+baubles.type.ring=Ring
+baubles.type.belt=Belt
+baubles.type.trinket=Any
+baubles.type.head=Head
+baubles.type.body=Body
+baubles.type.charm=Charm
+
+baubles.item.desc=Bauble (%s)

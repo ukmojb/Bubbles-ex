@@ -39,8 +39,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
                 new SlotDefinition(baublesHandler, 3, BaubleType.BELT),
                 new SlotDefinition(baublesHandler, 4, BaubleType.HEAD),
                 new SlotDefinition(baublesHandler, 5, BaubleType.BODY),
-                new SlotDefinition(baublesHandler, 6, BaubleType.CHARM),
-                new SlotDefinition(baublesHandler, 7, BaubleType.HEAD)
+                new SlotDefinition(baublesHandler, 6, BaubleType.CHARM)
         };
     }
 
@@ -65,8 +64,10 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     public void incrOffset(int offset) {
         this.offset += offset;
-        if (this.offset < 0) this.offset = getSlots() - 1;
-        else if (offset == getSlots()) this.offset = 0;
+        int slots = getSlots();
+        this.offset %= slots;
+        if (this.offset < 0) this.offset += slots;
+        else if (this.offset >= slots) this.offset -= slots;
     }
 
     public void resetOffset() {
@@ -96,7 +97,8 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
         if (bauble != null) {
             IBaubleType stackType = bauble.getType(stack);
-            return bauble.canEquip(stack, player) && (stackType == BaubleType.TRINKET || stackType == getSlot(slot).getType());
+            IBaubleType slotType = getSlot(slot).getType();
+            return bauble.canEquip(stack, player) && (slotType == BaubleType.TRINKET || stackType == BaubleType.TRINKET || stackType == slotType);
         }
         return false;
     }
@@ -239,8 +241,11 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         NBTTagList list = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound stackTag = list.getCompoundTagAt(i);
-            ItemStack stack = new ItemStack(stackTag);
-            stacks[stackTag.getInteger("Slot")] = stack;
+            int slot = stackTag.getInteger("Slot");
+            if (slot < getSlots()) {
+                ItemStack stack = new ItemStack(stackTag);
+                stacks[stackTag.getInteger("Slot")] = stack;
+            }
         }
     }
 }

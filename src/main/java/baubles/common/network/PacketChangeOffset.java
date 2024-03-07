@@ -11,23 +11,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketChangeOffset implements IMessage, IMessageHandler<PacketChangeOffset, IMessage> {
 
-    private boolean offsetChange;
+    private int offsetChange;
 
     public PacketChangeOffset() {
     }
 
-    public PacketChangeOffset(boolean offsetChange) {
+    public PacketChangeOffset(int offsetChange) {
         this.offsetChange = offsetChange;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        offsetChange = buf.readBoolean();
+        offsetChange = buf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeBoolean(offsetChange);
+        buf.writeInt(offsetChange);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class PacketChangeOffset implements IMessage, IMessageHandler<PacketChang
         mainThread.addScheduledTask(() -> {
             ContainerPlayerExpanded container = (ContainerPlayerExpanded) ctx.getServerHandler().player.openContainer;
             BaublesContainer baublesHandler = (BaublesContainer) container.baubles;
-            baublesHandler.incrOffset(offsetChange ? -1 : 1);
+            baublesHandler.incrOffset(offsetChange);
         });
         return null;
     }
