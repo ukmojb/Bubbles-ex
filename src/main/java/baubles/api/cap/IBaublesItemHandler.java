@@ -9,7 +9,7 @@ public interface IBaublesItemHandler extends IItemHandlerModifiable {
     boolean isItemValidForSlot(int slot, ItemStack stack, EntityLivingBase player);
 
     /**
-     * Used internally to prevent equip/unequip events from triggering when they shouldn't
+     * Used internally to prevent equip/un-equip events from triggering when they shouldn't
      */
     boolean isEventBlocked();
 

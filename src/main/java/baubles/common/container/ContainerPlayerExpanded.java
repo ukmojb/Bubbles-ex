@@ -17,10 +17,8 @@ import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class ContainerPlayerExpanded extends Container {
+
     private static final EntityEquipmentSlot[] equipmentSlots = new EntityEquipmentSlot[]{EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
-    /**
-     * The crafting matrix inventory.
-     */
     public final InventoryCrafting craftMatrix = new InventoryCrafting(this, 2, 2);
     public final InventoryCraftResult craftResult = new InventoryCraftResult();
     private final EntityPlayer thePlayer;
@@ -93,17 +91,11 @@ public class ContainerPlayerExpanded extends Container {
         this.onCraftMatrixChanged(this.craftMatrix);
     }
 
-    /**
-     * Callback for when the crafting matrix is changed.
-     */
     @Override
     public void onCraftMatrixChanged(@Nonnull IInventory par1IInventory) {
         this.slotChangedCraftingGrid(this.thePlayer.getEntityWorld(), this.thePlayer, this.craftMatrix, this.craftResult);
     }
 
-    /**
-     * Called when the container is closed.
-     */
     @Override
     public void onContainerClosed(@Nonnull EntityPlayer player) {
         super.onContainerClosed(player);

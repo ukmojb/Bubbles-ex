@@ -145,7 +145,6 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
             if (mouseY >= yLoc && mouseY < yLoc + (17 * baublesHandler.getSlots()) - 10) {
                 int dWheel = Mouse.getDWheel();
                 if (dWheel != 0) {
-                    // TODO add a config option to reverse the thing
                     int value = -(dWheel / 120);
                     PacketHandler.INSTANCE.sendToServer(new PacketChangeOffset(value));
                     ((BaublesContainer) baublesHandler).incrOffset(value);

@@ -4,6 +4,9 @@ import baubles.api.BaubleType;
 import baubles.api.IBauble;
 import net.minecraft.item.ItemStack;
 
+/**
+ * Pretty basic implementation of a bauble item
+ **/
 public class BaubleItem implements IBauble {
     private final BaubleType baubleType;
 
@@ -12,6 +15,7 @@ public class BaubleItem implements IBauble {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public BaubleType getBaubleType(ItemStack itemstack) {
         return baubleType;
     }

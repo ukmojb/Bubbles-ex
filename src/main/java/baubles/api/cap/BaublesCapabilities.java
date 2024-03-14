@@ -8,12 +8,16 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
 public class BaublesCapabilities {
+
     /**
-     * Access to the baubles capability.
+     * Access to the baubles' capability. 99% it's {@link BaublesContainer}
      */
     @CapabilityInject(IBaublesItemHandler.class)
     public static final Capability<IBaublesItemHandler> CAPABILITY_BAUBLES = null;
 
+    /**
+     * Access to the bauble items capability.
+     **/
     @CapabilityInject(IBauble.class)
     public static final Capability<IBauble> CAPABILITY_ITEM_BAUBLE = null;
 

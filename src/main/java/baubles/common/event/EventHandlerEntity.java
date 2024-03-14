@@ -28,6 +28,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.*;
 
+@SuppressWarnings("unused") // gets used by Forge event handler
 public class EventHandlerEntity {
 
     private final HashMap<UUID, ItemStack[]> baublesSync = new HashMap<UUID, ItemStack[]>();

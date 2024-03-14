@@ -10,6 +10,7 @@ import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class SlotBauble extends SlotItemHandler {
 
@@ -64,29 +65,8 @@ public class SlotBauble extends SlotItemHandler {
         if (getHasStack() && !ItemStack.areItemStacksEqual(oldstack, getStack())
                 && !((IBaublesItemHandler) getItemHandler()).isEventBlocked() &&
                 getStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
-            getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onEquipped(getStack(), player);
+            Objects.requireNonNull(getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)).onEquipped(getStack(), player);
         }
-        /*Logger l = LogManager.getLogger("test?");
-        ItemStack slotStack = getStack();
-
-        l.info("{}, {}", stack.toString(), slotStack.toString());
-
-        if (!slotStack.isEmpty()) {
-            if (baublesHandler.isEventBlocked()) return;
-            IBauble bauble = slotStack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-            if (bauble != null) bauble.onUnequipped(slotStack, player);
-        }
-
-        super.putStack(stack);
-
-        ItemStack slotStackNew = getStack();
-
-        l.info("{}, {}", stack.toString(), slotStackNew.toString());
-
-        if (!slotStackNew.isEmpty() && !ItemStack.areItemStacksEqual(slotStack, slotStackNew) && !baublesHandler.isEventBlocked()) {
-            IBauble bauble = slotStackNew.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-            if (bauble != null) bauble.onEquipped(slotStackNew, player);
-        }*/
     }
 
     @Nullable

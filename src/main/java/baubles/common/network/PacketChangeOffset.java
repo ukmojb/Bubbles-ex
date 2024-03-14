@@ -13,8 +13,7 @@ public class PacketChangeOffset implements IMessage, IMessageHandler<PacketChang
 
     private int offsetChange;
 
-    public PacketChangeOffset() {
-    }
+    public PacketChangeOffset() {}
 
     public PacketChangeOffset(int offsetChange) {
         this.offsetChange = offsetChange;

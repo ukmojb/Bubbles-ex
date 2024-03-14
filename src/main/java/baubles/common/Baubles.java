@@ -23,12 +23,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-@Mod(
-        modid = Baubles.MODID,
-        name = Baubles.MODNAME,
-        version = Tags.MOD_VERSION,
-        guiFactory = "baubles.client.gui.BaublesGuiFactory",
-        dependencies = "required-after:forge@[14.21.0.2348,);")
+@Mod(modid = Baubles.MODID, name = Baubles.MODNAME, version = Tags.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory")
+@SuppressWarnings("unused") // mods instance class
 public class Baubles {
 
     public static final String MODID = "baubles";
@@ -44,20 +40,10 @@ public class Baubles {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         modDir = event.getModConfigurationDirectory();
+        Config.initialize(event.getSuggestedConfigurationFile());
 
-        try {
-            Config.initialize(event.getSuggestedConfigurationFile());
-        } catch (Exception e) {
-            Baubles.log.error("BAUBLES has a problem loading it's configuration");
-        } finally {
-            if (Config.config != null) Config.save();
-        }
-
-        CapabilityManager.INSTANCE.register(IBaublesItemHandler.class,
-                new CapabilityBaubles<IBaublesItemHandler>(), BaublesContainer.class);
-
-        CapabilityManager.INSTANCE
-                .register(IBauble.class, new BaublesCapabilities.CapabilityItemBaubleStorage(), () -> new BaubleItem(BaubleType.TRINKET));
+        CapabilityManager.INSTANCE.register(IBaublesItemHandler.class, new CapabilityBaubles<>(), BaublesContainer::new);
+        CapabilityManager.INSTANCE.register(IBauble.class, new BaublesCapabilities.CapabilityItemBaubleStorage(), () -> new BaubleItem(BaubleType.TRINKET));
 
         proxy.registerEventHandlers();
         PacketHandler.init();

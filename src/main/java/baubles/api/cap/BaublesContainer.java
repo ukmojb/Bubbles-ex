@@ -4,6 +4,7 @@ import baubles.api.BaubleType;
 import baubles.api.IBauble;
 import baubles.api.IBaubleType;
 import baubles.api.inv.SlotDefinition;
+import baubles.common.Config;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,21 +27,9 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     private EntityLivingBase player;
 
     public BaublesContainer() {
-        this.slots = getDefaultSlots(this);
+        this.slots = getDefaultSlots();
         this.stacks = new ItemStack[slots.length];
         this.changed = new boolean[slots.length];
-    }
-
-    private static SlotDefinition[] getDefaultSlots(IBaublesItemHandler baublesHandler) {
-        return new SlotDefinition[]{
-                new SlotDefinition(baublesHandler, 0, BaubleType.AMULET),
-                new SlotDefinition(baublesHandler, 1, BaubleType.RING),
-                new SlotDefinition(baublesHandler, 2, BaubleType.RING),
-                new SlotDefinition(baublesHandler, 3, BaubleType.BELT),
-                new SlotDefinition(baublesHandler, 4, BaubleType.HEAD),
-                new SlotDefinition(baublesHandler, 5, BaubleType.BODY),
-                new SlotDefinition(baublesHandler, 6, BaubleType.CHARM)
-        };
     }
 
     public ItemStack getStack(int slot) {
@@ -87,10 +76,6 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
     }
 
-    /**
-     * Returns true if automation is allowed to insert the given stack (ignoring
-     * stack size) into the given slot.
-     */
     @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack, EntityLivingBase player) {
         if (stack == null || stack.isEmpty()) return false;
@@ -247,5 +232,9 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
                 stacks[stackTag.getInteger("Slot")] = stack;
             }
         }
+    }
+
+    private static SlotDefinition[] getDefaultSlots() {
+        return Config.getSlots();
     }
 }

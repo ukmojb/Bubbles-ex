@@ -7,6 +7,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 
+import java.util.Objects;
+
 /**
  * @author Azanor
  */
@@ -15,7 +17,7 @@ public class BaublesApi {
      * Retrieves the baubles inventory capability handler for the supplied player
      */
     public static IBaublesItemHandler getBaublesHandler(EntityPlayer player) {
-        IBaublesItemHandler handler = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+        IBaublesItemHandler handler = Objects.requireNonNull(player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null));
         handler.setPlayer(player);
         return handler;
     }
@@ -25,7 +27,7 @@ public class BaublesApi {
      */
     @Deprecated
     public static IInventory getBaubles(EntityPlayer player) {
-        IBaublesItemHandler handler = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+        IBaublesItemHandler handler = Objects.requireNonNull(player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null));
         handler.setPlayer(player);
         return new BaublesInventoryWrapper(handler, player);
     }

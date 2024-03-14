@@ -12,6 +12,7 @@ import net.minecraftforge.fml.client.config.IConfigElement;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused") // gets used by Forge annotations
 public class BaublesGuiFactory extends DefaultGuiFactory {
 
     public BaublesGuiFactory() {

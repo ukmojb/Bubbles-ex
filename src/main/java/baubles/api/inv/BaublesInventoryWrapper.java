@@ -7,6 +7,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 
+import javax.annotation.Nonnull;
+
 public class BaublesInventoryWrapper implements IInventory {
     final IBaublesItemHandler handler;
     final EntityPlayer player;
@@ -23,16 +25,13 @@ public class BaublesInventoryWrapper implements IInventory {
         this.player = player;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "BaublesInventory";
     }
 
-    @Override
-    public boolean hasCustomName() {
-        return false;
-    }
-
+    @Nonnull
     @Override
     public ITextComponent getDisplayName() {
         return new TextComponentString(this.getName());
@@ -43,21 +42,19 @@ public class BaublesInventoryWrapper implements IInventory {
         return handler.getSlots();
     }
 
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
+    @Nonnull
     @Override
     public ItemStack getStackInSlot(int index) {
         return handler.getStackInSlot(index);
     }
 
+    @Nonnull
     @Override
     public ItemStack decrStackSize(int index, int count) {
         return handler.extractItem(index, count, false);
     }
 
+    @Nonnull
     @Override
     public ItemStack removeStackFromSlot(int index) {
         ItemStack out = this.getStackInSlot(index);
@@ -66,7 +63,7 @@ public class BaublesInventoryWrapper implements IInventory {
     }
 
     @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
+    public void setInventorySlotContents(int index, @Nonnull ItemStack stack) {
         handler.setStackInSlot(index, stack);
     }
 
@@ -76,39 +73,13 @@ public class BaublesInventoryWrapper implements IInventory {
     }
 
     @Override
-    public void markDirty() {
-    }
-
-    @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(@Nonnull EntityPlayer player) {
         return true;
     }
 
     @Override
-    public void openInventory(EntityPlayer player) {
-    }
-
-    @Override
-    public void closeInventory(EntityPlayer player) {
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
+    public boolean isItemValidForSlot(int index, @Nonnull ItemStack stack) {
         return handler.isItemValidForSlot(index, stack, player);
-    }
-
-    @Override
-    public int getField(int id) {
-        return 0;
-    }
-
-    @Override
-    public void setField(int id, int value) {
-    }
-
-    @Override
-    public int getFieldCount() {
-        return 0;
     }
 
     @Override
@@ -117,4 +88,17 @@ public class BaublesInventoryWrapper implements IInventory {
             this.setInventorySlotContents(i, ItemStack.EMPTY);
         }
     }
+
+    @Override public boolean isEmpty() { return false; }
+
+    @Override public boolean hasCustomName() { return false; }
+
+    @Override public void markDirty() {}
+
+    @Override public void openInventory(@Nonnull EntityPlayer player) {}
+    @Override public void closeInventory(@Nonnull EntityPlayer player) {}
+
+    @Override public int getField(int id) { return 0; }
+    @Override public void setField(int id, int value) {}
+    @Override public int getFieldCount() { return 0; }
 }

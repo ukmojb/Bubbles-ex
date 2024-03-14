@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@SuppressWarnings("unused") // gets used by Forge event handler
 public class EventHandlerItem {
     private static final ResourceLocation capabilityResourceLocation = new ResourceLocation(Baubles.MODID, "bauble_cap");
 
@@ -24,8 +25,6 @@ public class EventHandlerItem {
      * - does implement the IBauble interface
      * - does not already have the capability
      * - did not get the capability by another event handler earlier in the chain
-     *
-     * @param event
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void itemCapabilityAttach(AttachCapabilitiesEvent<ItemStack> event) {

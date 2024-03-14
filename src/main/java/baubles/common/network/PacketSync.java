@@ -20,8 +20,7 @@ public class PacketSync implements IMessage {
     byte slot = 0;
     ItemStack bauble;
 
-    public PacketSync() {
-    }
+    public PacketSync() {}
 
     public PacketSync(EntityPlayer p, int slot, ItemStack bauble) {
         this.slot = (byte) slot;
@@ -46,15 +45,13 @@ public class PacketSync implements IMessage {
     public static class Handler implements IMessageHandler<PacketSync, IMessage> {
         @Override
         public IMessage onMessage(PacketSync message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(new Runnable() {
-                public void run() {
-                    World world = Baubles.proxy.getClientWorld();
-                    if (world == null) return;
-                    Entity p = world.getEntityByID(message.playerId);
-                    if (p != null && p instanceof EntityPlayer) {
-                        IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) p);
-                        baubles.setStackInSlot(message.slot, message.bauble);
-                    }
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                World world = Baubles.proxy.getClientWorld();
+                if (world == null) return;
+                Entity p = world.getEntityByID(message.playerId);
+                if (p instanceof EntityPlayer) {
+                    IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) p);
+                    baubles.setStackInSlot(message.slot, message.bauble);
                 }
             });
             return null;
