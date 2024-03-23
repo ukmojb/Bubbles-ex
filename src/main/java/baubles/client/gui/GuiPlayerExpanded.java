@@ -3,6 +3,7 @@ package baubles.client.gui;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.inv.SlotDefinition;
+import baubles.api.inv.SlotTypeDefinition;
 import baubles.client.ClientProxy;
 import baubles.common.Baubles;
 import baubles.common.container.ContainerPlayerExpanded;
@@ -24,7 +25,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
-import org.apache.logging.log4j.LogManager;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -117,7 +117,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(0, 0, 200);
-                String str = I18n.format(definition.getType().getTranslationKey());
+                String str = I18n.format(definition.getTranslationKey(slotIndex));
                 GuiUtils.drawHoveringText(Collections.singletonList(str), mouseX - this.guiLeft, mouseY - this.guiTop + 7, width, height, 300, renderer);
                 GlStateManager.popMatrix();
             }

@@ -1,7 +1,7 @@
 package baubles.common;
 
 import baubles.api.BaubleType;
-import baubles.api.inv.SlotDefinition;
+import baubles.api.inv.SlotTypeDefinition;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -60,14 +60,25 @@ public class Config {
         config.save();
     }
 
-    public static SlotDefinition[] getSlots() {
+    public static SlotTypeDefinition[] getSlots() {
         File file = new File(Minecraft.getMinecraft().gameDir, "config/" + Baubles.MODID + "/slots.json");
-        JsonArray slots = GSON.fromJson(readFile(file), JsonArray.class);
-        SlotDefinition[] definitions = new SlotDefinition[slots.size()];
-        for (int i = 0; i < slots.size(); i++) {
-            JsonObject slot = slots.get(i).getAsJsonObject();
-            definitions[i] = new SlotDefinition(i, BaubleType.getType(slot.get("type").getAsString()));
+        JsonArray slots;
+
+        try {
+            slots = GSON.fromJson(readFile(file), JsonArray.class);
+        } catch (Exception e) {
+            Baubles.log.error("Exception while reading slots.json! Using default slots");
+            file.delete();
+            writeSlotsJson(file);
+            slots = GSON.fromJson(readFile(file), JsonArray.class);
         }
+
+        SlotTypeDefinition[] definitions = new SlotTypeDefinition[slots.size()];
+        for (int i = 0; i < slots.size(); i++) {
+            String slot = slots.get(i).getAsString();
+            definitions[i] = new SlotTypeDefinition(BaubleType.getType(slot));
+        }
+
         return definitions;
     }
 
@@ -89,7 +100,7 @@ public class Config {
 
     private static void writeSlotsJson(File file) {
         try (FileWriter writer = new FileWriter(file)) {
-            writer.write("[\n {\n  \"type\": \"amulet\"\n },\n {\n  \"type\": \"ring\"\n },\n {\n  \"type\": \"ring\"\n },\n {\n  \"type\": \"belt\"\n },\n {\n  \"type\": \"head\"\n },\n {\n  \"type\": \"body\"\n },\n {\n  \"type\": \"charm\"\n }\n]");
+            writer.write("[\n \"amulet\",\n \"ring\",\n \"ring\",\n \"belt\",\n \"head\",\n \"body\",\n \"charm\"\n]");
         } catch (IOException e) {
             throw new RuntimeException();
         }

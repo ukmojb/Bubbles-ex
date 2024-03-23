@@ -1,26 +1,10 @@
 package baubles.api.inv;
 
-import baubles.api.IBaubleType;
 
-public class SlotDefinition {
+import net.minecraft.item.ItemStack;
 
-    private final int id;
-    private final IBaubleType type;
-
-    public SlotDefinition(int id, IBaubleType type) {
-        this.id = id;
-        this.type = type;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getBackgroundTexture() {
-        return type.getBackgroundTexture();
-    }
-
-    public IBaubleType getType() {
-        return type;
-    }
+public interface SlotDefinition {
+    String getBackgroundTexture(int id);
+    String getTranslationKey(int id);
+    boolean canPutItem(int id, ItemStack stack);
 }

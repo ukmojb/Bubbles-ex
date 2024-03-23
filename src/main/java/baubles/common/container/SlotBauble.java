@@ -72,7 +72,7 @@ public class SlotBauble extends SlotItemHandler {
     @Nullable
     @Override
     public String getSlotTexture() {
-        return ((BaublesContainer) baublesHandler).getSlot(slotIndex).getBackgroundTexture();
+        return ((BaublesContainer) baublesHandler).getSlot(slotIndex).getBackgroundTexture(slotIndex);
     }
 
     @Override

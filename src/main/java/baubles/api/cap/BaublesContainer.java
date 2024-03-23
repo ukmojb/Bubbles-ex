@@ -1,8 +1,6 @@
 package baubles.api.cap;
 
-import baubles.api.BaubleType;
 import baubles.api.IBauble;
-import baubles.api.IBaubleType;
 import baubles.api.inv.SlotDefinition;
 import baubles.common.Config;
 import net.minecraft.entity.EntityLivingBase;
@@ -81,9 +79,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         if (stack == null || stack.isEmpty()) return false;
         IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
         if (bauble != null) {
-            IBaubleType stackType = bauble.getType(stack);
-            IBaubleType slotType = getSlot(slot).getType();
-            return bauble.canEquip(stack, player) && (slotType == BaubleType.TRINKET || stackType == BaubleType.TRINKET || stackType == slotType);
+            return bauble.canEquip(stack, player) && getSlot(slot).canPutItem(slot, stack);
         }
         return false;
     }
