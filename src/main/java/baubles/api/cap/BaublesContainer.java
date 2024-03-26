@@ -49,12 +49,23 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         return this.slots[slotGet];
     }
 
+    public int getOffset() {
+        return offset;
+    }
+
     public void incrOffset(int offset) {
         this.offset += offset;
         int slots = getSlots();
         this.offset %= slots;
         if (this.offset < 0) this.offset += slots;
         else if (this.offset >= slots) this.offset -= slots;
+    }
+
+    public void changeOffsetBasedOnSlot(int slot) {
+        slot += this.offset;
+        if (slot < this.offset || slot > this.offset + 7) {
+            this.offset = slot;
+        }
     }
 
     public void resetOffset() {

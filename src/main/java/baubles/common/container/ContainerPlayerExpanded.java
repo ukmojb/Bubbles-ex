@@ -4,6 +4,7 @@ import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
+import baubles.api.inv.SlotDefinition;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,7 +12,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -124,7 +124,7 @@ public class ContainerPlayerExpanded extends Container {
 
             EntityEquipmentSlot entityequipmentslot = EntityLiving.getSlotForItemStack(itemstack);
 
-            int slotShift = baubles.getSlots();
+            int slotShift = 7;
 
 
             if (index == 0) {
@@ -165,13 +165,15 @@ public class ContainerPlayerExpanded extends Container {
                 if (bauble.canEquip(itemstack1, playerIn)) {
                     BaublesContainer container = (BaublesContainer) baubles;
 
+                    boolean check = true;
                     for (int i = 0; i < this.baubles.getSlots(); i++) {
-                        if (container.getStack(i).isEmpty() && container.isItemValidForSlot(i, itemstack1, playerIn)) {
-                            container.setStack(i, itemstack);
-                            itemstack1.setCount(0);
-                            return ItemStack.EMPTY;
+                        if (container.isItemValidForSlot(i, itemstack1, playerIn)) {
+                            if (!mergeBauble(itemstack1, i)) {
+                                check = false;
+                            }
                         }
                     }
+                    if (!check) return ItemStack.EMPTY;
                 }
             } else if (index >= 9 + slotShift && index < 36 + slotShift) {
                 if (!this.mergeItemStack(itemstack1, 36 + slotShift, 45 + slotShift, false)) {
@@ -214,5 +216,49 @@ public class ContainerPlayerExpanded extends Container {
     @Override
     public boolean canMergeSlot(@Nonnull ItemStack stack, Slot slot) {
         return slot.inventory != this.craftResult && super.canMergeSlot(stack, slot);
+    }
+
+    private boolean mergeBauble(ItemStack stack, int slotIndex) {
+        BaublesContainer container = (BaublesContainer) baubles;
+        boolean flag = false;
+
+        if (!stack.isEmpty()) {
+            SlotDefinition slot = container.getSlot(slotIndex);
+            ItemStack itemstack = container.getStack(slotIndex);
+
+            if (stack.isStackable() && !itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack)) {
+                int j = itemstack.getCount() + stack.getCount();
+                int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
+
+                if (j <= maxSize) {
+                    stack.setCount(0);
+                    itemstack.setCount(j);
+                    flag = true;
+                }
+                else if (itemstack.getCount() < maxSize) {
+                    stack.shrink(maxSize - itemstack.getCount());
+                    itemstack.setCount(maxSize);
+                    flag = true;
+                }
+
+                container.changeOffsetBasedOnSlot(slotIndex);
+                container.setChanged(slotIndex, true);
+            }
+
+            if (itemstack.isEmpty() && slot.canPutItem(slotIndex, stack)) {
+                if (stack.getCount() > slot.getSlotStackLimit()) {
+                    container.setStack(slotIndex, stack.splitStack(slot.getSlotStackLimit()));
+                }
+                else {
+                    container.setStack(slotIndex, stack.splitStack(stack.getCount()));
+                }
+
+                container.changeOffsetBasedOnSlot(slotIndex);
+                container.setChanged(slotIndex, true);
+                flag = true;
+            }
+        }
+
+        return flag;
     }
 }

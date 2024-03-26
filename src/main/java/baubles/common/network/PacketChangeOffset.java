@@ -8,8 +8,9 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import org.apache.logging.log4j.LogManager;
 
-public class PacketChangeOffset implements IMessage, IMessageHandler<PacketChangeOffset, IMessage> {
+public class PacketChangeOffset implements IMessage {
 
     private int offsetChange;
 
@@ -29,14 +30,16 @@ public class PacketChangeOffset implements IMessage, IMessageHandler<PacketChang
         buf.writeInt(offsetChange);
     }
 
-    @Override
-    public IMessage onMessage(PacketChangeOffset message, MessageContext ctx) {
-        IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
-        mainThread.addScheduledTask(() -> {
-            ContainerPlayerExpanded container = (ContainerPlayerExpanded) ctx.getServerHandler().player.openContainer;
-            BaublesContainer baublesHandler = (BaublesContainer) container.baubles;
-            baublesHandler.incrOffset(offsetChange);
-        });
-        return null;
+    public static class Handler implements IMessageHandler<PacketChangeOffset, IMessage> {
+        @Override
+        public IMessage onMessage(PacketChangeOffset message, MessageContext ctx) {
+            IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
+            mainThread.addScheduledTask(() -> {
+                ContainerPlayerExpanded container = (ContainerPlayerExpanded) ctx.getServerHandler().player.openContainer;
+                BaublesContainer baublesHandler = (BaublesContainer) container.baubles;
+                baublesHandler.incrOffset(message.offsetChange);
+            });
+            return null;
+        }
     }
 }

@@ -11,7 +11,7 @@ public class PacketHandler {
     public static void init() {
         INSTANCE.registerMessage(PacketOpenBaublesInventory.class, PacketOpenBaublesInventory.class, 0, Side.SERVER);
         INSTANCE.registerMessage(PacketOpenNormalInventory.class, PacketOpenNormalInventory.class, 1, Side.SERVER);
-        INSTANCE.registerMessage(PacketChangeOffset.class, PacketChangeOffset.class, 2, Side.SERVER);
+        INSTANCE.registerMessage(PacketChangeOffset.Handler.class, PacketChangeOffset.class, 2, Side.SERVER);
         INSTANCE.registerMessage(PacketSync.Handler.class, PacketSync.class, 3, Side.CLIENT);
     }
 }
