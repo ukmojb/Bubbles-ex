@@ -1,17 +1,13 @@
 [
 {
   "modid": "baubles",
-  "name": "Baubles",
-  "description": "Adding a touch of bling to Minecraft",
+  "name": "Bubbles",
+  "description": "Real men play with bubbles",
   "version": "${version}",
   "mcversion": "1.12.2",
   "logoFile": "BLogo.png",
   "url": "http://www.minecraftforum.net/topic/2535073-baubles",
-  "updateUrl": "",
   "authorList": ["Surreal"],
-  "credits": "Originally made by Azanor.",
-  "parent": "",
-  "screenshots": [],
-  "dependencies": []
+  "credits": "Originally made by Azanor."
 }
 ]
