@@ -4,7 +4,7 @@ plugins {
 
 group = "surreal"
 version = "1.12-pre2.O-bubbles"
-archivesBaseName = "Bubbles"
+archivesBaseName = "Baubles"
 
 java {
     toolchain {
