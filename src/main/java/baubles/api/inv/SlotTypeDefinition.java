@@ -32,6 +32,7 @@ public class SlotTypeDefinition implements SlotDefinition {
     @Override
     public boolean canPutItem(int id, ItemStack stack) {
         IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-        return type == BaubleType.TRINKET || (type == Objects.requireNonNull(bauble).getType(stack));
+        IBaubleType type = Objects.requireNonNull(bauble).getType(stack);
+        return this.type == BaubleType.TRINKET || type == BaubleType.TRINKET || this.type == type;
     }
 }
