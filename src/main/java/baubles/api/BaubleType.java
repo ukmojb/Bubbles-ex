@@ -24,7 +24,7 @@ public enum BaubleType implements IBaubleType {
 
     final String name;
     final String translationKey, backgroundTexture;
-    final IntList validSlots = new IntArrayList(7);
+    final IntList validSlots = new IntArrayList(1);
 
     BaubleType(String name, int... validSlots) {
         this.name = name;
@@ -84,12 +84,11 @@ public enum BaubleType implements IBaubleType {
     @Deprecated
     public int[] getValidSlots() {
         int[] array;
-        if (validSlots.size() < 2 && this == RING) {
+        if (this == RING) {
             array = new int[2];
             array[1] = -1;
         }
         else array = new int[1];
-
         array[0] = -1;
 
         return validSlots.toArray(array);
