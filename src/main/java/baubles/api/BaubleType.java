@@ -1,6 +1,8 @@
 package baubles.api;
 
 import baubles.common.Baubles;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,13 +24,12 @@ public enum BaubleType implements IBaubleType {
 
     final String name;
     final String translationKey, backgroundTexture;
-    final int[] validSlots;
+    final IntList validSlots = new IntArrayList(7);
 
     BaubleType(String name, int... validSlots) {
         this.name = name;
         this.translationKey = Baubles.MODID + ".type." + name;
         this.backgroundTexture = "baubles:gui/slots/" + name;
-        this.validSlots = validSlots;
     }
 
     @Override
@@ -39,6 +40,10 @@ public enum BaubleType implements IBaubleType {
     @Override
     public String getBackgroundTexture() {
         return backgroundTexture;
+    }
+
+    public void addSlot(int slot) {
+        validSlots.add(slot);
     }
 
     // Bauble Type Map
@@ -78,6 +83,15 @@ public enum BaubleType implements IBaubleType {
 
     @Deprecated
     public int[] getValidSlots() {
-        return new int[0];
+        int[] array;
+        if (validSlots.size() < 2 && this == RING) {
+            array = new int[2];
+            array[1] = -1;
+        }
+        else array = new int[1];
+
+        array[0] = -1;
+
+        return validSlots.toArray(array);
     }
 }

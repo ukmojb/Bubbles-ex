@@ -31,6 +31,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     }
 
     public ItemStack getStack(int slot) {
+        if (slot == -1) return ItemStack.EMPTY;
         int slotGet = offset + slot;
         if (slotGet >= getSlots()) slotGet %= getSlots();
         ItemStack stack = this.stacks[slotGet];
@@ -76,9 +77,11 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         setChanged(slot, true);
     }
 
-    protected void validateSlotIndex(int slot) {
-        if (slot < 0 || slot >= slots.length)
-            throw new RuntimeException("Slot " + slot + " not in valid range - [0," + slots.length + ")");
+    protected int validateSlotIndex(int slot) {
+        if (slot < 0 || slot >= slots.length) {
+            return -1;
+        }
+        return slot;
     }
 
     protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
@@ -99,6 +102,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
         if (stack.isEmpty() || this.isItemValidForSlot(slot, stack, player)) {
             setStack(slot, stack);
+            setChanged(slot, true);
         }
     }
 
@@ -110,7 +114,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     @Nonnull
     @Override
     public ItemStack getStackInSlot(int slot) {
-        validateSlotIndex(slot);
+        slot = validateSlotIndex(slot);
         ItemStack stack = this.getStack(slot);
         if (stack == null) stack = ItemStack.EMPTY;
         return stack;
@@ -122,7 +126,8 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         if (!this.isItemValidForSlot(slot, stack, player)) return stack;
         if (stack.isEmpty()) return ItemStack.EMPTY;
 
-        validateSlotIndex(slot);
+        slot = validateSlotIndex(slot);
+        if (slot == -1) return ItemStack.EMPTY;
 
         ItemStack existing = getStack(slot);
 
@@ -153,7 +158,8 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (amount == 0) return ItemStack.EMPTY;
-        validateSlotIndex(slot);
+        slot = validateSlotIndex(slot);
+        if (slot == -1) return ItemStack.EMPTY;
 
         ItemStack existing = this.getStack(slot);
         if (existing.isEmpty()) return ItemStack.EMPTY;

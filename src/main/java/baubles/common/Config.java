@@ -80,7 +80,7 @@ public class Config {
         SlotTypeDefinition[] definitions = new SlotTypeDefinition[slots.size()];
         for (int i = 0; i < slots.size(); i++) {
             String slot = slots.get(i).getAsString();
-            definitions[i] = new SlotTypeDefinition(BaubleType.getType(slot));
+            definitions[i] = new SlotTypeDefinition(i, BaubleType.getType(slot));
         }
 
         return definitions;

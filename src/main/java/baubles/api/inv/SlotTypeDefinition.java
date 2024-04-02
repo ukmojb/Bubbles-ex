@@ -12,7 +12,8 @@ public class SlotTypeDefinition implements SlotDefinition {
 
     private final IBaubleType type;
 
-    public SlotTypeDefinition(IBaubleType type) {
+    public SlotTypeDefinition(int index, IBaubleType type) {
+        if (type instanceof BaubleType) ((BaubleType) type).addSlot(index);
         this.type = type;
     }
 
