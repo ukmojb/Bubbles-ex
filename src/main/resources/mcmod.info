@@ -6,7 +6,7 @@
   "version": "${version}",
   "mcversion": "1.12.2",
   "logoFile": "BLogo.png",
-  "url": "http://www.minecraftforum.net/topic/2535073-baubles",
+  "url": "https://www.curseforge.com/minecraft/mc-mods/bubbles-a-baubles-fork",
   "authorList": ["Surreal"],
   "credits": "Originally made by Azanor."
 }
