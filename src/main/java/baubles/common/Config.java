@@ -85,6 +85,7 @@ public class Config {
     }
 
     public static class ConfigChangeListener {
+        @SuppressWarnings("unused")
         @SubscribeEvent
         public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent eventArgs) {
             if (eventArgs.getModID().equals(Baubles.MODID))

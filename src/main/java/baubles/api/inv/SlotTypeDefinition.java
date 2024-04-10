@@ -10,7 +10,7 @@ import java.util.*;
 
 public class SlotTypeDefinition implements SlotDefinition {
 
-    public static final Map<String, SlotDefinition> SLOTS = new HashMap<>();
+    private static final Map<String, SlotDefinition> SLOTS = new HashMap<>();
 
     private final IBaubleType type;
 
