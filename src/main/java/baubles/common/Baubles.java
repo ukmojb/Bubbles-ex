@@ -23,12 +23,11 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-@Mod(modid = Baubles.MODID, name = Baubles.MODNAME, version = Tags.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory")
+@Mod(modid = Baubles.MODID, name = "Baubles", version = Tags.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory")
 @SuppressWarnings("unused") // mods instance class
 public class Baubles {
 
     public static final String MODID = "baubles";
-    public static final String MODNAME = "Baubles";
     public static final Logger log = LogManager.getLogger(MODID.toUpperCase());
     public static final int GUI = 0;
     @SidedProxy(clientSide = "baubles.client.ClientProxy", serverSide = "baubles.common.CommonProxy")

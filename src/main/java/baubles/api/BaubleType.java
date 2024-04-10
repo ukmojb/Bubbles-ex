@@ -1,9 +1,9 @@
 package baubles.api;
 
-import baubles.common.Baubles;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,15 +28,23 @@ public enum BaubleType implements IBaubleType {
 
     BaubleType(String name, int... validSlots) {
         this.name = name;
-        this.translationKey = Baubles.MODID + ".type." + name;
+        this.translationKey = "baubles.type." + name;
         this.backgroundTexture = "baubles:gui/slots/" + name;
     }
 
+    @Nonnull
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Nonnull
     @Override
     public String getTranslationKey() {
         return translationKey;
     }
 
+    @Nonnull
     @Override
     public String getBackgroundTexture() {
         return backgroundTexture;
@@ -51,14 +59,16 @@ public enum BaubleType implements IBaubleType {
         return TYPES;
     }
 
-    public static IBaubleType putType(String name) {
+    private static IBaubleType putType(String name) {
         IBaubleType type = new BaubleTypeImpl(name);
         TYPES.put(name, type);
         return type;
     }
 
     public static IBaubleType getType(String name) {
-        return TYPES.get(name);
+        IBaubleType baubleType = TYPES.get(name);
+        if (baubleType == null) baubleType = putType(name);
+        return baubleType;
     }
 
     static {

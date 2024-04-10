@@ -6,9 +6,11 @@ import baubles.api.IBaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import net.minecraft.item.ItemStack;
 
-import java.util.Objects;
+import java.util.*;
 
 public class SlotTypeDefinition implements SlotDefinition {
+
+    public static final Map<String, SlotDefinition> SLOTS = new HashMap<>();
 
     private final IBaubleType type;
 
@@ -35,5 +37,11 @@ public class SlotTypeDefinition implements SlotDefinition {
         IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
         IBaubleType type = Objects.requireNonNull(bauble).getType(stack);
         return this.type == BaubleType.TRINKET || type == BaubleType.TRINKET || this.type == type;
+    }
+
+    public static SlotDefinition getSlot(int id, IBaubleType type) {
+        SlotDefinition slot = SLOTS.get(type.getName());
+        if (slot == null) slot = new SlotTypeDefinition(id, type);
+        return slot;
     }
 }

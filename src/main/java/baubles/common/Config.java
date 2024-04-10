@@ -1,6 +1,7 @@
 package baubles.common;
 
 import baubles.api.BaubleType;
+import baubles.api.inv.SlotDefinition;
 import baubles.api.inv.SlotTypeDefinition;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -58,7 +59,7 @@ public class Config {
         config.save();
     }
 
-    public static SlotTypeDefinition[] getSlots() {
+    public static SlotDefinition[] getSlots() {
         JsonArray slots;
 
         String fOut = readFile(JSON_DIR);
@@ -74,10 +75,10 @@ public class Config {
             throw new RuntimeException(e);
         }
 
-        SlotTypeDefinition[] definitions = new SlotTypeDefinition[slots.size()];
+        SlotDefinition[] definitions = new SlotDefinition[slots.size()];
         for (int i = 0; i < slots.size(); i++) {
             String slot = slots.get(i).getAsString();
-            definitions[i] = new SlotTypeDefinition(i, BaubleType.getType(slot));
+            definitions[i] = SlotTypeDefinition.getSlot(i, BaubleType.getType(slot));
         }
 
         return definitions;
