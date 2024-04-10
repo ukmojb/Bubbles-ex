@@ -87,7 +87,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         super.initGui();
         this.recipeBook = new GuiButtonImage(10, this.guiLeft + 104, this.height / 2 - 22, 20, 18, 178, 0, 19, INVENTORY_BACKGROUND);
         this.up = new GuiSlotButton(56, this, guiLeft - 27, guiTop - 10, 27, 14, false);
-        this.down = new GuiSlotButton(57, this, guiLeft - 27, guiTop + 4 + (18 * (Math.min(7, baublesHandler.getSlots()))), 27, 14, true);
+        this.down = new GuiSlotButton(57, this, guiLeft - 27, guiTop + 4 + getMaxY(), 27, 14, true);
         this.buttonList.add(this.recipeBook);
         this.buttonList.add(this.up);
         this.buttonList.add(this.down);
@@ -100,7 +100,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         int xLoc = this.guiLeft - 22;
         if (mouseX > xLoc && mouseX < xLoc + 18) {
             int yLoc = this.guiTop + 4;
-            if (mouseY >= yLoc && mouseY < yLoc + (17 * baublesHandler.getSlots()) - 10) {
+            if (mouseY >= yLoc && mouseY < yLoc + getMaxY()) {
                 int slotIndex = (mouseY - yLoc) / 18;
                 BaublesContainer container = ((BaublesContainer) baublesHandler);
 
@@ -142,7 +142,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         int xLoc = this.guiLeft - 22;
         if (mouseX > xLoc && mouseX < xLoc + 18) {
             int yLoc = this.guiTop + 4;
-            if (mouseY >= yLoc && mouseY < yLoc + (17 * baublesHandler.getSlots()) - 10) {
+            if (mouseY >= yLoc && mouseY < yLoc + getMaxY()) {
                 int dWheel = Mouse.getDWheel();
                 if (dWheel != 0) {
                     int value = -(dWheel / 120);
@@ -180,7 +180,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         switch (button.id) {
             case 1: // Stats button
                 this.mc.displayGuiScreen(new GuiStats(this, this.mc.player.getStatFileWriter()));
@@ -249,5 +249,9 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    private int getMaxY() {
+        return 18 * Math.min(baublesHandler.getSlots(), 7);
     }
 }
