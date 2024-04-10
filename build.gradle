@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "surreal"
-version = "1.12-pre2.0-1-bubbles"
+version = "1.12-pre2.0-2-bubbles"
 archivesBaseName = "Baubles"
 
 java {
