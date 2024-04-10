@@ -5,7 +5,6 @@ import baubles.api.inv.SlotTypeDefinition;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -22,6 +21,7 @@ public class Config {
       NORMAL = "[\n \"amulet\",\n \"ring\",\n \"ring\",\n \"belt\",\n \"head\",\n \"body\",\n \"charm\"\n]",
       EXPANDED = "[\n \"amulet\",\n \"amulet\",\n \"ring\",\n \"ring\",\n \"ring\",\n \"ring\",\n \"belt\",\n \"belt\",\n \"head\",\n \"head\",\n \"body\",\n \"body\",\n \"charm\",\n \"charm\"\n]";
 
+    private static File JSON_DIR;
 
     // Configuration Options
     public static boolean renderBaubles = true;
@@ -29,16 +29,14 @@ public class Config {
 
     public static void initialize(File configFile) {
         initConfig(configFile);
+        JSON_DIR = new File(configFile.getParentFile(), "baubles/slots.json");
         initJsonConfig();
     }
 
     private static void initJsonConfig() {
-        File dir = new File(Minecraft.getMinecraft().gameDir, "config/baubles");
-        dir.mkdirs();
-
-        File slotsJson = new File(dir, "slots.json");
-        if (!slotsJson.exists()) {
-            writeSlotsJson(slotsJson);
+        JSON_DIR.getParentFile().mkdirs();
+        if (!JSON_DIR.exists()) {
+            writeSlotsJson(JSON_DIR);
         }
     }
 
@@ -61,13 +59,12 @@ public class Config {
     }
 
     public static SlotTypeDefinition[] getSlots() {
-        File file = new File(Minecraft.getMinecraft().gameDir, "config/" + Baubles.MODID + "/slots.json");
         JsonArray slots;
 
-        String fOut = readFile(file);
+        String fOut = readFile(JSON_DIR);
         if ((fOut.equals(NORMAL) && expandedMode) || (fOut.equals(EXPANDED) && !expandedMode)) {
-            writeSlotsJson(file);
-            fOut = readFile(file);
+            writeSlotsJson(JSON_DIR);
+            fOut = readFile(JSON_DIR);
         }
 
         try {
