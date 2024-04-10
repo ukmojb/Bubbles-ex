@@ -172,6 +172,9 @@ public class ContainerPlayerExpanded extends Container {
                             if (!mergeBauble(itemstack1, i)) {
                                 check = false;
                             }
+                            else {
+                                bauble.onEquipped(itemstack1, playerIn);
+                            }
                         }
                     }
                     if (!check) return ItemStack.EMPTY;
@@ -199,9 +202,10 @@ public class ContainerPlayerExpanded extends Container {
                 return ItemStack.EMPTY;
             }
 
-            if (itemstack1.isEmpty() && !baubles.isEventBlocked() && slot instanceof SlotBauble &&
-                    itemstack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
-                itemstack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(itemstack, playerIn);
+            if (itemstack1.isEmpty() && !baubles.isEventBlocked() && slot instanceof SlotBauble) {
+                IBauble cap = itemstack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+                if (cap != null)
+                    cap.onUnequipped(itemstack, playerIn);
             }
 
             ItemStack itemstack2 = slot.onTake(playerIn, itemstack1);

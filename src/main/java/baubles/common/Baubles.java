@@ -9,19 +9,35 @@ import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.common.event.CommandBaubles;
 import baubles.common.network.PacketHandler;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.*;
+import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.util.Objects;
 
 @Mod(modid = Baubles.MODID, name = "Baubles", version = Tags.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory")
 @SuppressWarnings("unused") // mods instance class
@@ -35,6 +51,15 @@ public class Baubles {
     @Instance(value = Baubles.MODID)
     public static Baubles instance;
     public File modDir;
+
+    public static final Item MAX_VERSTAPPEN;
+
+    public static final SoundEvent TU_TU_TU_TU;
+
+    @EventHandler
+    public void construction(FMLConstructionEvent event) {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -59,5 +84,39 @@ public class Baubles {
     @EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandBaubles());
+    }
+
+    @SubscribeEvent
+    public void registerItem(RegistryEvent.Register<Item> event) {
+        event.getRegistry().register(MAX_VERSTAPPEN);
+    }
+
+    @SubscribeEvent
+    public void registerSound(RegistryEvent.Register<SoundEvent> event) {
+        event.getRegistry().register(TU_TU_TU_TU);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void registerModel(ModelRegistryEvent event) {
+        ModelLoader.setCustomModelResourceLocation(MAX_VERSTAPPEN, 0, new ModelResourceLocation(Objects.requireNonNull(MAX_VERSTAPPEN.getRegistryName()), "inventory"));
+    }
+
+    static {
+        ResourceLocation MAX_VERSTAPPEN_LOCATION = new ResourceLocation(MODID, "max_verstappen");
+
+        MAX_VERSTAPPEN = new BaubleItem(BaubleType.RING) {
+
+            @Override
+            public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
+                World world = player.world;
+                if (!world.isRemote) {
+                    world.playSound(null, player.posX, player.posY, player.posZ, TU_TU_TU_TU, SoundCategory.PLAYERS, 1F, 1F);
+                }
+            }
+
+        }.setRegistryName(MAX_VERSTAPPEN_LOCATION).setTranslationKey(MODID + ".max_verstappen").setCreativeTab(CreativeTabs.MISC);
+
+        TU_TU_TU_TU = new SoundEvent(MAX_VERSTAPPEN_LOCATION).setRegistryName(MAX_VERSTAPPEN_LOCATION);
     }
 }
