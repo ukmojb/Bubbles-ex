@@ -17,6 +17,8 @@ minecraft {
     injectedTags.put("MOD_VERSION", project.version)
 }
 
+apply from: "dependencies.gradle"
+
 for (File at : sourceSets.main.resources.files) {
     if (at.name.toLowerCase().endsWith("_at.cfg")) {
         tasks.deobfuscateMergedJarToSrg.accessTransformerFiles.from(at)

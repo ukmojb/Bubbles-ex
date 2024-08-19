@@ -1,0 +1,16 @@
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                url "https://cursemaven.com"
+            }
+        }
+        filter {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
+dependencies {
+    compileOnly "curse.maven:universaltweaks-705000:5529764"
+}

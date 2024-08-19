@@ -6,9 +6,11 @@ import baubles.api.inv.SlotDefinition;
 import baubles.api.inv.SlotTypeDefinition;
 import baubles.client.ClientProxy;
 import baubles.common.Baubles;
+import baubles.common.ModCompatibility;
 import baubles.common.container.ContainerPlayerExpanded;
 import baubles.common.network.PacketChangeOffset;
 import baubles.common.network.PacketHandler;
+import com.sun.jna.platform.win32.Winspool;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -39,6 +41,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     public static final ResourceLocation background =
             new ResourceLocation(Baubles.MODID, "textures/gui/baubles_inventory.png");
 
+    private static final boolean ENABLE_RECIPE_BOOK = !ModCompatibility.noRecipeBookDisabled();
     private static final Field REF_OLD_MOUSE_X, REF_OLD_MOUSE_Y; // in GuiInventory to retain mouse positions when you close baubles gui
     private static final Method REF_ACTION_PERFORMED; // in GuiInventory for recipe book
 
@@ -48,14 +51,19 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         try {
             REF_OLD_MOUSE_X = GuiInventory.class.getDeclaredField(deobfEnv ? "oldMouseX" : "field_147048_u");
             REF_OLD_MOUSE_Y = GuiInventory.class.getDeclaredField(deobfEnv ? "oldMouseY" : "field_147047_v");
-            REF_ACTION_PERFORMED = GuiInventory.class.getDeclaredMethod(deobfEnv ? "actionPerformed" : "func_146284_a", GuiButton.class);
+
+            REF_OLD_MOUSE_X.setAccessible(true);
+            REF_OLD_MOUSE_Y.setAccessible(true);
+
+            if (ENABLE_RECIPE_BOOK) {
+                REF_ACTION_PERFORMED = GuiInventory.class.getDeclaredMethod(deobfEnv ? "actionPerformed" : "func_146284_a", GuiButton.class);
+                REF_ACTION_PERFORMED.setAccessible(true);
+            }
+            else REF_ACTION_PERFORMED = null;
+
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-
-        REF_OLD_MOUSE_X.setAccessible(true);
-        REF_OLD_MOUSE_Y.setAccessible(true);
-        REF_ACTION_PERFORMED.setAccessible(true);
     }
 
     private final EntityPlayer player;
@@ -85,13 +93,18 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     public void initGui() {
         this.buttonList.clear();
         super.initGui();
-        this.recipeBook = new GuiButtonImage(10, this.guiLeft + 104, this.height / 2 - 22, 20, 18, 178, 0, 19, INVENTORY_BACKGROUND);
+        this.recipeBook = createRecipeBook();
         this.up = new GuiSlotButton(56, this, guiLeft - 27, guiTop - 10, 27, 14, false);
         this.down = new GuiSlotButton(57, this, guiLeft - 27, guiTop + 4 + getMaxY(), 27, 14, true);
-        this.buttonList.add(this.recipeBook);
+        if (this.recipeBook != null) this.buttonList.add(this.recipeBook);
         this.buttonList.add(this.up);
         this.buttonList.add(this.down);
         resetGuiLeft();
+    }
+
+    private GuiButtonImage createRecipeBook() {
+        if (ModCompatibility.noRecipeBookDisabled()) return null;
+        return new GuiButtonImage(10, this.guiLeft + 104, this.height / 2 - 22, 20, 18, 178, 0, 19, INVENTORY_BACKGROUND);
     }
 
     @Override
@@ -241,9 +254,11 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     }
 
     private void openInventoryWithRecipeBook(GuiInventory inventory) {
+        if (recipeBook == null) return;
         this.mc.displayGuiScreen(inventory);
         if (!inventory.func_194310_f().isVisible()) {
             try {
+                assert REF_ACTION_PERFORMED != null;
                 REF_ACTION_PERFORMED.invoke(inventory, recipeBook);
             } catch (InvocationTargetException | IllegalAccessException e) {
                 throw new RuntimeException(e);
