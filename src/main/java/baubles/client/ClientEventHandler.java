@@ -8,6 +8,8 @@ import baubles.api.cap.BaublesCapabilities;
 import baubles.client.gui.GuiBaublesButton;
 import baubles.client.gui.GuiPlayerExpanded;
 import baubles.common.Baubles;
+import baubles.common.network.PacketHandler;
+import baubles.common.network.PacketOpenBaublesInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
@@ -20,6 +22,7 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.Objects;
 
@@ -40,6 +43,13 @@ public class ClientEventHandler {
         TextureMap map = event.getMap();
         for (String type : BaubleType.getTypes().keySet()) {
             map.registerSprite(new ResourceLocation(Baubles.MODID, "gui/slots/" + type));
+        }
+    }
+
+    @SubscribeEvent
+    public void playerTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.START && Minecraft.getMinecraft().inGameHasFocus && ClientProxy.KEY_BAUBLES.isPressed()) {
+            PacketHandler.INSTANCE.sendToServer(new PacketOpenBaublesInventory());
         }
     }
 
