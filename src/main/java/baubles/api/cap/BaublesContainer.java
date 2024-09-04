@@ -32,22 +32,22 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     public ItemStack getStack(int slot) {
         if (slot == -1) return ItemStack.EMPTY;
-        int slotGet = offset + slot;
-        if (slotGet >= getSlots()) slotGet %= getSlots();
-        ItemStack stack = this.stacks[slotGet];
+        ItemStack stack = this.stacks[getSlotIndex(slot)];
         return stack == null ? ItemStack.EMPTY : stack;
     }
 
     public void setStack(int slot, ItemStack stack) {
-        int slotGet = offset + slot;
-        if (slotGet >= getSlots()) slotGet %= getSlots();
-        this.stacks[slotGet] = stack;
+        this.stacks[getSlotIndex(slot)] = stack;
     }
 
     public SlotDefinition getSlot(int slot) {
+        return this.slots[getSlotIndex(slot)];
+    }
+
+    public int getSlotIndex(int slot) {
         int slotGet = offset + slot;
-        if (slotGet >= getSlots()) slotGet %= getSlots();
-        return this.slots[slotGet];
+        if (slotGet >= getSlots()) slotGet -= getSlots();
+        return slotGet;
     }
 
     public int getOffset() {

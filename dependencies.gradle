@@ -12,5 +12,13 @@ repositories {
 }
 
 dependencies {
+
+    // No Recipe Book integration
     compileOnly "curse.maven:universaltweaks-705000:5529764"
+
+    // Cosmetic Armor integration
+    implementation "curse.maven:cosmeticarmor-237307:2937869"
+
+    // Wings Integration
+    compileOnly rfg.deobf("curse.maven:wings-302584:2829351")
 }

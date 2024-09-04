@@ -15,6 +15,7 @@ java {
 minecraft {
     mcVersion = "1.12.2"
     injectedTags.put("MOD_VERSION", project.version)
+    extraRunJvmArguments.addAll("-Xms128m", "-Xmx2048m")
 }
 
 apply from: "dependencies.gradle"

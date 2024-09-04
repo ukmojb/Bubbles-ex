@@ -8,9 +8,11 @@ import baubles.api.cap.BaublesCapabilities;
 import baubles.client.gui.GuiBaublesButton;
 import baubles.client.gui.GuiPlayerExpanded;
 import baubles.common.Baubles;
+import baubles.common.integration.ModCompatibility;
 import baubles.common.network.PacketHandler;
 import baubles.common.network.PacketOpenBaublesInventory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -57,9 +59,13 @@ public class ClientEventHandler {
     public void guiPostInit(GuiScreenEvent.InitGuiEvent.Post event) {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player != null && BaublesApi.getBaublesHandler(player).getSlots() > 0) {
-            if (event.getGui() instanceof GuiInventory || event.getGui() instanceof GuiPlayerExpanded) {
-                GuiContainer gui = (GuiContainer) event.getGui();
-                event.getButtonList().add(new GuiBaublesButton(55, gui, 64, 9, 10, 10,
+            Gui gui = event.getGui();
+            boolean normalInv = gui instanceof GuiInventory || ModCompatibility.isCAInventory(gui);
+            boolean expandedInv = gui instanceof GuiPlayerExpanded;
+            String buttonKey = normalInv ? "button.baubles" : "button.normal";
+            if (normalInv || expandedInv) {
+                GuiContainer container = (GuiContainer) event.getGui();
+                event.getButtonList().add(new GuiBaublesButton(55, container, 64, 9, 10, 10,
                         I18n.format((event.getGui() instanceof GuiInventory) ? "button.baubles" : "button.normal")));
             }
         }

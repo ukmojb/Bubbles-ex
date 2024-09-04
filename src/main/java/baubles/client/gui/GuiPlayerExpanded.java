@@ -3,14 +3,18 @@ package baubles.client.gui;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.inv.SlotDefinition;
-import baubles.api.inv.SlotTypeDefinition;
 import baubles.client.ClientProxy;
 import baubles.common.Baubles;
-import baubles.common.ModCompatibility;
+import baubles.common.integration.ModCompatibility;
 import baubles.common.container.ContainerPlayerExpanded;
 import baubles.common.network.PacketChangeOffset;
 import baubles.common.network.PacketHandler;
-import com.sun.jna.platform.win32.Winspool;
+import lain.mods.cos.CosmeticArmorReworked;
+import lain.mods.cos.ModConfigs;
+import lain.mods.cos.client.GuiCosArmorButton;
+import lain.mods.cos.client.GuiCosArmorToggleButton;
+import lain.mods.cos.client.PlayerRenderHandler;
+import lain.mods.cos.network.packet.PacketOpenCosArmorInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -19,17 +23,22 @@ import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.InventoryEffectRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -41,7 +50,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     public static final ResourceLocation background =
             new ResourceLocation(Baubles.MODID, "textures/gui/baubles_inventory.png");
 
-    private static final boolean ENABLE_RECIPE_BOOK = !ModCompatibility.noRecipeBookDisabled();
+    private static final boolean ENABLE_RECIPE_BOOK = !ModCompatibility.isRecipeBookDisabled();
     private static final Field REF_OLD_MOUSE_X, REF_OLD_MOUSE_Y; // in GuiInventory to retain mouse positions when you close baubles gui
     private static final Method REF_ACTION_PERFORMED; // in GuiInventory for recipe book
 
@@ -69,6 +78,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     private final EntityPlayer player;
     private final IBaublesItemHandler baublesHandler = ((ContainerPlayerExpanded) this.inventorySlots).baubles;
     protected GuiButtonImage recipeBook;
+    protected GuiButton cosButton, cosToggleButton;
     protected GuiSlotButton up, down;
     private float oldMouseX, oldMouseY;
 
@@ -93,18 +103,56 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     public void initGui() {
         this.buttonList.clear();
         super.initGui();
-        this.recipeBook = createRecipeBook();
         this.up = new GuiSlotButton(56, this, guiLeft - 27, guiTop - 10, 27, 14, false);
         this.down = new GuiSlotButton(57, this, guiLeft - 27, guiTop + 4 + getMaxY(), 27, 14, true);
+
+        this.initRecipeBook();
+        this.initCosButtons();
+
         if (this.recipeBook != null) this.buttonList.add(this.recipeBook);
         this.buttonList.add(this.up);
         this.buttonList.add(this.down);
+        if (Loader.isModLoaded(ModCompatibility.CA)) {
+            this.buttonList.add(this.cosButton);
+            this.buttonList.add(this.cosToggleButton);
+        }
         resetGuiLeft();
     }
 
-    private GuiButtonImage createRecipeBook() {
-        if (ModCompatibility.noRecipeBookDisabled()) return null;
-        return new GuiButtonImage(10, this.guiLeft + 104, this.height / 2 - 22, 20, 18, 178, 0, 19, INVENTORY_BACKGROUND);
+    private void initRecipeBook() {
+        if (ModCompatibility.isRecipeBookDisabled()) return;
+        this.recipeBook = new GuiButtonImage(10, this.guiLeft + 104, this.height / 2 - 22, 20, 18, 178, 0, 19, INVENTORY_BACKGROUND);
+    }
+
+    private void initCosButtons() {
+        if (!Loader.isModLoaded(ModCompatibility.CA)) return;
+        if (!ModConfigs.CosArmorGuiButton_Hidden) {
+            this.cosButton = new GuiCosArmorButton(58, this.guiLeft + ModConfigs.CosArmorGuiButton_Left, this.guiTop + ModConfigs.CosArmorGuiButton_Top, 10, 10, "cos.gui.buttoncos") {
+                @Override
+                public boolean mousePressed(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+                    boolean pressed = super.mousePressed(mc, mouseX, mouseY);
+                    if (pressed) {
+                        CosmeticArmorReworked.network.sendToServer(new PacketOpenCosArmorInventory());
+                    }
+                    return pressed;
+                }
+            };
+        }
+        if (!ModConfigs.CosArmorToggleButton_Hidden) {
+            GuiCosArmorToggleButton toggleButton = new GuiCosArmorToggleButton(59, this.guiLeft + ModConfigs.CosArmorToggleButton_Left, this.guiTop + ModConfigs.CosArmorToggleButton_Top, 5, 5, "") {
+                @Override
+                public boolean mousePressed(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+                    boolean pressed = super.mousePressed(mc, mouseX, mouseY);
+                    if (pressed) {
+                        PlayerRenderHandler.HideCosArmor = !PlayerRenderHandler.HideCosArmor;
+                        this.state = PlayerRenderHandler.HideCosArmor ? 1 : 0;
+                    }
+                    return pressed;
+                }
+            };
+            toggleButton.state = PlayerRenderHandler.HideCosArmor ? 1 : 0;
+            this.cosToggleButton = toggleButton;
+        }
     }
 
     @Override
@@ -202,9 +250,6 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
                 openInventoryWithRecipeBook(new GuiInventory(this.player));
                 break;
         }
-        /*if (button.id == 0) {
-            //this.mc.displayGuiScreen(new GuiAchievements(this, this.mc.player.getStatFileWriter()));
-        }*/
     }
 
     @Override

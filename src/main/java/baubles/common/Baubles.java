@@ -8,6 +8,7 @@ import baubles.api.cap.BaublesCapabilities.CapabilityBaubles;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.common.event.CommandBaubles;
+import baubles.common.integration.ModCompatibility;
 import baubles.common.network.PacketHandler;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -71,7 +72,7 @@ public class Baubles {
 
         proxy.registerEventHandlers();
         PacketHandler.init();
-
+        ModCompatibility.applyEvents();
         Config.save();
     }
 

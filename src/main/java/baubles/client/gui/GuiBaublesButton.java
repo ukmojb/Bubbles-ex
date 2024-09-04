@@ -27,12 +27,11 @@ public class GuiBaublesButton extends GuiButton {
     public boolean mousePressed(@Nonnull Minecraft mc, int mouseX, int mouseY) {
         boolean pressed = super.mousePressed(mc, mouseX - this.parentGui.getGuiLeft(), mouseY);
         if (pressed) {
-            if (parentGui instanceof GuiInventory) {
-                PacketHandler.INSTANCE.sendToServer(new PacketOpenBaublesInventory());
-            } else {
+            if (parentGui instanceof GuiPlayerExpanded) {
                 ((GuiPlayerExpanded) parentGui).displayNormalInventory();
                 PacketHandler.INSTANCE.sendToServer(new PacketOpenNormalInventory());
             }
+            else PacketHandler.INSTANCE.sendToServer(new PacketOpenBaublesInventory());
         }
         return pressed;
     }
