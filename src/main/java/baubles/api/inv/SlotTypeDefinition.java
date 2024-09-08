@@ -4,19 +4,22 @@ import baubles.api.BaubleType;
 import baubles.api.IBauble;
 import baubles.api.IBaubleType;
 import baubles.api.cap.BaublesCapabilities;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
 
 import java.util.*;
 
 public class SlotTypeDefinition implements SlotDefinition {
 
-    private static final Map<String, SlotDefinition> SLOTS = new HashMap<>();
+    private static final Int2ObjectMap<SlotDefinition> SLOTS = new Int2ObjectOpenHashMap<>();
 
     private final IBaubleType type;
 
     public SlotTypeDefinition(int index, IBaubleType type) {
         if (type instanceof BaubleType) ((BaubleType) type).addSlot(index);
         this.type = type;
+        SLOTS.put(index, this);
     }
 
     public IBaubleType getType() {
@@ -40,7 +43,7 @@ public class SlotTypeDefinition implements SlotDefinition {
     }
 
     public static SlotDefinition getSlot(int id, IBaubleType type) {
-        SlotDefinition slot = SLOTS.get(type.getName());
+        SlotDefinition slot = SLOTS.get(id);
         if (slot == null) slot = new SlotTypeDefinition(id, type);
         return slot;
     }
