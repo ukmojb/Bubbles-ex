@@ -164,9 +164,9 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         this.fontRenderer.drawString(I18n.format("container.crafting"), 97, 8, 4210752);
-        int xLoc = this.guiLeft - 22;
-        if (mouseX > xLoc && mouseX < xLoc + 18) {
-            int yLoc = this.guiTop + 4;
+        int xLoc = this.guiLeft - 24;
+        if (mouseX > xLoc && mouseX < xLoc + 19) {
+            int yLoc = this.guiTop + 5;
             if (mouseY >= yLoc && mouseY < yLoc + getMaxY()) {
                 int slotIndex = (mouseY - yLoc) / 18;
                 BaublesContainer container = ((BaublesContainer) baublesHandler);
@@ -185,7 +185,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(0, 0, 200);
                 String str = I18n.format(definition.getTranslationKey(slotIndex));
-                GuiUtils.drawHoveringText(Collections.singletonList(str), mouseX - this.guiLeft, mouseY - this.guiTop + 7, width, height, 300, renderer);
+                GuiUtils.drawHoveringText(Collections.singletonList(str), mouseX - this.guiLeft, mouseY - this.guiTop, width, height, 300, renderer);
                 GlStateManager.popMatrix();
             }
         }
