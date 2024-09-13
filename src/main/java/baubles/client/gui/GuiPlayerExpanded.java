@@ -328,15 +328,15 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         }
     }
 
-    private int getMaxY() {
+    public int getMaxY() {
         return 18 * this.getMaxBaubleSlots();
     }
 
-    private int getMaxBaubleSlots() {
+    public int getMaxBaubleSlots() {
         return Math.min(baublesHandler.getSlots(), this.getActualMaxBaubleSlots());
     }
 
-    private int getActualMaxBaubleSlots() {
+    public int getActualMaxBaubleSlots() {
         return 8;
     }
 }

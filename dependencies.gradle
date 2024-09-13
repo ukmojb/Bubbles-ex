@@ -1,4 +1,8 @@
 repositories {
+    maven {
+        name 'CleanroomMC Maven' // HEI
+        url 'https://maven.cleanroommc.com'
+    }
     exclusiveContent {
         forRepository {
             maven {
@@ -12,6 +16,9 @@ repositories {
 }
 
 dependencies {
+
+    // JEI Integration
+    implementation "mezz:jei:4.25.5"
 
     // No Recipe Book integration
     compileOnly "curse.maven:universaltweaks-705000:5529764"
