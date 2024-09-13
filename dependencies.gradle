@@ -16,16 +16,24 @@ repositories {
 }
 
 dependencies {
+    var jei = "mezz:jei:4.25.5"
+    var ut = "curse.maven:universaltweaks-705000:5529764"
+    var ca = "curse.maven:cosmeticarmor-237307:2937869"
+    var wings = "curse.maven:wings-302584:2829351"
 
-    // JEI Integration
-    implementation "mezz:jei:4.25.5"
+    // JEI Extra Bounds
+    if (project.include_jei) implementation(jei)
+    else compileOnly(jei)
 
-    // No Recipe Book integration
-    compileOnly "curse.maven:universaltweaks-705000:5529764"
+    // No Recipe Book
+    if (project.include_ut) implementation(ut)
+    else compileOnly(ut)
 
-    // Cosmetic Armor integration
-    implementation "curse.maven:cosmeticarmor-237307:2937869"
+    // Cosmetic Armors
+    if (project.include_ca) implementation(ca)
+    else compileOnly(ca)
 
-    // Wings Integration
-    compileOnly rfg.deobf("curse.maven:wings-302584:2829351")
+    // Wings
+    if (project.include_wings) implementation(wings)
+    else compileOnly(wings)
 }

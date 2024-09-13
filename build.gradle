@@ -2,9 +2,12 @@ plugins {
     id "com.gtnewhorizons.retrofuturagradle" version "1.3.33"
 }
 
-group = "surreal"
-version = "1.5-bubbles-2.0-3"
-archivesBaseName = "Baubles"
+group = project.group
+version = project.mod_version
+
+base {
+    archivesName = project.archive_name
+}
 
 java {
     toolchain {
@@ -14,8 +17,8 @@ java {
 
 minecraft {
     mcVersion = "1.12.2"
-    injectedTags.put("MOD_VERSION", project.version)
     extraRunJvmArguments.addAll("-Xms128m", "-Xmx2048m")
+    injectedTags.put("MOD_VERSION", project.version)
 }
 
 apply from: "dependencies.gradle"
