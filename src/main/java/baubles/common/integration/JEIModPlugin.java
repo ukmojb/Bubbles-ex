@@ -33,7 +33,8 @@ public class JEIModPlugin implements IModPlugin {
         @Override
         public List<Rectangle> getGuiExtraAreas(@Nonnull GuiPlayerExpanded gui) {
             int add = gui.getBaubleSlots() > gui.getActualMaxBaubleSlots() ? -9 : 0;
-            return Collections.singletonList(new Rectangle(gui.getGuiLeft() - 26, gui.getGuiTop() + add, 26, gui.getMaxY()));
+            int add2 = gui.getBaubleSlots() > gui.getActualMaxBaubleSlots() ? 18 : 0;
+            return Collections.singletonList(new Rectangle(gui.getGuiLeft() - 26, gui.getGuiTop() + add, 26, gui.getMaxY() + add2));
         }
     }
 }
