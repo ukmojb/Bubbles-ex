@@ -9,10 +9,10 @@ import mezz.jei.api.gui.IAdvancedGuiHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @JEIPlugin
 public class JEIModPlugin implements IModPlugin {
 
