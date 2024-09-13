@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.opengl.GL11;
@@ -40,7 +39,6 @@ public class GuiBaublesButton extends GuiButton {
     public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             int x = this.x + this.parentGui.getGuiLeft();
-
             FontRenderer fontrenderer = mc.fontRenderer;
             mc.getTextureManager().bindTexture(GuiPlayerExpanded.background);
             GlStateManager.pushMatrix();

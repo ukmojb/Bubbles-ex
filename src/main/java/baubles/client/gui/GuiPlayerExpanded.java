@@ -31,6 +31,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -41,6 +42,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
+
+import static baubles.common.integration.ModCompatibility.CA;
 
 public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
@@ -106,26 +109,29 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         this.up.visible = this.baublesHandler.getSlots() > this.getActualMaxBaubleSlots();
         this.down.visible = this.up.visible;
 
-        this.initRecipeBook();
-        this.initCosButtons();
-
-        if (this.recipeBook != null) this.buttonList.add(this.recipeBook);
         this.buttonList.add(this.up);
         this.buttonList.add(this.down);
-        if (Loader.isModLoaded(ModCompatibility.CA)) {
+
+        if (ENABLE_RECIPE_BOOK) {
+            this.initRecipeBook();
+            this.buttonList.add(this.recipeBook);
+        }
+
+        if (Loader.isModLoaded(CA)) {
+            this.initCosButtons();
             this.buttonList.add(this.cosButton);
             this.buttonList.add(this.cosToggleButton);
         }
+
         resetGuiLeft();
     }
 
     private void initRecipeBook() {
-        if (ModCompatibility.isRecipeBookDisabled()) return;
         this.recipeBook = new GuiButtonImage(10, this.guiLeft + 104, this.height / 2 - 22, 20, 18, 178, 0, 19, INVENTORY_BACKGROUND);
     }
 
+    @Optional.Method(modid = CA)
     private void initCosButtons() {
-        if (!Loader.isModLoaded(ModCompatibility.CA)) return;
         if (!ModConfigs.CosArmorGuiButton_Hidden) {
             this.cosButton = new GuiCosArmorButton(58, this.guiLeft + ModConfigs.CosArmorGuiButton_Left, this.guiTop + ModConfigs.CosArmorGuiButton_Top, 10, 10, "cos.gui.buttoncos") {
                 @Override
@@ -264,7 +270,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
                 this.mc.displayGuiScreen(new GuiStats(this, this.mc.player.getStatFileWriter()));
                 break;
             case 10: // Recipe Book Button
-                openInventoryWithRecipeBook(new GuiInventory(this.player));
+                this.openInventoryWithRecipeBook(new GuiInventory(this.player));
                 break;
         }
     }
@@ -316,7 +322,6 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     }
 
     private void openInventoryWithRecipeBook(GuiInventory inventory) {
-        if (recipeBook == null) return;
         this.mc.displayGuiScreen(inventory);
         if (!inventory.func_194310_f().isVisible()) {
             try {
