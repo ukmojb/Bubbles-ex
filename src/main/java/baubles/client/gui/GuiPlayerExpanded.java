@@ -103,8 +103,8 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         this.up = new GuiSlotButton(56, this, guiLeft - 26, guiTop - 9, 27, 14, false);
         this.down = new GuiSlotButton(57, this, guiLeft - 26, guiTop + 7 + getMaxY(), 27, 14, true);
 
-        this.up.visible = this.getMaxBaubleSlots() > 1;
-        this.down.visible = this.getMaxBaubleSlots() > 1;
+        this.up.visible = this.baublesHandler.getSlots() > this.getActualMaxBaubleSlots();
+        this.down.visible = this.up.visible;
 
         this.initRecipeBook();
         this.initCosButtons();
@@ -197,6 +197,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
+        if (this.baublesHandler.getSlots() <= this.getActualMaxBaubleSlots()) return;
         int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
         int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
 
@@ -328,10 +329,14 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     }
 
     private int getMaxY() {
-        return 18 * Math.min(baublesHandler.getSlots(), 7);
+        return 18 * this.getMaxBaubleSlots();
     }
 
     private int getMaxBaubleSlots() {
-        return Math.min(baublesHandler.getSlots(), 7);
+        return Math.min(baublesHandler.getSlots(), this.getActualMaxBaubleSlots());
+    }
+
+    private int getActualMaxBaubleSlots() {
+        return 8;
     }
 }
