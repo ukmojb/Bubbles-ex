@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @JEIPlugin
@@ -31,11 +32,8 @@ public class JEIModPlugin implements IModPlugin {
         @Nullable
         @Override
         public List<Rectangle> getGuiExtraAreas(@Nonnull GuiPlayerExpanded gui) {
-            List<Rectangle> list = new ArrayList<>(2);
-            list.add(new Rectangle(gui.getGuiLeft(), gui.getGuiTop(), gui.width, gui.height));
-            int add = gui.getMaxBaubleSlots() > gui.getActualMaxBaubleSlots() ? -9 : 0;
-            list.add(new Rectangle(gui.getGuiLeft() - 26, gui.getGuiTop() + add, 26, gui.getMaxY()));
-            return list;
+            int add = gui.getBaubleSlots() > gui.getActualMaxBaubleSlots() ? -9 : 0;
+            return Collections.singletonList(new Rectangle(gui.getGuiLeft() - 26, gui.getGuiTop() + add, 26, gui.getMaxY()));
         }
     }
 }
