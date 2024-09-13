@@ -22,18 +22,18 @@ dependencies {
     var wings = "curse.maven:wings-302584:2829351"
 
     // JEI Extra Bounds
-    if (project.include_jei) implementation(jei)
+    if (project.runtime_jei.toBoolean()) implementation(jei)
     else compileOnly(jei)
 
     // No Recipe Book
-    if (project.include_ut) implementation(ut)
+    if (project.runtime_ut.toBoolean()) implementation(ut)
     else compileOnly(ut)
 
     // Cosmetic Armors
-    if (project.include_ca) implementation(ca)
+    if (project.runtime_ca.toBoolean()) implementation(ca)
     else compileOnly(ca)
 
     // Wings
-    if (project.include_wings) implementation(wings)
+    if (project.runtime_wings.toBoolean()) implementation(wings)
     else compileOnly(wings)
 }
