@@ -52,9 +52,9 @@ public class GuiSlotButton extends GuiButton {
             GlStateManager.translate(0, 0, 200);
 
             if (ticks > 0) {
-                this.drawTexturedModalRect(this.x, this.y, 200 + (isDown ? 1 : 0) * 28, 14, 28, 14);
+                this.drawTexturedModalRect(this.x, this.y, 176 + (isDown ? 1 : 0) * 24, 12, 24, 12);
                 ticks--;
-            } else this.drawTexturedModalRect(this.x, this.y, 200 + (isDown ? 1 : 0) * 28, 0, 28, 14);
+            } else this.drawTexturedModalRect(this.x, this.y, 176 + (isDown ? 1 : 0) * 24, 0, 24, 12);
 
             GlStateManager.popMatrix();
 

@@ -64,7 +64,7 @@ public class ContainerPlayerExpanded extends Container {
         }
 
         for (int i = 0; i < Math.min(7, Objects.requireNonNull(baubles).getSlots()); i++) {
-            this.addSlotToContainer(new SlotBauble(player, baubles, i, -21, 5 + (i * 18)));
+            this.addSlotToContainer(new SlotBauble(player, baubles, i, -22,  6 + (i * 18)));
         }
 
         for (int i = 0; i < 3; ++i) {

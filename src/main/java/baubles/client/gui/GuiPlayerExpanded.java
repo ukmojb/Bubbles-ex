@@ -23,11 +23,8 @@ import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.InventoryEffectRenderer;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -103,8 +100,11 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     public void initGui() {
         this.buttonList.clear();
         super.initGui();
-        this.up = new GuiSlotButton(56, this, guiLeft - 27, guiTop - 10, 27, 14, false);
-        this.down = new GuiSlotButton(57, this, guiLeft - 27, guiTop + 4 + getMaxY(), 27, 14, true);
+        this.up = new GuiSlotButton(56, this, guiLeft - 26, guiTop - 9, 27, 14, false);
+        this.down = new GuiSlotButton(57, this, guiLeft - 26, guiTop + 7 + getMaxY(), 27, 14, true);
+
+        this.up.visible = this.getMaxBaubleSlots() > 1;
+        this.down.visible = this.getMaxBaubleSlots() > 1;
 
         this.initRecipeBook();
         this.initCosButtons();
@@ -229,11 +229,27 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
 
-        int size = Math.min(7, baublesHandler.getSlots());
+        int maxSlots = this.getMaxBaubleSlots();
 
-        if (size > 0) {
-            for (int i = 0; i < size; i++) {
-                this.drawTexturedModalRect(k - 27, l + 4 + (i * 18), 228, 28, 27, 18);
+        if (maxSlots > 0) {
+            if (maxSlots == 1) {
+                this.drawTexturedModalRect(k - 28, l, 176, 34, 28, 28);
+            }
+            else {
+                for (int i = 0; i < maxSlots; i++) {
+                    int textureY = 39;
+                    int height = 20;
+                    int y = l + (i * 18);
+
+                    if (i == 0) {
+                        textureY = 34;
+                        height += 4;
+                    }
+                    else y += 5;
+                    if (i == maxSlots - 1) height += 4;
+
+                    this.drawTexturedModalRect(k - 28, y, 176, textureY, 28, height);
+                }
             }
         }
 
@@ -313,5 +329,9 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
     private int getMaxY() {
         return 18 * Math.min(baublesHandler.getSlots(), 7);
+    }
+
+    private int getMaxBaubleSlots() {
+        return Math.min(baublesHandler.getSlots(), 7);
     }
 }
