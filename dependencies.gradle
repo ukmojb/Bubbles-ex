@@ -20,6 +20,7 @@ dependencies {
     var ut = "curse.maven:universaltweaks-705000:5529764"
     var ca = "curse.maven:cosmeticarmor-237307:2937869"
     var wings = "curse.maven:wings-302584:2829351"
+    var aa = "curse.maven:actuallyadditions-228404:3117927"
 
     var mixins = ut
 
@@ -41,6 +42,10 @@ dependencies {
     // Wings
     if (project.runtime_wings.toBoolean()) implementation(wings)
     else compileOnly(wings)
+
+    // Compatibility
+    if (project.runtime_aa.toBoolean()) implementation rfg.deobf(aa)
+    else compileOnly rfg.deobf(aa)
 
     if (mixins) {
         annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
