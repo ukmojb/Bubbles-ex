@@ -34,7 +34,7 @@ public class JEIModPlugin implements IModPlugin {
         public List<Rectangle> getGuiExtraAreas(@Nonnull GuiPlayerExpanded gui) {
             int add = gui.getBaubleSlots() > gui.getActualMaxBaubleSlots() ? -9 : 0;
             int add2 = gui.getBaubleSlots() > gui.getActualMaxBaubleSlots() ? 18 : 0;
-            return Collections.singletonList(new Rectangle(gui.getGuiLeft() - 26, gui.getGuiTop() + add, 26, gui.getMaxY() + add2));
+            return Collections.singletonList(new Rectangle(gui.getGuiLeft() - 28, gui.getGuiTop() + add, 28, gui.getMaxY() + 9 + add2));
         }
     }
 }
