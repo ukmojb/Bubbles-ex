@@ -56,8 +56,8 @@ public class ModCompatibility {
     // Compatibility
     public static InjectableBauble getBaubleToInject(ItemStack stack) {
         Item item = stack.getItem();
-        if (item.getRegistryName() == null) return null;
-        ResourceLocation loc = Objects.requireNonNull(item.getRegistryName());
+        ResourceLocation loc = item.getRegistryName();
+        if (loc == null) return null;
         if (loc.getNamespace().equals(AA)) {
             if (item instanceof ItemMagnetRing) {
                 return new InjectableBauble(item, BaubleType.RING, true, 0);
