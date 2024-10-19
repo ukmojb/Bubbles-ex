@@ -23,6 +23,7 @@ dependencies {
     var wings = "curse.maven:wings-302584:2829351"
     var aa = "curse.maven:actuallyadditions-228404:3117927"
     var qt = "curse.maven:quality-tools-264756:2732994"
+    var botania = "curse.maven:botania-225643:3330934"
     var mixins = project.runtime_ut
 
     // JEI Extra Bounds
@@ -52,11 +53,16 @@ dependencies {
     if (project.runtime_aa.toBoolean()) implementation rfg.deobf(aa)
     else compileOnly rfg.deobf(aa)
 
+    // Fixes
     if (project.runtime_qt.toBoolean()) {
         runtimeOnly "curse.maven:potion-core-242872:2905184"
         implementation rfg.deobf(qt)
     }
-    else compileOnly rfg.deobf(qt)
+
+    if (project.runtime_botania.toBoolean()) {
+        runtimeOnly "curse.maven:autoreglib-250363:2746011"
+        implementation rfg.deobf(botania)
+    }
 
     if (mixins) {
         annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
