@@ -21,8 +21,9 @@ dependencies {
     var ca = "curse.maven:cosmeticarmor-237307:2937869"
     var wings = "curse.maven:wings-302584:2829351"
     var aa = "curse.maven:actuallyadditions-228404:3117927"
+    var qt = "curse.maven:quality-tools-264756:2732994"
 
-    var mixins = ut
+    var mixins = project.runtime_ut
 
     // JEI Extra Bounds
     if (project.runtime_jei.toBoolean()) implementation(jei)
@@ -46,6 +47,12 @@ dependencies {
     // Compatibility
     if (project.runtime_aa.toBoolean()) implementation rfg.deobf(aa)
     else compileOnly rfg.deobf(aa)
+
+    if (project.runtime_qt.toBoolean()) {
+        runtimeOnly "curse.maven:potion-core-242872:2905184"
+        implementation rfg.deobf(qt)
+    }
+    else compileOnly rfg.deobf(qt)
 
     if (mixins) {
         annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
