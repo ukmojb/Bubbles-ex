@@ -8,6 +8,7 @@ import de.ellpeck.actuallyadditions.mod.items.ItemPotionRing;
 import lain.mods.cos.client.GuiCosArmorInventory;
 import mod.acgaming.universaltweaks.config.UTConfigTweaks;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -18,6 +19,7 @@ import yalter.mousetweaks.MTConfig;
 public class ModCompatibility {
 
     public static final String
+            // Scrolling check
             MT = "mousetweaks",
 
             // No Recipe Book
@@ -34,8 +36,10 @@ public class ModCompatibility {
             AA = "actuallyadditions";
 
     // Mouse Tweaks scrolling
-    public static boolean isMouseTweaksScrollingEnabled() {
-        return Loader.isModLoaded(MT) && MTConfig.wheelTweak;
+    public static boolean shouldScroll(Slot slot) {
+        if (!Loader.isModLoaded(MT)) return true;
+        boolean wheelTweaksEnabled = MTConfig.wheelTweak;
+        return !wheelTweaksEnabled || slot == null || !slot.getHasStack();
     }
 
     // No Recipe Book
