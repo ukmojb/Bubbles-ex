@@ -17,17 +17,21 @@ repositories {
 
 dependencies {
     var jei = "mezz:jei:4.25.5"
+    var mt = "curse.maven:mouse-tweaks-unofficial-461660:4661407"
     var ut = "curse.maven:universaltweaks-705000:5529764"
     var ca = "curse.maven:cosmeticarmor-237307:2937869"
     var wings = "curse.maven:wings-302584:2829351"
     var aa = "curse.maven:actuallyadditions-228404:3117927"
     var qt = "curse.maven:quality-tools-264756:2732994"
-
     var mixins = project.runtime_ut
 
     // JEI Extra Bounds
     if (project.runtime_jei.toBoolean()) implementation(jei)
     else compileOnly(jei)
+
+    // Mouse Tweaks (Mouse Rolling)
+    if (project.runtime_mt.toBoolean()) implementation(mt)
+    else compileOnly(mt)
 
     // No Recipe Book
     if (project.runtime_ut.toBoolean()) {

@@ -204,7 +204,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         if (this.baublesHandler.getSlots() <= this.getActualMaxBaubleSlots()) return;
-        if (this.getSlotUnderMouse() == null) {
+        if (!ModCompatibility.isMouseTweaksScrollingEnabled() || this.getSlotUnderMouse() == null) {
             int dWheel = Mouse.getEventDWheel();
             if (dWheel != 0) {
                 System.out.println(dWheel);

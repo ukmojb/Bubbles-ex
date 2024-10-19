@@ -13,12 +13,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
-
-import java.util.Objects;
+import yalter.mousetweaks.MTConfig;
 
 public class ModCompatibility {
 
     public static final String
+            MT = "mousetweaks",
+
             // No Recipe Book
             NRB = "norecipebook",
             UT = "universaltweaks",
@@ -31,6 +32,11 @@ public class ModCompatibility {
 
             // Compatibility
             AA = "actuallyadditions";
+
+    // Mouse Tweaks scrolling
+    public static boolean isMouseTweaksScrollingEnabled() {
+        return Loader.isModLoaded(MT) && MTConfig.wheelTweak;
+    }
 
     // No Recipe Book
     public static boolean isRecipeBookDisabled() {
