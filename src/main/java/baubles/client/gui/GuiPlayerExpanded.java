@@ -204,19 +204,13 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         if (this.baublesHandler.getSlots() <= this.getActualMaxBaubleSlots()) return;
-        int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
-        int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-
-        int xLoc = this.guiLeft - 22;
-        if (mouseX > xLoc && mouseX < xLoc + 18) {
-            int yLoc = this.guiTop + 4;
-            if (mouseY >= yLoc && mouseY < yLoc + getMaxY()) {
-                int dWheel = Mouse.getDWheel();
-                if (dWheel != 0) {
-                    int value = -(dWheel / 120);
-                    PacketHandler.INSTANCE.sendToServer(new PacketChangeOffset(value));
-                    ((BaublesContainer) baublesHandler).incrOffset(value);
-                }
+        if (this.getSlotUnderMouse() == null) {
+            int dWheel = Mouse.getEventDWheel();
+            if (dWheel != 0) {
+                System.out.println(dWheel);
+                int value = -(dWheel / 120);
+                PacketHandler.INSTANCE.sendToServer(new PacketChangeOffset(value));
+                ((BaublesContainer) baublesHandler).incrOffset(value);
             }
         }
     }
