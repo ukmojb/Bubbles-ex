@@ -9,10 +9,12 @@ import baubles.api.cap.IBaublesItemHandler;
 import baubles.common.Baubles;
 import baubles.common.network.PacketHandler;
 import baubles.common.network.PacketSync;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -149,7 +151,11 @@ public class EventHandlerEntity {
     public void dropItemsAt(EntityPlayer player, List<EntityItem> drops, Entity e) {
         IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
         for (int i = 0; i < baubles.getSlots(); ++i) {
-            if (baubles.getStackInSlot(i) != null && !baubles.getStackInSlot(i).isEmpty()) {
+            if (!baubles.getStackInSlot(i).isEmpty()) {
+                ItemStack stack = baubles.getStackInSlot(i);
+                baubles.setStackInSlot(i, ItemStack.EMPTY);
+                int vanishing = EnchantmentHelper.getEnchantmentLevel(Enchantments.VANISHING_CURSE, stack);
+                if (vanishing > 0) continue;
                 EntityItem ei = new EntityItem(e.world,
                         e.posX, e.posY + e.getEyeHeight(), e.posZ,
                         baubles.getStackInSlot(i).copy());
@@ -160,7 +166,6 @@ public class EventHandlerEntity {
                 ei.motionZ = MathHelper.cos(f2) * f1;
                 ei.motionY = 0.20000000298023224D;
                 drops.add(ei);
-                baubles.setStackInSlot(i, ItemStack.EMPTY);
             }
         }
     }

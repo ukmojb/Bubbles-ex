@@ -4,7 +4,9 @@ import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -36,6 +38,8 @@ public class SlotBauble extends SlotItemHandler {
     public boolean canTakeStack(@Nonnull EntityPlayer player) {
         ItemStack stack = getStack();
         if (stack.isEmpty()) return false;
+        int binding = EnchantmentHelper.getEnchantmentLevel(Enchantments.BINDING_CURSE, stack);
+        if (!player.isCreative() && binding > 0) return false;
         IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
         return bauble == null || bauble.canUnequip(stack, player);
     }
