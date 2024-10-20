@@ -11,6 +11,8 @@
 package baubles.client;
 
 import baubles.api.BaublesApi;
+import baubles.api.IBauble;
+import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.render.IRenderBauble;
 import baubles.api.render.IRenderBauble.RenderType;
@@ -19,11 +21,10 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public final class BaublesRenderLayer implements LayerRenderer<EntityPlayer> {
 
@@ -35,7 +36,7 @@ public final class BaublesRenderLayer implements LayerRenderer<EntityPlayer> {
 
         IBaublesItemHandler inv = BaublesApi.getBaublesHandler(player);
 
-        dispatchRenders(inv, player, RenderType.BODY, partialTicks);
+        dispatchRenders(inv, player, RenderType.BODY, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, partialTicks);
 
         float yaw = player.prevRotationYawHead + (player.rotationYawHead - player.prevRotationYawHead) * partialTicks;
         float yawOffset = player.prevRenderYawOffset + (player.renderYawOffset - player.prevRenderYawOffset) * partialTicks;
@@ -45,20 +46,23 @@ public final class BaublesRenderLayer implements LayerRenderer<EntityPlayer> {
         GlStateManager.rotate(yawOffset, 0, -1, 0);
         GlStateManager.rotate(yaw - 270, 0, 1, 0);
         GlStateManager.rotate(pitch, 0, 0, 1);
-        dispatchRenders(inv, player, RenderType.HEAD, partialTicks);
+        dispatchRenders(inv, player, RenderType.HEAD, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, partialTicks);
         GlStateManager.popMatrix();
     }
 
-    private void dispatchRenders(IBaublesItemHandler inv, EntityPlayer player, RenderType type, float partialTicks) {
+    private void dispatchRenders(IBaublesItemHandler inv, EntityPlayer player, RenderType type, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale, float partialTicks) {
         for (int i = 0; i < inv.getSlots(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                Item item = stack.getItem();
-                if (item instanceof IRenderBauble) {
+                IBauble bauble = Objects.requireNonNull(stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null));
+                if (bauble.shouldRender(stack, player)) {
+                    IRenderBauble renderBauble = null;
+                    if (bauble instanceof IRenderBauble) renderBauble = (IRenderBauble) bauble;
+                    else if (stack.getItem() instanceof IRenderBauble) renderBauble = (IRenderBauble) stack.getItem();
+                    if (renderBauble == null) throw new RuntimeException("Render Bauble is null for " + stack.getItem().getRegistryName());
                     GlStateManager.pushMatrix();
-                    GL11.glColor3ub((byte) 255, (byte) 255, (byte) 255);
                     GlStateManager.color(1F, 1F, 1F, 1F);
-                    ((IRenderBauble) stack.getItem()).onPlayerBaubleRender(stack, player, type, partialTicks);
+                    renderBauble.onPlayerBaubleRender(stack, player, type, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, partialTicks);
                     GlStateManager.popMatrix();
                 }
             }

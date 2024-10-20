@@ -17,11 +17,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 
 /**
- * A Bauble Item that implements this will be have hooks to render something on
+ * A Bauble that implements this can use onPlayerBaubleRender to render it to player as a Layer.
  * the player while its equipped.
  * This class doesn't extend IBauble to make the API not depend on the Baubles
  * API, but the item in question still needs to implement IBauble.
+ * + Bubbles Change: You can implement this interface to any bauble even if it's not an item.
  */
+// TODO Hand rendering
 public interface IRenderBauble {
 
     /**
@@ -30,7 +32,19 @@ public interface IRenderBauble {
      * the RenderType passed in. Make sure to check against the type parameter for
      * rendering.
      */
-    void onPlayerBaubleRender(ItemStack stack, EntityPlayer player, RenderType type, float partialTicks);
+    default void onPlayerBaubleRender(ItemStack stack, EntityPlayer player, RenderType type, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale, float partialTicks) {
+        this.onPlayerBaubleRender(stack, player, type, partialTicks);
+    }
+
+    /**
+     * Called for the rendering of the bauble on the player. The player instance can be
+     * acquired through the event parameter. Transformations are already applied for
+     * the RenderType passed in. Make sure to check against the type parameter for
+     * rendering.
+     * @deprecated use {@link IRenderBauble#onPlayerBaubleRender(ItemStack, EntityPlayer, RenderType, float, float, float, float, float, float, float)} instead
+     */
+    @Deprecated
+    default void onPlayerBaubleRender(ItemStack stack, EntityPlayer player, RenderType type, float partialTicks) {}
 
     enum RenderType {
         /**

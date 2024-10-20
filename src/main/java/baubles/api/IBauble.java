@@ -1,6 +1,8 @@
 package baubles.api;
 
+import baubles.api.render.IRenderBauble;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -59,6 +61,10 @@ public interface IBauble {
      */
     default boolean canUnequip(ItemStack itemstack, EntityLivingBase player) {
         return true;
+    }
+
+    default boolean shouldRender(ItemStack stack, EntityPlayer player) {
+        return this instanceof IRenderBauble || stack.getItem() instanceof IRenderBauble;
     }
 
     /**
