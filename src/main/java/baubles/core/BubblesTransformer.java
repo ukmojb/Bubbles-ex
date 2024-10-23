@@ -2,6 +2,7 @@ package baubles.core;
 
 import baubles.core.transformers.BotaniaTransformer;
 import baubles.core.transformers.QualityToolsTransformer;
+import baubles.core.transformers.WearableBackpacksTransformer;
 import net.minecraft.launchwrapper.IClassTransformer;
 
 public class BubblesTransformer implements IClassTransformer {
@@ -9,7 +10,7 @@ public class BubblesTransformer implements IClassTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         switch (transformedName) {
-            // Botania
+            // Botania - Make slots not hardcoded
             case "vazkii.botania.common.item.equipment.bauble.ItemDivaCharm": return BotaniaTransformer.transformItemDivaCharm(basicClass);
             case "vazkii.botania.common.item.equipment.bauble.ItemTiara": return BotaniaTransformer.transformItemTiara(basicClass);
             case "vazkii.botania.common.item.equipment.bauble.ItemGoddessCharm": return BotaniaTransformer.transformItemGoddessCharm(basicClass);
@@ -17,8 +18,10 @@ public class BubblesTransformer implements IClassTransformer {
             case "vazkii.botania.common.item.equipment.bauble.ItemMonocle": return BotaniaTransformer.transformItemMonocle(basicClass);
             case "vazkii.botania.common.item.equipment.bauble.ItemTravelBelt": return BotaniaTransformer.transformItemTravelBelt(basicClass);
             case "vazkii.botania.common.item.equipment.bauble.ItemWaterRing": return BotaniaTransformer.transformItemWaterRing(basicClass);
-            // Quality Tools
+            // Quality Tools - Make it check if item has bauble capability and make it work with custom bauble types
             case "com.tmtravlr.qualitytools.baubles.BaublesHandler": return QualityToolsTransformer.transformBaublesHandler(basicClass);
+            // Wearable Backpacks - Fix a crash
+            case "net.mcft.copy.backpacks.api.BackpackHelper": return WearableBackpacksTransformer.transformBackpackHelper(basicClass);
             default: return basicClass;
         }
     }

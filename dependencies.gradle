@@ -64,6 +64,8 @@ dependencies {
         implementation rfg.deobf(botania)
     }
 
+    compileOnly "curse.maven:wb-684624:4203074"
+
     if (mixins) {
         annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
         annotationProcessor 'com.google.guava:guava:24.1.1-jre'
