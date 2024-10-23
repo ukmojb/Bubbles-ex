@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,21 +55,31 @@ public enum BaubleType implements IBaubleType {
         validSlots.add(slot);
     }
 
-    // Bauble Type Map
+    // Bauble Type Map TODO this sucks
     public static Map<String, IBaubleType> getTypes() {
         return TYPES;
+    }
+
+    public static IBaubleType register(IBaubleType type) {
+        TYPES.put(type.getName(), type);
+        return type;
+    }
+
+    @Nullable
+    public static IBaubleType getType(String name) {
+        return TYPES.get(name);
+    }
+
+    public static IBaubleType getOrCreateType(String name) {
+        IBaubleType baubleType = TYPES.get(name);
+        if (baubleType == null) baubleType = putType(name);
+        return baubleType;
     }
 
     private static IBaubleType putType(String name) {
         IBaubleType type = new BaubleTypeImpl(name);
         TYPES.put(name, type);
         return type;
-    }
-
-    public static IBaubleType getType(String name) {
-        IBaubleType baubleType = TYPES.get(name);
-        if (baubleType == null) baubleType = putType(name);
-        return baubleType;
     }
 
     static {
@@ -100,7 +111,6 @@ public enum BaubleType implements IBaubleType {
         }
         else array = new int[1];
         array[0] = -1;
-
         return validSlots.toArray(array);
     }
 }
