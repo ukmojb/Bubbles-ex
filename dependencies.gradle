@@ -24,7 +24,7 @@ dependencies {
     var aa = "curse.maven:actuallyadditions-228404:3117927"
     var qt = "curse.maven:quality-tools-264756:2732994"
     var botania = "curse.maven:botania-225643:3330934"
-    var mixins = project.runtime_ut
+    var mixins = project.runtime_ut.toBoolean()
 
     // JEI Extra Bounds
     if (project.runtime_jei.toBoolean()) implementation(jei)
