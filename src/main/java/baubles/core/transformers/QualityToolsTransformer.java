@@ -1,10 +1,17 @@
 package baubles.core.transformers;
 
+import baubles.api.BaubleType;
+import baubles.api.IBaubleType;
+import baubles.api.cap.BaublesContainer;
+import baubles.api.cap.IBaublesItemHandler;
+import baubles.api.inv.SlotDefinition;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 
 public class QualityToolsTransformer extends BaseTransformer {
 
@@ -14,12 +21,20 @@ public class QualityToolsTransformer extends BaseTransformer {
      **/
     public static byte[] transformBaublesHandler(byte[] basicClass) {
         ClassNode cls = read(basicClass);
-        {
-            Iterator<MethodNode> iterator = cls.methods.iterator();
-            while (iterator.hasNext()) {
-                if (iterator.next().name.equals("canEquipBauble")) {
-                    iterator.remove();
-                    break;
+        Iterator<MethodNode> mIterator = cls.methods.iterator();
+        while (mIterator.hasNext()) {
+            MethodNode method = mIterator.next();
+            if (method.name.equals("canEquipBauble") || method.name.equals("getBaublesNamesForSlot")) mIterator.remove();
+            else if (method.name.equals("applyAttributesFromBaubles")) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKESPECIAL) {
+                        ((MethodInsnNode) node).desc = "(Lbaubles/api/cap/IBaublesItemHandler;I)Ljava/util/ArrayList;";
+                        node = node.getPrevious();
+                        method.instructions.insertBefore(node, new VarInsnNode(ALOAD, 3));
+                        break;
+                    }
                 }
             }
         }
@@ -102,6 +117,26 @@ public class QualityToolsTransformer extends BaseTransformer {
             m.visitInsn(ICONST_0);
             m.visitInsn(IRETURN);
         }
+        { // getBaublesNamesForSlot
+            MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "getBaublesNamesForSlot", "(Lbaubles/api/cap/IBaublesItemHandler;I)Ljava/util/ArrayList;", null, null);
+            m.visitVarInsn(ALOAD, 1);
+            m.visitVarInsn(ILOAD, 2);
+            m.visitMethodInsn(INVOKESTATIC, "baubles/core/transformers/QualityToolsTransformer", "$getBaublesNameForSlot", "(Lbaubles/api/cap/IBaublesItemHandler;I)Ljava/util/ArrayList;", false);
+            m.visitInsn(ARETURN);
+        }
+        writeClass(cls);
         return write(cls);
+    }
+
+    @SuppressWarnings("unused")
+    public static ArrayList<String> $getBaublesNameForSlot(IBaublesItemHandler handler, int slot) {
+        ArrayList<String> list = new ArrayList<>();
+        SlotDefinition definition = ((BaublesContainer) handler).getSlot(slot);
+        for (Map.Entry<String, IBaubleType> type : BaubleType.getTypes().entrySet()) {
+            if (definition.canPutType(type.getValue())) {
+                list.add("baubles_" + type.getKey());
+            }
+        }
+        return list;
     }
 }

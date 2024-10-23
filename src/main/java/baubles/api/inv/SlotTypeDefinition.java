@@ -22,10 +22,6 @@ public class SlotTypeDefinition implements SlotDefinition {
         SLOTS.put(index, this);
     }
 
-    public IBaubleType getType() {
-        return type;
-    }
-
     public String getBackgroundTexture(int id) {
         return type.getBackgroundTexture();
     }
@@ -36,10 +32,15 @@ public class SlotTypeDefinition implements SlotDefinition {
     }
 
     @Override
+    public boolean canPutType(IBaubleType type) {
+        return this.type == BaubleType.TRINKET || type == BaubleType.TRINKET || this.type.equals(type);
+    }
+
+    @Override
     public boolean canPutItem(int id, ItemStack stack) {
         IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
         IBaubleType type = Objects.requireNonNull(bauble).getType(stack);
-        return this.type == BaubleType.TRINKET || type == BaubleType.TRINKET || this.type == type;
+        return this.canPutType(type);
     }
 
     public static SlotDefinition getSlot(int id, IBaubleType type) {
