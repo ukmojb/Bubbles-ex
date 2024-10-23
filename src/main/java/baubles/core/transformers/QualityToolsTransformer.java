@@ -124,7 +124,6 @@ public class QualityToolsTransformer extends BaseTransformer {
             m.visitMethodInsn(INVOKESTATIC, "baubles/core/transformers/QualityToolsTransformer", "$getBaublesNameForSlot", "(Lbaubles/api/cap/IBaublesItemHandler;I)Ljava/util/ArrayList;", false);
             m.visitInsn(ARETURN);
         }
-        writeClass(cls);
         return write(cls);
     }
 
