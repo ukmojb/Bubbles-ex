@@ -7,6 +7,9 @@ import org.objectweb.asm.tree.MethodNode;
 
 import java.util.Iterator;
 
+/**
+ * Fuck you Vazkii!!
+ **/
 public class PotionFingersTransformer extends BaseTransformer {
 
     public static byte[] transformItemRing(byte[] basicClass) {

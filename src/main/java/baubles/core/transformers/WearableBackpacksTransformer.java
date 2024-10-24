@@ -7,6 +7,9 @@ import org.objectweb.asm.tree.MethodNode;
 
 import java.util.Iterator;
 
+/**
+ * Fix a random crash that happens because of "deep" casting.
+ **/
 public class WearableBackpacksTransformer extends BaseTransformer {
 
     public static byte[] transformBackpackHelper(byte[] basicClass) {

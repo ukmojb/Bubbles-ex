@@ -13,10 +13,6 @@ import java.nio.file.Files;
 
 public class BaseTransformer implements Opcodes {
 
-//    protected static MethodInsnNode hook(String name, String desc) {
-//        return new MethodInsnNode(INVOKESTATIC, "surreal/backportium/core/BPHooks", name, desc, false);
-//    }
-
     protected static String getName(String mcpName, String srgName) {
         return FMLLaunchHandler.isDeobfuscatedEnvironment() ? mcpName : srgName;
     }

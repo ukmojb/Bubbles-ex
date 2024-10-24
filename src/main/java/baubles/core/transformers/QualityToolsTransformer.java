@@ -13,12 +13,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * Quality Tools checks if item is IBauble instead of checking capabilities.
+ * Change it to check capabilities instead. Fixes issues with Wings and EbWizardry.
+ * Check slots properly, fixes the issues that occur with more than 7 slots.
+ **/
 public class QualityToolsTransformer extends BaseTransformer {
 
-    /**
-     * Quality Tools checks if item is IBauble instead of checking capabilities.
-     * Change it to check capabilities instead. Fixes issues with Wings and EbWizardry
-     **/
     public static byte[] transformBaublesHandler(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         Iterator<MethodNode> mIterator = cls.methods.iterator();
@@ -44,8 +45,6 @@ public class QualityToolsTransformer extends BaseTransformer {
             m.visitFieldInsn(GETFIELD, cls.name, "baublesExists", "Z");
             Label l_con1 = new Label();
             m.visitJumpInsn(IFEQ, l_con1);
-            m.visitLabel(new Label());
-
             m.visitVarInsn(ALOAD, 1);
             m.visitFieldInsn(GETSTATIC, "baubles/api/cap/BaublesCapabilities", "CAPABILITY_ITEM_BAUBLE", "Lnet/minecraftforge/common/capabilities/Capability;");
             m.visitInsn(ACONST_NULL);
@@ -56,7 +55,6 @@ public class QualityToolsTransformer extends BaseTransformer {
             m.visitVarInsn(ALOAD, 3);
             Label l_con_cap_check = new Label();
             m.visitJumpInsn(IFNULL, l_con_cap_check);
-            m.visitLabel(new Label());
             m.visitVarInsn(ALOAD, 3);
             m.visitVarInsn(ALOAD, 1);
             m.visitMethodInsn(INVOKEINTERFACE, "baubles/api/IBauble", "getType", "(Lnet/minecraft/item/ItemStack;)Lbaubles/api/IBaubleType;", true);
@@ -67,7 +65,6 @@ public class QualityToolsTransformer extends BaseTransformer {
             m.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z", false);
             Label l_con_captrinket_check = new Label();
             m.visitJumpInsn(IFEQ, l_con_captrinket_check);
-            m.visitLabel(new Label());
             m.visitInsn(ICONST_1);
             m.visitInsn(IRETURN);
 
@@ -78,7 +75,6 @@ public class QualityToolsTransformer extends BaseTransformer {
             m.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "startsWith", "(Ljava/lang/String;)Z", false);
             Label l_con_swith = new Label();
             m.visitJumpInsn(IFEQ, l_con_swith);
-            m.visitLabel(new Label());
 
             m.visitVarInsn(ALOAD, 2);
             m.visitIntInsn(BIPUSH, 8);
@@ -91,7 +87,6 @@ public class QualityToolsTransformer extends BaseTransformer {
             m.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z", false);
             Label l_con_typetrinket_check = new Label();
             m.visitJumpInsn(IFEQ, l_con_typetrinket_check);
-            m.visitLabel(new Label());
             m.visitInsn(ICONST_1);
             m.visitInsn(IRETURN);
 
