@@ -207,7 +207,6 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         if (ModCompatibility.shouldScroll(this.getSlotUnderMouse())) {
             int dWheel = Mouse.getEventDWheel();
             if (dWheel != 0) {
-                System.out.println(dWheel);
                 int value = -(dWheel / 120);
                 PacketHandler.INSTANCE.sendToServer(new PacketChangeOffset(value));
                 ((BaublesContainer) baublesHandler).incrOffset(value);
