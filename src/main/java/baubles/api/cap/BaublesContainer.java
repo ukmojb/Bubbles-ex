@@ -57,7 +57,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     public int getSlotIndex(int slot) {
         int slotGet = offset + slot;
-        if (slotGet >= getSlots()) slotGet -= getSlots();
+        if (slotGet >= getSlots()) slotGet %= this.getSlots();
         return slotGet;
     }
 

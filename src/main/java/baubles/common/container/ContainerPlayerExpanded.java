@@ -127,7 +127,6 @@ public class ContainerPlayerExpanded extends Container {
 
             int slotShift = 7;
 
-
             if (index == 0) {
                 if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, true)) {
                     return ItemStack.EMPTY;
