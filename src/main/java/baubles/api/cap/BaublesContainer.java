@@ -3,16 +3,25 @@ package baubles.api.cap;
 import baubles.api.IBauble;
 import baubles.api.inv.SlotDefinition;
 import baubles.common.Config;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
 
@@ -23,6 +32,8 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     private boolean[] changed;
     private boolean blockEvents = false;
     private EntityLivingBase player;
+
+    private ItemStack[] itemsToPuke = null;
 
     public BaublesContainer() {
         this.slots = getDefaultSlots();
@@ -218,6 +229,20 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         this.player = player;
     }
 
+    public void pukeItems(World world, double x, double y, double z) {
+        if (this.itemsToPuke != null) {
+            for (ItemStack stack : this.itemsToPuke) {
+                EntityItem eItem = new EntityItem(world, x, y, z, stack);
+                world.spawnEntity(eItem);
+            }
+            this.itemsToPuke = null;
+        }
+    }
+
+    public void pukeItems(Entity entity) {
+        this.pukeItems(entity.world, entity.posX, entity.posY, entity.posZ);
+    }
+
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagList list = new NBTTagList();
@@ -237,14 +262,21 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         NBTTagList list = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        List<ItemStack> itemsToPuke = new ArrayList<>();
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound stackTag = list.getCompoundTagAt(i);
             int slot = stackTag.getInteger("Slot");
+            if (!stackTag.hasKey("id", 8)) continue;
+            Item item = Item.getByNameOrId(stackTag.getString("id"));
+            if (item == null || item == Items.AIR) continue;
+            ItemStack stack = new ItemStack(stackTag);
             if (slot < getSlots()) {
-                ItemStack stack = new ItemStack(stackTag);
-                stacks[stackTag.getInteger("Slot")] = stack;
+                if (this.slots[slot].canPutItem(slot, stack)) this.stacks[slot] = stack;
+                else itemsToPuke.add(stack);
             }
+            else itemsToPuke.add(new ItemStack(stackTag));
         }
+        if (!itemsToPuke.isEmpty()) this.itemsToPuke = itemsToPuke.toArray(new ItemStack[0]);
     }
 
     private static SlotDefinition[] getDefaultSlots() {

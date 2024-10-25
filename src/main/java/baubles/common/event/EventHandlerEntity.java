@@ -61,6 +61,8 @@ public class EventHandlerEntity {
         if (entity instanceof EntityPlayerMP) {
             EntityPlayerMP player = (EntityPlayerMP) entity;
             syncSlots(player, Collections.singletonList(player));
+            BaublesContainer container = (BaublesContainer) BaublesApi.getBaublesHandler(player);
+            container.pukeItems(player);
         }
     }
 
