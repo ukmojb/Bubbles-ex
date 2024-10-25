@@ -89,12 +89,12 @@ public class PotionFingersTransformer extends BaseTransformer {
             m.visitLabel(l_con_effectCheck);
             m.visitFrame(F_SAME, 0, null, 0, null);
             m.visitVarInsn(ALOAD, 4);
-            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/potion/PotionEffect", getName("getAmplifier", ""), "()I", false);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/potion/PotionEffect", getName("getAmplifier", "func_76458_c"), "()I", false);
             m.visitInsn(ICONST_0);
             Label l_con_end = new Label();
             m.visitJumpInsn(IF_ICMPEQ, l_con_end);
             m.visitVarInsn(ALOAD, 4);
-            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/potion/PotionEffect", getName("getDuration", ""), "()I", false);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/potion/PotionEffect", getName("getDuration", "func_76459_b"), "()I", false);
             m.visitIntInsn(SIPUSH, 32767);
             m.visitJumpInsn(IF_ICMPGT, l_con_or);
             m.visitLabel(l_con_end);
