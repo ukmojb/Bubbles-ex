@@ -1,6 +1,6 @@
 #
 # ITEMS
-item.Ring.0.name=礦工戒指
+item.baubles.max_verstappen.name=馬克斯·維斯塔潘
 #
 # GUI
 button.baubles=配件裝備欄
@@ -10,10 +10,12 @@ button.normal=一般裝備欄
 keybind.baublesinventory=配件裝備欄
 #
 # Description
-name.AMULET=配件（護身符）
-name.RING=配件（戒指）
-name.BELT=配件（腰帶）
-name.TRINKET=配件（任意）
-name.HEAD=配件（頭部）
-name.BODY=配件（身體）
-name.CHARM=配件（墜飾）
+baubles.type.amulet=護身符
+baubles.type.ring=戒指
+baubles.type.belt=腰帶
+baubles.type.trinket=任意
+baubles.type.head=頭部
+baubles.type.body=身體
+baubles.type.charm=墜飾
+
+baubles.item.desc=配件 (%s)
