@@ -14,9 +14,11 @@ import baubles.common.network.PacketOpenBaublesInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -26,6 +28,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 @SuppressWarnings("unused") // gets used by Forge event handler
@@ -61,12 +64,24 @@ public class ClientEventHandler {
         if (player != null && BaublesApi.getBaublesHandler(player).getSlots() > 0) {
             Gui gui = event.getGui();
             boolean normalInv = gui instanceof GuiInventory || ModCompatibility.isCAInventory(gui);
+            boolean creativeInv = gui instanceof GuiContainerCreative;
             boolean expandedInv = gui instanceof GuiPlayerExpanded;
-            String buttonKey = normalInv ? "button.baubles" : "button.normal";
-            if (normalInv || expandedInv) {
+            if (creativeInv) { // TODO Polish
+                GuiContainerCreative container = (GuiContainerCreative) gui;
+                event.getButtonList().add(new GuiBaublesButton(55, container, 95, 6, 10, 10, "button.baubles") {
+                    @Override
+                    public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+                        this.visible = container.getSelectedTabIndex() == CreativeTabs.INVENTORY.getIndex();
+                        if (this.visible) {
+                            super.drawButton(mc, mouseX, mouseY, partialTicks);
+                        }
+                    }
+                });
+            }
+            else if (normalInv || expandedInv) {
                 GuiContainer container = (GuiContainer) event.getGui();
                 event.getButtonList().add(new GuiBaublesButton(55, container, 64, 9, 10, 10,
-                        I18n.format((event.getGui() instanceof GuiInventory) ? "button.baubles" : "button.normal")));
+                        normalInv ? "button.baubles" : "button.normal"));
             }
         }
     }
