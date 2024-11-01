@@ -64,6 +64,8 @@ dependencies {
         implementation rfg.deobf(botania)
     }
 
+    compileOnly "curse.maven:cofh-core-69162:2920433"
+
     compileOnly "curse.maven:wb-684624:4203074"
 
     if (mixins) {

@@ -9,6 +9,10 @@ import baubles.api.cap.IBaublesItemHandler;
 import baubles.common.Baubles;
 import baubles.common.network.PacketHandler;
 import baubles.common.network.PacketSync;
+import cofh.core.enchantment.EnchantmentSoulbound;
+import cofh.core.util.helpers.ItemHelper;
+import cofh.core.util.helpers.MathHelper;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -18,8 +22,8 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
@@ -27,6 +31,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.*;
 
@@ -150,25 +155,57 @@ public class EventHandlerEntity {
         }
     }
 
+    @GameRegistry.ObjectHolder("cofhcore:soulbound") public static Enchantment COFH_SOULBOUND = null;
+    @GameRegistry.ObjectHolder("tombstone:soulbound") public static Enchantment TOMBSTONE_SOULBOUND = null;
+
     public void dropItemsAt(EntityPlayer player, List<EntityItem> drops, Entity e) {
         IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
+        player.captureDrops = true;
         for (int i = 0; i < baubles.getSlots(); ++i) {
             if (!baubles.getStackInSlot(i).isEmpty()) {
                 ItemStack stack = baubles.getStackInSlot(i);
-                baubles.setStackInSlot(i, ItemStack.EMPTY);
-                int vanishing = EnchantmentHelper.getEnchantmentLevel(Enchantments.VANISHING_CURSE, stack);
-                if (vanishing > 0) continue;
-                EntityItem ei = new EntityItem(e.world,
-                        e.posX, e.posY + e.getEyeHeight(), e.posZ,
-                        baubles.getStackInSlot(i).copy());
-                ei.setPickupDelay(40);
-                float f1 = e.world.rand.nextFloat() * 0.5F;
-                float f2 = e.world.rand.nextFloat() * (float) Math.PI * 2.0F;
-                ei.motionX = -MathHelper.sin(f2) * f1;
-                ei.motionZ = MathHelper.cos(f2) * f1;
-                ei.motionY = 0.20000000298023224D;
-                drops.add(ei);
+                boolean soulboundCheck = !hasAnySoulbound(stack) || this.isFakePlayer(player);
+                boolean vanishingCheck = EnchantmentHelper.hasVanishingCurse(stack);
+                if (!soulboundCheck) baubles.setStackInSlot(i, ItemStack.EMPTY);
+                if (EnchantmentHelper.hasVanishingCurse(stack)) continue;
+                this.handleCofhSouldbound(stack);
+                if (!soulboundCheck) player.dropItem(stack, true, false);
+//                EntityItem ei = new EntityItem(e.world,
+//                        e.posX, e.posY + e.getEyeHeight(), e.posZ,
+//                        baubles.getStackInSlot(i).copy());
+//                ei.setPickupDelay(40);
+//                float f1 = e.world.rand.nextFloat() * 0.5F;
+//                float f2 = e.world.rand.nextFloat() * (float) Math.PI * 2.0F;
+//                ei.motionX = -MathHelper.sin(f2) * f1;
+//                ei.motionZ = MathHelper.cos(f2) * f1;
+//                ei.motionY = 0.20000000298023224D;
+//                drops.add(ei);
             }
         }
+        player.captureDrops = false;
+    }
+
+    private boolean hasAnySoulbound(ItemStack stack) {
+        return EnchantmentHelper.getEnchantmentLevel(COFH_SOULBOUND, stack) > 0 || EnchantmentHelper.getEnchantmentLevel(TOMBSTONE_SOULBOUND, stack) > 0;
+    }
+
+    private void handleCofhSouldbound(ItemStack stack) {
+        if (COFH_SOULBOUND != null) {
+            int level = EnchantmentHelper.getEnchantmentLevel(COFH_SOULBOUND, stack);
+            if (level > 1) {
+                if (EnchantmentSoulbound.permanent) {
+                    ItemHelper.removeEnchantment(stack, COFH_SOULBOUND);
+                    ItemHelper.addEnchantment(stack, COFH_SOULBOUND, level - 1);
+                }
+                else if (MathHelper.RANDOM.nextInt(level + 1) == 0) {
+                    ItemHelper.removeEnchantment(stack, COFH_SOULBOUND);
+                    ItemHelper.addEnchantment(stack, COFH_SOULBOUND, level - 1);
+                }
+            }
+        }
+    }
+
+    private boolean isFakePlayer(EntityPlayer player) {
+        return player instanceof FakePlayer;
     }
 }
