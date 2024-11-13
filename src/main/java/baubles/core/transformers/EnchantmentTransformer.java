@@ -12,15 +12,16 @@ import org.objectweb.asm.tree.*;
 
 import java.util.List;
 
-/**
- * transforms {@link Enchantment#getEntityEquipment(EntityLivingBase)} for making enchantments in baubles work.
- **/
+
 public class EnchantmentTransformer extends BaseTransformer {
 
+    /**
+     * transforms {@link Enchantment#getEntityEquipment(EntityLivingBase)} for making enchantments in baubles work.
+     **/
     public static byte[] transformEnchantment(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
-            if (method.name.equals(getName("getEntityEquipment", ""))) {
+            if (method.name.equals(getName("getEntityEquipment", "func_185260_a"))) {
                 // ALOAD 2 - list
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != ARETURN) node = node.getPrevious();
