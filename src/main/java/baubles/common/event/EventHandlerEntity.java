@@ -170,16 +170,6 @@ public class EventHandlerEntity {
                 if (EnchantmentHelper.hasVanishingCurse(stack)) continue;
                 this.handleCofhSouldbound(stack);
                 if (!soulboundCheck) player.dropItem(stack, true, false);
-//                EntityItem ei = new EntityItem(e.world,
-//                        e.posX, e.posY + e.getEyeHeight(), e.posZ,
-//                        baubles.getStackInSlot(i).copy());
-//                ei.setPickupDelay(40);
-//                float f1 = e.world.rand.nextFloat() * 0.5F;
-//                float f2 = e.world.rand.nextFloat() * (float) Math.PI * 2.0F;
-//                ei.motionX = -MathHelper.sin(f2) * f1;
-//                ei.motionZ = MathHelper.cos(f2) * f1;
-//                ei.motionY = 0.20000000298023224D;
-//                drops.add(ei);
             }
         }
         player.captureDrops = false;
