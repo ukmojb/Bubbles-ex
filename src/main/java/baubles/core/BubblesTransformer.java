@@ -10,6 +10,7 @@ public class BubblesTransformer implements IClassTransformer {
         switch (transformedName) {
             // Minecraft - Apply baubles enchantments
             case "net.minecraft.enchantment.Enchantment": return EnchantmentTransformer.transformEnchantment(basicClass);
+            case "net.minecraft.item.Item": return EnchantmentTransformer.transformItem(basicClass);
             // Botania - Make slots not hardcoded
             case "vazkii.botania.common.item.equipment.bauble.ItemDivaCharm": return BotaniaTransformer.transformItemDivaCharm(basicClass);
             case "vazkii.botania.common.item.equipment.bauble.ItemTiara": return BotaniaTransformer.transformItemTiara(basicClass);

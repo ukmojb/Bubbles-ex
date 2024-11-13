@@ -2,6 +2,7 @@ package baubles.api;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.item.ItemStack;
 
@@ -54,14 +55,16 @@ public enum BaubleType implements IBaubleType {
     }
 
     @Override
-    public boolean canApplyEnchantment(EnumEnchantmentType type, ItemStack stack) {
-        switch (type) {
+    public boolean canApplyEnchantment(Enchantment enchantment, ItemStack stack) {
+        if (enchantment.type == null) return false;
+        if (IBaubleType.super.canApplyEnchantment(enchantment, stack)) return true;
+        switch (enchantment.type) {
             case ARMOR_HEAD: if (this == HEAD) return true;
             case ARMOR_CHEST: if (this == AMULET || this == BODY) return true;
             case ARMOR_LEGS: if (this == BELT) return true;
             case BREAKABLE: return stack.isItemStackDamageable();
         }
-        return IBaubleType.super.canApplyEnchantment(type, stack);
+        return false;
     }
 
     public void addSlot(int slot) {
