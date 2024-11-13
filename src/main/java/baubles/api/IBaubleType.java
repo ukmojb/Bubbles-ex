@@ -1,5 +1,8 @@
 package baubles.api;
 
+import net.minecraft.enchantment.EnumEnchantmentType;
+import net.minecraft.item.ItemStack;
+
 import javax.annotation.Nonnull;
 
 public interface IBaubleType {
@@ -21,4 +24,8 @@ public interface IBaubleType {
      **/
     @Nonnull
     String getBackgroundTexture();
+
+    default boolean canApplyEnchantment(EnumEnchantmentType type, ItemStack stack) {
+        return type == EnumEnchantmentType.ALL || type == EnumEnchantmentType.WEARABLE;
+    }
 }

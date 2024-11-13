@@ -31,7 +31,7 @@ public interface IBauble {
      */
     @Deprecated
     default BaubleType getBaubleType(ItemStack itemstack) {
-        return null;
+        return BaubleType.TRINKET;
     }
 
     /**

@@ -1,9 +1,6 @@
 package baubles.core;
 
-import baubles.core.transformers.BotaniaTransformer;
-import baubles.core.transformers.PotionFingersTransformer;
-import baubles.core.transformers.QualityToolsTransformer;
-import baubles.core.transformers.WearableBackpacksTransformer;
+import baubles.core.transformers.*;
 import net.minecraft.launchwrapper.IClassTransformer;
 
 @SuppressWarnings("unused")
@@ -11,6 +8,8 @@ public class BubblesTransformer implements IClassTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         switch (transformedName) {
+            // Minecraft - Apply baubles enchantments
+            case "net.minecraft.enchantment.Enchantment": return EnchantmentTransformer.transformEnchantment(basicClass);
             // Botania - Make slots not hardcoded
             case "vazkii.botania.common.item.equipment.bauble.ItemDivaCharm": return BotaniaTransformer.transformItemDivaCharm(basicClass);
             case "vazkii.botania.common.item.equipment.bauble.ItemTiara": return BotaniaTransformer.transformItemTiara(basicClass);
