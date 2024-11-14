@@ -8,6 +8,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
@@ -26,6 +27,7 @@ public class SlotBauble extends SlotItemHandler {
         this.baublesHandler = itemHandler;
         this.player = player;
         this.slotIndex = slot;
+        this.backgroundLocation = itemHandler.getSlot(slot).getBackgroundTexture(slot);
     }
 
     @Override
@@ -47,7 +49,7 @@ public class SlotBauble extends SlotItemHandler {
     @Nonnull
     @Override
     public ItemStack onTake(@Nonnull EntityPlayer playerIn, @Nonnull ItemStack stack) {
-        if (!stack.isEmpty() && !baublesHandler.isEventBlocked()) {
+        if (!stack.isEmpty()) {
             IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
             if (bauble != null) bauble.onUnequipped(stack, playerIn);
         }
@@ -58,7 +60,6 @@ public class SlotBauble extends SlotItemHandler {
     @Override
     public void putStack(@Nonnull ItemStack stack) {
         if (getHasStack() && !ItemStack.areItemStacksEqual(stack, getStack()) &&
-                !((IBaublesItemHandler) getItemHandler()).isEventBlocked() &&
                 getStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
             getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(getStack(), player);
         }
@@ -66,17 +67,10 @@ public class SlotBauble extends SlotItemHandler {
         ItemStack oldstack = getStack().copy();
         super.putStack(stack);
 
-        if (getHasStack() && !ItemStack.areItemStacksEqual(oldstack, getStack())
-                && !((IBaublesItemHandler) getItemHandler()).isEventBlocked() &&
+        if (getHasStack() && !ItemStack.areItemStacksEqual(oldstack, getStack()) &&
                 getStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
             Objects.requireNonNull(getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)).onEquipped(getStack(), player);
         }
-    }
-
-    @Nullable
-    @Override
-    public String getSlotTexture() {
-        return ((BaublesContainer) baublesHandler).getSlot(slotIndex).getBackgroundTexture(slotIndex);
     }
 
     @Override

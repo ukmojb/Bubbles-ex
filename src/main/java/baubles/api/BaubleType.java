@@ -1,10 +1,11 @@
 package baubles.api;
 
+import baubles.common.Baubles;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,21 +25,21 @@ public enum BaubleType implements IBaubleType {
     BODY("body"),
     CHARM("charm");
 
-    private static final Map<String, IBaubleType> TYPES = new HashMap<>();
+    private static final Map<ResourceLocation, IBaubleType> TYPES = new HashMap<>();
 
-    final String name;
+    final ResourceLocation name;
     final String translationKey, backgroundTexture;
     final IntList validSlots = new IntArrayList(1);
 
     BaubleType(String name, int... validSlots) {
-        this.name = name;
+        this.name = new ResourceLocation(Baubles.MODID, name);
         this.translationKey = "baubles.type." + name;
         this.backgroundTexture = "baubles:gui/slots/" + name;
     }
 
     @Nonnull
     @Override
-    public String getName() {
+    public ResourceLocation getRegistryName() {
         return this.name;
     }
 
@@ -46,12 +47,6 @@ public enum BaubleType implements IBaubleType {
     @Override
     public String getTranslationKey() {
         return translationKey;
-    }
-
-    @Nonnull
-    @Override
-    public String getBackgroundTexture() {
-        return backgroundTexture;
     }
 
     @Override
@@ -72,29 +67,29 @@ public enum BaubleType implements IBaubleType {
     }
 
     // Bauble Type Map TODO this sucks
-    public static Map<String, IBaubleType> getTypes() {
+    public static Map<ResourceLocation, IBaubleType> getTypes() {
         return TYPES;
     }
 
     public static IBaubleType register(IBaubleType type) {
-        TYPES.put(type.getName(), type);
+        TYPES.put(type.getRegistryName(), type);
         return type;
     }
 
     @Nullable
-    public static IBaubleType getType(String name) {
-        return TYPES.get(name);
+    public static IBaubleType getType(ResourceLocation location) {
+        return TYPES.get(location);
     }
 
-    public static IBaubleType getOrCreateType(String name) {
-        IBaubleType baubleType = TYPES.get(name);
-        if (baubleType == null) baubleType = putType(name);
+    public static IBaubleType getOrCreateType(ResourceLocation location) {
+        IBaubleType baubleType = TYPES.get(location);
+        if (baubleType == null) baubleType = putType(location);
         return baubleType;
     }
 
-    private static IBaubleType putType(String name) {
-        IBaubleType type = new BaubleTypeImpl(name);
-        TYPES.put(name, type);
+    private static IBaubleType putType(ResourceLocation location) {
+        IBaubleType type = new BaubleTypeImpl(location);
+        TYPES.put(location, type);
         return type;
     }
 

@@ -5,28 +5,23 @@ import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
 public interface IBaubleType {
 
     /**
-     * Name of the bauble type.
+     * Registry name of the bauble type.
      **/
     @Nonnull
-    String getName();
+    ResourceLocation getRegistryName();
 
     /**
      * Translation key of the bauble type. A bit more extensible version of "baubles.AMULET"
      **/
     @Nonnull
     String getTranslationKey();
-
-    /**
-     * The texture used for slots background shape
-     **/
-    @Nonnull
-    String getBackgroundTexture();
 
     /**
      * Use this if you want to add type to the list of {@link Enchantment#getEntityEquipment(EntityLivingBase)}.

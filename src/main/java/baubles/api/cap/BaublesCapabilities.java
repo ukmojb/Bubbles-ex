@@ -3,20 +3,24 @@ package baubles.api.cap;
 import baubles.api.IBauble;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
 public class BaublesCapabilities {
 
+    // TODO How should this be handled for other entities?
     /**
      * Access to the baubles' capability. 99% it's {@link BaublesContainer}
+     * This capability is attached to entities with {@link EntityLivingBase} type.
      */
     @CapabilityInject(IBaublesItemHandler.class)
     public static final Capability<IBaublesItemHandler> CAPABILITY_BAUBLES = null;
 
     /**
      * Access to the bauble items capability.
+     * This capability is attached to itemstacks.
      **/
     @CapabilityInject(IBauble.class)
     public static final Capability<IBauble> CAPABILITY_ITEM_BAUBLE = null;

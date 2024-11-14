@@ -6,6 +6,7 @@ import baubles.api.inv.SlotTypeDefinition;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -78,7 +79,10 @@ public class Config {
         SlotDefinition[] definitions = new SlotDefinition[slots.size()];
         for (int i = 0; i < slots.size(); i++) {
             String slot = slots.get(i).getAsString();
-            definitions[i] = SlotTypeDefinition.getSlot(i, BaubleType.getOrCreateType(slot));
+            ResourceLocation location;
+            if (!slot.contains(":")) location = new ResourceLocation(Baubles.MODID, slot);
+            else location = new ResourceLocation(slot);
+            definitions[i] = SlotTypeDefinition.getSlot(i, BaubleType.getOrCreateType(location));
         }
 
         return definitions;

@@ -2,9 +2,11 @@ package baubles.core.transformers;
 
 import baubles.api.BaubleType;
 import baubles.api.IBaubleType;
-import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.inv.SlotDefinition;
+import baubles.api.inv.SlotTypeDefinition;
+import baubles.common.Baubles;
+import net.minecraft.util.ResourceLocation;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
+// TODO Remove workarounds and make Quality Tools actually work with Bubbles.
 /**
  * Quality Tools checks if item is IBauble instead of checking capabilities.
  * Change it to check capabilities instead. Fixes issues with Wings and EbWizardry.
@@ -122,13 +125,17 @@ public class QualityToolsTransformer extends BaseTransformer {
         return write(cls);
     }
 
+    /// This will stay here until I find a better way for handling it.
     @SuppressWarnings("unused")
     public static ArrayList<String> $getBaublesNameForSlot(IBaublesItemHandler handler, int slot) {
         ArrayList<String> list = new ArrayList<>();
-        SlotDefinition definition = ((BaublesContainer) handler).getSlot(slot);
-        for (Map.Entry<String, IBaubleType> type : BaubleType.getTypes().entrySet()) {
-            if (definition.canPutType(type.getValue())) {
-                list.add("baubles_" + type.getKey());
+        SlotDefinition definition = handler.getSlot(slot);
+        if (definition instanceof SlotTypeDefinition) {
+            for (Map.Entry<ResourceLocation, IBaubleType> type : BaubleType.getTypes().entrySet()) {
+                if (((SlotTypeDefinition) definition).canPutType(type.getValue())) {
+                    String name = type.getKey().getNamespace().equals(Baubles.MODID) ? type.getKey().getPath() : type.getKey().toString();
+                    list.add("baubles_" + name);
+                }
             }
         }
         return list;

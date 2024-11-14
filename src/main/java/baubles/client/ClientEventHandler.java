@@ -46,9 +46,10 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void registerTextures(TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();
-        for (String type : BaubleType.getTypes().keySet()) {
-            map.registerSprite(new ResourceLocation(Baubles.MODID, "gui/slots/" + type));
-        }
+        // TODO Register SlotTypeDefinition textures
+//        for (String type : BaubleType.getTypes().keySet()) {
+//            map.registerSprite(new ResourceLocation(Baubles.MODID, "gui/slots/" + type));
+//        }
     }
 
     @SubscribeEvent

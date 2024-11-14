@@ -15,10 +15,10 @@ import cofh.core.util.helpers.MathHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -52,11 +52,12 @@ public class EventHandlerEntity {
         }
     }
 
+    // TODO Support for entities other than player.
     @SubscribeEvent
     public void attachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof EntityPlayer) {
             event.addCapability(new ResourceLocation(Baubles.MODID, "container"),
-                    new BaublesContainerProvider(new BaublesContainer()));
+                    new BaublesContainerProvider(new BaublesContainer((EntityLivingBase) event.getObject())));
         }
     }
 

@@ -161,8 +161,8 @@ public class ContainerPlayerExpanded extends Container {
             }
             // inv -> bauble
             else if (itemstack1.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
-                IBauble bauble = itemstack1.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-                if (bauble.canEquip(itemstack1, playerIn)) {
+                IBauble bauble = Objects.requireNonNull(itemstack1.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null));
+                if (playerIn.isCreative() || bauble.canEquip(itemstack1, playerIn)) {
                     BaublesContainer container = (BaublesContainer) baubles;
 
                     boolean check = true;
@@ -201,7 +201,7 @@ public class ContainerPlayerExpanded extends Container {
                 return ItemStack.EMPTY;
             }
 
-            if (itemstack1.isEmpty() && !baubles.isEventBlocked() && slot instanceof SlotBauble) {
+            if (itemstack1.isEmpty() && slot instanceof SlotBauble) {
                 IBauble cap = itemstack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
                 if (cap != null)
                     cap.onUnequipped(itemstack, playerIn);
@@ -228,7 +228,7 @@ public class ContainerPlayerExpanded extends Container {
 
         if (!stack.isEmpty()) {
             SlotDefinition slot = container.getSlot(slotIndex);
-            ItemStack itemstack = container.getStack(slotIndex);
+            ItemStack itemstack = container.getStackInSlot(slotIndex);
 
             if (stack.isStackable() && !itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack)) {
                 int j = itemstack.getCount() + stack.getCount();
@@ -251,10 +251,10 @@ public class ContainerPlayerExpanded extends Container {
 
             if (itemstack.isEmpty() && slot.canPutItem(slotIndex, stack)) {
                 if (stack.getCount() > slot.getSlotStackLimit()) {
-                    container.setStack(slotIndex, stack.splitStack(slot.getSlotStackLimit()));
+                    container.setStackInSlot(slotIndex, stack.splitStack(slot.getSlotStackLimit()));
                 }
                 else {
-                    container.setStack(slotIndex, stack.splitStack(stack.getCount()));
+                    container.setStackInSlot(slotIndex, stack.splitStack(stack.getCount()));
                 }
 
                 container.changeOffsetBasedOnSlot(slotIndex);

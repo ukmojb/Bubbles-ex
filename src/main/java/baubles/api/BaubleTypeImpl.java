@@ -1,32 +1,36 @@
 package baubles.api;
 
+import net.minecraft.util.ResourceLocation;
+
 import javax.annotation.Nonnull;
 
 public class BaubleTypeImpl implements IBaubleType {
 
-    private final String name, translationKey, backgroundTexture;
+    private final ResourceLocation name;
+    private final String translationKey;
+
+    public BaubleTypeImpl(String namespace, String path) {
+        this(new ResourceLocation(namespace, path));
+    }
 
     public BaubleTypeImpl(String name) {
+        this(new ResourceLocation(name));
+    }
+
+    public BaubleTypeImpl(ResourceLocation name) {
         this.name = name;
-        this.translationKey = "baubles.type." + name;
-        this.backgroundTexture = "baubles:gui/slots/" + name;
+        this.translationKey = name.getNamespace() + ".type." + name.getPath();
     }
 
     @Nonnull
     @Override
-    public String getName() {
-        return name;
+    public ResourceLocation getRegistryName() {
+        return this.name;
     }
 
     @Nonnull
     @Override
     public String getTranslationKey() {
         return translationKey;
-    }
-
-    @Nonnull
-    @Override
-    public String getBackgroundTexture() {
-        return backgroundTexture;
     }
 }

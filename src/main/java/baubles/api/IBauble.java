@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This interface should be extended by items that can be worn in bauble slots
@@ -53,14 +54,15 @@ public interface IBauble {
     }
 
     /**
-     * can this bauble be placed in a bauble slot
+     * can this bauble be placed in a bauble slot.
      */
-    default boolean canEquip(ItemStack itemstack, EntityLivingBase player) {
+    default boolean canEquip(ItemStack itemstack, @Nullable EntityLivingBase entity) {
         return true;
     }
 
     /**
-     * Can this bauble be removed from a bauble slot
+     * Can this bauble be removed from a bauble slot.
+     * If item has Curse of Binding it will not be equippable.
      */
     default boolean canUnequip(ItemStack itemstack, EntityLivingBase player) {
         return true;

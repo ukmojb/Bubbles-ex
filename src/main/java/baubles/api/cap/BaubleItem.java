@@ -15,7 +15,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
- * Pretty basic implementation of a bauble item
+ * A basic example for a bauble item.
+ * You're free to use this as a template.
  **/
 public class BaubleItem extends Item implements IBauble {
     private final BaubleType baubleType;

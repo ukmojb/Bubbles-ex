@@ -2,5 +2,3 @@
 package baubles.api;
 
 import net.minecraftforge.fml.common.API;
-
-// TODO Expand the API more

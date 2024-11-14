@@ -6,23 +6,27 @@ import baubles.common.Config;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
+/**
+ * Default implementation of {@link IBaublesItemHandler}
+ **/
 public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
 
     private final ItemStack[] stacks;
@@ -31,40 +35,48 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     private int offset = 0; // Can't be higher than getSlots()
     private boolean[] changed;
     private boolean blockEvents = false;
-    private EntityLivingBase player;
 
+    /**
+     * Entity which has the baubles inventory
+     **/
+    private final EntityLivingBase entity;
+
+    /**
+     * Items to drop when slots get updated
+     **/
     private ItemStack[] itemsToPuke = null;
 
+    /**
+     * Only for internal use. Do not use it anywhere else.
+     * Used for factory parameter of {@link CapabilityManager#register(Class, Capability.IStorage, Callable)}
+     **/
     public BaublesContainer() {
+        this(null);
+    }
+
+    public BaublesContainer(EntityLivingBase entity) {
         this.slots = getDefaultSlots();
         this.stacks = new ItemStack[slots.length];
         this.changed = new boolean[slots.length];
+        this.entity = entity;
     }
 
-    public ItemStack getStack(int slot) {
-        if (slot == -1) return ItemStack.EMPTY;
-        ItemStack stack = this.stacks[getSlotIndex(slot)];
-        return stack == null ? ItemStack.EMPTY : stack;
+    @Override
+    public EntityLivingBase getEntity() {
+        return this.entity;
     }
 
-    public void setStack(int slot, ItemStack stack) {
-        this.stacks[getSlotIndex(slot)] = stack;
-    }
-
+    @Override
     public SlotDefinition getSlot(int slot) {
         return this.slots[getSlotIndex(slot)];
     }
 
-    public int getSlotIndex(int slot) {
-        int slotGet = offset + slot;
-        if (slotGet >= getSlots()) slotGet %= this.getSlots();
-        return slotGet;
-    }
-
+    // TODO Find a way to use without casting.
     public int getOffset() {
         return offset;
     }
 
+    // TODO Find a way to use without casting.
     public void incrOffset(int offset) {
         this.offset += offset;
         int slots = getSlots();
@@ -73,6 +85,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         else if (this.offset >= slots) this.offset -= slots;
     }
 
+    // TODO Find a way to use without casting.
     public void changeOffsetBasedOnSlot(int slot) {
         slot += this.offset;
         if (slot < this.offset || slot > this.offset + 7) {
@@ -80,6 +93,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         }
     }
 
+    // TODO Find a way to use without casting.
     public void resetOffset() {
         this.offset = 0;
     }
@@ -88,30 +102,23 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         setChanged(slot, true);
     }
 
-    protected int validateSlotIndex(int slot) {
-        if (slot < 0 || slot >= slots.length) {
-            return -1;
-        }
-        return slot;
-    }
-
     protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
         return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
     }
 
     @Override
-    public boolean isItemValidForSlot(int slot, ItemStack stack, EntityLivingBase player) {
+    public boolean isItemValidForSlot(int slot, ItemStack stack, EntityLivingBase entity) {
         if (stack == null || stack.isEmpty()) return false;
         IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
         if (bauble != null) {
-            return bauble.canEquip(stack, player) && getSlot(slot).canPutItem(slot, stack);
+            return bauble.canUnequip(stack, entity) && this.getSlot(slot).canPutItem(slot, stack);
         }
         return false;
     }
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-        if (stack.isEmpty() || this.isItemValidForSlot(slot, stack, player)) {
+        if (stack.isEmpty() || this.isItemValidForSlot(slot, stack, this.entity)) {
             setStack(slot, stack);
             setChanged(slot, true);
         }
@@ -126,6 +133,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     @Override
     public ItemStack getStackInSlot(int slot) {
         slot = validateSlotIndex(slot);
+        if (slot == -1) return ItemStack.EMPTY;
         ItemStack stack = this.getStack(slot);
         if (stack == null) stack = ItemStack.EMPTY;
         return stack;
@@ -134,7 +142,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (!this.isItemValidForSlot(slot, stack, player)) return stack;
+        if (!this.isItemValidForSlot(slot, stack, this.entity)) return stack;
         if (stack.isEmpty()) return ItemStack.EMPTY;
 
         slot = validateSlotIndex(slot);
@@ -195,18 +203,18 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     @Override
     public int getSlotLimit(int slot) {
-        return 64;
+        return this.getSlot(slot).getSlotStackLimit();
     }
 
-    @Override
-    public boolean isEventBlocked() {
-        return blockEvents;
-    }
-
-    @Override
-    public void setEventBlock(boolean blockEvents) {
-        this.blockEvents = blockEvents;
-    }
+//    @Override
+//    public boolean isEventBlocked() {
+//        return blockEvents;
+//    }
+//
+//    @Override
+//    public void setEventBlock(boolean blockEvents) {
+//        this.blockEvents = blockEvents;
+//    }
 
     @Override
     public boolean isChanged(int slot) {
@@ -222,11 +230,6 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
             changed = new boolean[this.getSlots()];
         }
         this.changed[slot] = change;
-    }
-
-    @Override
-    public void setPlayer(EntityLivingBase player) {
-        this.player = player;
     }
 
     public void pukeItems(World world, double x, double y, double z) {
@@ -281,5 +284,34 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     private static SlotDefinition[] getDefaultSlots() {
         return Config.getSlots();
+    }
+
+    /**
+     * Use {@link BaublesContainer#getStackInSlot(int)}
+     **/
+    private ItemStack getStack(int slot) {
+        if (slot == -1) return ItemStack.EMPTY;
+        ItemStack stack = this.stacks[getSlotIndex(slot)];
+        return stack == null ? ItemStack.EMPTY : stack;
+    }
+
+    /**
+     * Use {@link BaublesContainer#setStackInSlot(int, ItemStack)}
+     **/
+    private void setStack(int slot, ItemStack stack) {
+        this.stacks[getSlotIndex(slot)] = stack;
+    }
+
+    private int validateSlotIndex(int slot) {
+        if (slot < 0 || slot >= slots.length) {
+            return -1;
+        }
+        return slot;
+    }
+
+    private int getSlotIndex(int slot) {
+        int slotGet = offset + slot;
+        if (slotGet >= getSlots()) slotGet %= this.getSlots();
+        return slotGet;
     }
 }

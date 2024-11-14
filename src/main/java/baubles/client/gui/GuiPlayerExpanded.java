@@ -94,7 +94,6 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
     @Override
     public void updateScreen() {
-        ((ContainerPlayerExpanded) inventorySlots).baubles.setEventBlock(false);
         updateActivePotionEffects();
         resetGuiLeft();
     }
@@ -171,7 +170,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
                 int slotIndex = (mouseY - yLoc) / 18;
                 BaublesContainer container = ((BaublesContainer) baublesHandler);
 
-                ItemStack stack = container.getStack(slotIndex);
+                ItemStack stack = container.getStackInSlot(slotIndex);
                 if (!stack.isEmpty()) return;
 
                 SlotDefinition definition = container.getSlot(slotIndex);

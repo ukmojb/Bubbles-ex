@@ -2,6 +2,7 @@ package baubles.api.cap;
 
 import baubles.api.IBauble;
 import baubles.api.IBaubleType;
+import baubles.common.integration.ModCompatibility;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -11,6 +12,8 @@ import javax.annotation.Nonnull;
 
 /**
  * An implementation of {@link IBauble} to inject to items that normally aren't baubles.
+ * It's encouraged to implement your own {@link IBauble} classes.
+ * Used in {@link ModCompatibility#getBaubleToInject(ItemStack)}
  **/
 public class InjectableBauble implements IBauble {
 
