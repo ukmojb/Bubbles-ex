@@ -6,6 +6,7 @@ import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.BaublesContainerProvider;
 import baubles.api.cap.IBaublesItemHandler;
+import baubles.api.inv.SlotDefinition;
 import baubles.common.Baubles;
 import baubles.common.network.PacketHandler;
 import baubles.common.network.PacketSync;
@@ -165,12 +166,26 @@ public class EventHandlerEntity {
         for (int i = 0; i < baubles.getSlots(); ++i) {
             if (!baubles.getStackInSlot(i).isEmpty()) {
                 ItemStack stack = baubles.getStackInSlot(i);
-                boolean soulboundCheck = !hasAnySoulbound(stack) || this.isFakePlayer(player);
-                boolean vanishingCheck = EnchantmentHelper.hasVanishingCurse(stack);
-                if (!soulboundCheck) baubles.setStackInSlot(i, ItemStack.EMPTY);
-                if (EnchantmentHelper.hasVanishingCurse(stack)) continue;
-                this.handleCofhSouldbound(stack);
-                if (!soulboundCheck) player.dropItem(stack, true, false);
+                SlotDefinition definition = baubles.getSlot(i);
+                SlotDefinition.DropResult result = definition.shouldDrop(i, stack, player);
+                switch (result) {
+                    case ALWAYS_KEEP: break;
+                    case ALWAYS_DROP: {
+                        baubles.setStackInSlot(i, ItemStack.EMPTY);
+                        player.dropItem(stack, true, false);
+                        break;
+                    }
+                    case DESTROY: baubles.setStackInSlot(i, ItemStack.EMPTY); break;
+                    case DEFAULT: {
+                        boolean soulboundCheck = !hasAnySoulbound(stack) || this.isFakePlayer(player);
+                        boolean vanishingCheck = EnchantmentHelper.hasVanishingCurse(stack);
+                        if (!soulboundCheck) baubles.setStackInSlot(i, ItemStack.EMPTY);
+                        if (EnchantmentHelper.hasVanishingCurse(stack)) continue;
+                        this.handleCofhSouldbound(stack);
+                        if (!soulboundCheck) player.dropItem(stack, true, false);
+                        break;
+                    }
+                }
             }
         }
         player.captureDrops = false;

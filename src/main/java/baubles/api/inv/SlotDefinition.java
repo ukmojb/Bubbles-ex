@@ -1,5 +1,6 @@
 package baubles.api.inv;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.inventory.Slot;
 import baubles.api.cap.IBaublesItemHandler;
@@ -11,6 +12,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+// TODO Order???
 /**
  * An interface used by handlers that implement {@link IBaublesItemHandler} for defining how a slot should behave.
  * Handles item insertion, slot limit and clientside values like background texture and translation key to show slot name.
@@ -25,7 +27,10 @@ public interface SlotDefinition {
     @Nonnull
     String getTranslationKey(int slotIndex);
 
-    // TODO I don't like this method.
+    default DropResult shouldDrop(int slotIndex, ItemStack stack, EntityLivingBase living) {
+        return DropResult.DEFAULT;
+    }
+
     /**
      * Background icon for slots.
      * You might need to register textures with {@link TextureStitchEvent.Pre}
@@ -39,5 +44,12 @@ public interface SlotDefinition {
 
     default int getSlotStackLimit() {
         return 64;
+    }
+
+    enum DropResult {
+        DEFAULT,
+        ALWAYS_KEEP,
+        ALWAYS_DROP,
+        DESTROY
     }
 }
