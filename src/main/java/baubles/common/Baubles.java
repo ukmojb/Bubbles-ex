@@ -40,7 +40,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.util.Objects;
 
-@Mod(modid = Baubles.MODID, name = "Baubles", version = Tags.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory")
+@Mod(modid = Baubles.MODID, name = "Baubles", version = Tags.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory", dependencies = "after:mousetweaks@[3.0,)")
 @SuppressWarnings("unused") // mods instance class
 public class Baubles {
 
