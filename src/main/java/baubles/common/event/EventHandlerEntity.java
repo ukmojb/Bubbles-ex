@@ -177,12 +177,13 @@ public class EventHandlerEntity {
                     }
                     case DESTROY: baubles.setStackInSlot(i, ItemStack.EMPTY); break;
                     case DEFAULT: {
-                        boolean soulboundCheck = !hasAnySoulbound(stack) || this.isFakePlayer(player);
+                        boolean soulboundCheck = hasAnySoulbound(stack) && !this.isFakePlayer(player);
                         boolean vanishingCheck = EnchantmentHelper.hasVanishingCurse(stack);
-                        if (!soulboundCheck) baubles.setStackInSlot(i, ItemStack.EMPTY);
-                        if (EnchantmentHelper.hasVanishingCurse(stack)) continue;
+                        if (!soulboundCheck) {
+                            if (vanishingCheck) baubles.setStackInSlot(i, ItemStack.EMPTY);
+                            else player.dropItem(stack, true, false);
+                        }
                         this.handleCofhSouldbound(stack);
-                        if (!soulboundCheck) player.dropItem(stack, true, false);
                         break;
                     }
                 }
