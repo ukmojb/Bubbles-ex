@@ -1,11 +1,8 @@
 package baubles.common;
 
-import baubles.api.BaubleType;
-import baubles.api.BaubleTypeImpl;
-import baubles.api.IBaubleType;
 import baubles.api.inv.SlotDefinition;
-import baubles.api.inv.SlotDefinitionType;
 import baubles.common.init.SlotDefinitions;
+import baubles.common.integration.ModCompatibility;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -100,8 +97,14 @@ public class Config {
         @SuppressWarnings("unused")
         @SubscribeEvent
         public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent eventArgs) {
-            if (eventArgs.getModID().equals(Baubles.MODID))
-                loadConfigs();
+            String modId = eventArgs.getModID();
+            if (modId.equals(Baubles.MODID)) loadConfigs();
+        }
+
+        @SubscribeEvent
+        public static void postConfigChange(ConfigChangedEvent.PostConfigChangedEvent event) {
+            String modId = event.getModID();
+            if (modId.equals(ModCompatibility.ME)) ModCompatibility.ME$applyOffset();
         }
     }
 

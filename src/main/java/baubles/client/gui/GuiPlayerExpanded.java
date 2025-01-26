@@ -44,13 +44,14 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 
 import static baubles.common.integration.ModCompatibility.CA;
+import static baubles.common.integration.ModCompatibility.ME$shouldMoveLeft;
 
 public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
     public static final ResourceLocation background =
             new ResourceLocation(Baubles.MODID, "textures/gui/baubles_inventory.png");
 
-    private static final boolean ENABLE_RECIPE_BOOK = !ModCompatibility.isRecipeBookDisabled();
+    private static final boolean ENABLE_RECIPE_BOOK = !ModCompatibility.RecipeBook$isDisabled();
     private static final Field REF_OLD_MOUSE_X, REF_OLD_MOUSE_Y; // in GuiInventory to retain mouse positions when you close baubles gui
     private static final Method REF_ACTION_PERFORMED; // in GuiInventory for recipe book
 
@@ -203,7 +204,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         if (this.baublesHandler.getSlots() <= this.getActualMaxBaubleSlots()) return;
-        if (ModCompatibility.shouldScroll(this.getSlotUnderMouse())) {
+        if (ModCompatibility.MT$shouldScroll(this.getSlotUnderMouse())) {
             int dWheel = Mouse.getEventDWheel();
             if (dWheel != 0) {
                 int value = -(dWheel / 120);
@@ -290,9 +291,11 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
     @Override
     protected void drawActivePotionEffects() {
-        guiLeft -= 27;
+        boolean moveLeft = ME$shouldMoveLeft(this);
+        int i = this.guiLeft;
+        if (moveLeft) guiLeft -= 27;
         super.drawActivePotionEffects();
-        guiLeft += 27;
+        guiLeft = i;
     }
 
     public void displayNormalInventory() {

@@ -24,7 +24,8 @@ dependencies {
     var aa = "curse.maven:actuallyadditions-228404:3117927"
     var qt = "curse.maven:quality-tools-264756:2732994"
     var botania = "curse.maven:botania-225643:3330934"
-    var mixins = project.runtime_ut.toBoolean()
+    var minieffects = "curse.maven:minieffects-1081085:6096614"
+    var mixins = project.runtime_ut.toBoolean() || project.runtime_me.toBoolean()
 
     // JEI Extra Bounds
     if (project.runtime_jei.toBoolean()) implementation(jei)
@@ -37,9 +38,9 @@ dependencies {
     // No Recipe Book
     if (project.runtime_ut.toBoolean()) {
         runtimeOnly("com.cleanroommc:configanytime:3.0")
-        implementation(ut)
+        implementation(ut) { transitive = false }
     }
-    else compileOnly(ut)
+    else compileOnly(ut) { transitive = false }
 
     // Cosmetic Armors
     if (project.runtime_ca.toBoolean()) implementation(ca)
@@ -64,8 +65,10 @@ dependencies {
         implementation rfg.deobf(botania)
     }
 
-    compileOnly "curse.maven:cofh-core-69162:2920433"
+    if (project.runtime_me.toBoolean()) implementation (rfg.deobf(minieffects)) { transitive = false }
+    else compileOnly(minieffects) { transitive = false }
 
+    compileOnly "curse.maven:cofh-core-69162:2920433"
     compileOnly "curse.maven:wb-684624:4203074"
 
     if (mixins) {

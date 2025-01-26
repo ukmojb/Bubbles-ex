@@ -59,7 +59,7 @@ public class ClientEventHandler {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (player != null && BaublesApi.getBaublesHandler(player).getSlots() > 0) {
             Gui gui = event.getGui();
-            boolean normalInv = gui instanceof GuiInventory || ModCompatibility.isCAInventory(gui);
+            boolean normalInv = gui instanceof GuiInventory || ModCompatibility.CA$isCAInventory(gui);
             boolean creativeInv = gui instanceof GuiContainerCreative;
             boolean expandedInv = gui instanceof GuiPlayerExpanded;
             if (creativeInv) { // TODO Polish

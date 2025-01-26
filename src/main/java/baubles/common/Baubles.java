@@ -13,7 +13,6 @@ import baubles.common.init.SlotDefinitions;
 import baubles.common.integration.ModCompatibility;
 import baubles.common.network.PacketHandler;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
@@ -21,7 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -30,10 +28,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLConstructionEvent;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -76,7 +71,7 @@ public class Baubles {
 
         proxy.registerEventHandlers();
         PacketHandler.init();
-        ModCompatibility.applyEvents();
+        ModCompatibility.Wings$applyEvents();
         Config.save();
 
         BaubleTypes.registerDefaults();
@@ -89,6 +84,11 @@ public class Baubles {
     public void init(FMLInitializationEvent evt) {
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
         proxy.init();
+    }
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        ModCompatibility.ME$applyOffset();
     }
 
     @EventHandler
