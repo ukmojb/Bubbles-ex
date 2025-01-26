@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
  *
  * @author Azanor
  */
-
 public interface IBauble {
 
     /**
@@ -79,5 +78,29 @@ public interface IBauble {
      */
     default boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
         return false;
+    }
+
+    /**
+     * Runs when an entity that has this item dies.
+     *
+     * @param slotIndex The slot index item is in
+     * @param stack The stack in question
+     * @param living The entity that has died
+     *
+     * @return Way item drop should be handled when entity dies.
+     */
+    default DropResult onDeath(int slotIndex, ItemStack stack, EntityLivingBase living) {
+        return DropResult.DEFAULT;
+    }
+
+    /**
+     * Enums to define how item dropping should be handled on entity death.
+     */
+    enum DropResult {
+        DEFAULT,
+        ALWAYS_KEEP,
+        ALWAYS_DROP,
+        DESTROY,
+        CUSTOM
     }
 }

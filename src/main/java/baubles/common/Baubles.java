@@ -8,9 +8,12 @@ import baubles.api.cap.BaublesCapabilities.CapabilityBaubles;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.common.event.CommandBaubles;
+import baubles.common.init.BaubleTypes;
+import baubles.common.init.SlotDefinitions;
 import baubles.common.integration.ModCompatibility;
 import baubles.common.network.PacketHandler;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
@@ -18,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -74,6 +78,11 @@ public class Baubles {
         PacketHandler.init();
         ModCompatibility.applyEvents();
         Config.save();
+
+        BaubleTypes.registerDefaults();
+        MinecraftForge.EVENT_BUS.register(new BaubleTypes.Register());
+        SlotDefinitions.registerDefaults();
+        MinecraftForge.EVENT_BUS.register(new SlotDefinitions.Register());
     }
 
     @EventHandler
@@ -97,8 +106,8 @@ public class Baubles {
         event.getRegistry().register(TU_TU_TU_TU);
     }
 
-    @SideOnly(Side.CLIENT)
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public void registerModel(ModelRegistryEvent event) {
         ModelLoader.setCustomModelResourceLocation(MAX_VERSTAPPEN, 0, new ModelResourceLocation(Objects.requireNonNull(MAX_VERSTAPPEN.getRegistryName()), "inventory"));
     }

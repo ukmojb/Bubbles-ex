@@ -4,8 +4,9 @@ import baubles.api.BaubleType;
 import baubles.api.IBaubleType;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.inv.SlotDefinition;
-import baubles.api.inv.SlotTypeDefinition;
+import baubles.api.inv.SlotDefinitionType;
 import baubles.common.Baubles;
+import baubles.common.init.BaubleTypes;
 import net.minecraft.util.ResourceLocation;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -125,14 +126,14 @@ public class QualityToolsTransformer extends BaseTransformer {
         return write(cls);
     }
 
-    /// This will stay here until I find a better way for handling it.
+    // TODO Find a better way to handle this
     @SuppressWarnings("unused")
     public static ArrayList<String> $getBaublesNameForSlot(IBaublesItemHandler handler, int slot) {
         ArrayList<String> list = new ArrayList<>();
         SlotDefinition definition = handler.getSlot(slot);
-        if (definition instanceof SlotTypeDefinition) {
-            for (Map.Entry<ResourceLocation, IBaubleType> type : BaubleType.getTypes().entrySet()) {
-                if (((SlotTypeDefinition) definition).canPutType(type.getValue())) {
+        if (definition instanceof SlotDefinitionType) {
+            for (Map.Entry<ResourceLocation, IBaubleType> type : BaubleTypes.getRegistryMap().entrySet()) {
+                if (((SlotDefinitionType) definition).canPutType(type.getValue())) {
                     String name = type.getKey().getNamespace().equals(Baubles.MODID) ? type.getKey().getPath() : type.getKey().toString();
                     list.add("baubles_" + name);
                 }

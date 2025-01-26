@@ -1,8 +1,11 @@
 package baubles.common;
 
 import baubles.api.BaubleType;
+import baubles.api.BaubleTypeImpl;
+import baubles.api.IBaubleType;
 import baubles.api.inv.SlotDefinition;
-import baubles.api.inv.SlotTypeDefinition;
+import baubles.api.inv.SlotDefinitionType;
+import baubles.common.init.SlotDefinitions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -82,7 +85,12 @@ public class Config {
             ResourceLocation location;
             if (!slot.contains(":")) location = new ResourceLocation(Baubles.MODID, slot);
             else location = new ResourceLocation(slot);
-            definitions[i] = SlotTypeDefinition.getSlot(i, BaubleType.getOrCreateType(location));
+            SlotDefinition definition = SlotDefinitions.get(location);
+            if (definition == null) {
+                Baubles.log.error("Could not find slot definition from {}", location);
+                continue;
+            }
+            definitions[i] = definition;
         }
 
         return definitions;

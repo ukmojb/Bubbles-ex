@@ -4,11 +4,15 @@ import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
@@ -27,7 +31,16 @@ public class SlotBauble extends SlotItemHandler {
         this.baublesHandler = itemHandler;
         this.player = player;
         this.slotIndex = slot;
-        this.backgroundLocation = itemHandler.getSlot(slot).getBackgroundTexture(slot);
+    }
+
+    public IBaublesItemHandler getBaublesHandler() {
+        return this.baublesHandler;
+    }
+
+    @Deprecated
+    @Override
+    public IItemHandler getItemHandler() {
+        return super.getItemHandler();
     }
 
     @Override
@@ -76,5 +89,13 @@ public class SlotBauble extends SlotItemHandler {
     @Override
     public int getSlotStackLimit() {
         return 64;
+    }
+
+    @Nullable
+    @Override
+    public String getSlotTexture() {
+        ResourceLocation bg = this.getBaublesHandler().getSlot(this.slotIndex).getBackgroundTexture(this.slotIndex);
+        System.out.println(bg);
+        return bg == null ? null : bg.toString();
     }
 }

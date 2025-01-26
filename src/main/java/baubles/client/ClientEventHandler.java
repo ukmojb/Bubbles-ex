@@ -1,13 +1,12 @@
 package baubles.client;
 
-import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import baubles.api.IBaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.client.gui.GuiBaublesButton;
 import baubles.client.gui.GuiPlayerExpanded;
-import baubles.common.Baubles;
+import baubles.common.init.SlotDefinitions;
 import baubles.common.integration.ModCompatibility;
 import baubles.common.network.PacketHandler;
 import baubles.common.network.PacketOpenBaublesInventory;
@@ -20,7 +19,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -46,10 +44,7 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void registerTextures(TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();
-        // TODO Register SlotTypeDefinition textures
-//        for (String type : BaubleType.getTypes().keySet()) {
-//            map.registerSprite(new ResourceLocation(Baubles.MODID, "gui/slots/" + type));
-//        }
+        SlotDefinitions.registerTextures(event);
     }
 
     @SubscribeEvent

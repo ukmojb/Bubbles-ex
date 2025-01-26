@@ -25,8 +25,6 @@ public enum BaubleType implements IBaubleType {
     BODY("body"),
     CHARM("charm");
 
-    private static final Map<ResourceLocation, IBaubleType> TYPES = new HashMap<>();
-
     final ResourceLocation name;
     final String translationKey, backgroundTexture;
     final IntList validSlots = new IntArrayList(1);
@@ -64,39 +62,6 @@ public enum BaubleType implements IBaubleType {
 
     public void addSlot(int slot) {
         validSlots.add(slot);
-    }
-
-    // Bauble Type Map TODO this sucks
-    public static Map<ResourceLocation, IBaubleType> getTypes() {
-        return TYPES;
-    }
-
-    public static IBaubleType register(IBaubleType type) {
-        TYPES.put(type.getRegistryName(), type);
-        return type;
-    }
-
-    @Nullable
-    public static IBaubleType getType(ResourceLocation location) {
-        return TYPES.get(location);
-    }
-
-    public static IBaubleType getOrCreateType(ResourceLocation location) {
-        IBaubleType baubleType = TYPES.get(location);
-        if (baubleType == null) baubleType = putType(location);
-        return baubleType;
-    }
-
-    private static IBaubleType putType(ResourceLocation location) {
-        IBaubleType type = new BaubleTypeImpl(location);
-        TYPES.put(location, type);
-        return type;
-    }
-
-    static {
-        for (BaubleType type : BaubleType.values()) {
-            TYPES.put(type.name, type);
-        }
     }
 
     // Deprecated
