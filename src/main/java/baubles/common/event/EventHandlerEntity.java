@@ -23,12 +23,14 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -70,6 +72,19 @@ public class EventHandlerEntity {
             syncSlots(player, Collections.singletonList(player));
             BaublesContainer container = (BaublesContainer) BaublesApi.getBaublesHandler(player);
             container.pukeItems(player);
+        }
+    }
+
+    @SubscribeEvent
+    public void text(PlayerInteractEvent.LeftClickBlock event) {
+        Entity entity = event.getEntity();
+        if (entity instanceof EntityPlayerMP) {
+            EntityPlayerMP player = (EntityPlayerMP) entity;
+            for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
+                if (BaublesApi.getBaublesHandler(player).getSlot(i) != null) {
+                    player.sendMessage(new TextComponentString(BaublesApi.getBaublesHandler(player).getSlot(i).getTranslationKey(i)));
+                }
+            }
         }
     }
 

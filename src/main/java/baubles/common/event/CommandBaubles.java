@@ -1,19 +1,28 @@
 package baubles.common.event;
 
+import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import baubles.api.IBaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
+import baubles.common.Config;
+import baubles.common.network.PacketAddSlot;
+import baubles.common.network.PacketHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nonnull;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -99,11 +108,22 @@ public class CommandBaubles extends CommandBase {
                     sender.sendMessage(new TextComponentTranslation("\u00a73Cleared all baubles slots for " + entityplayermp.getName()));
                     entityplayermp.sendMessage(new TextComponentTranslation("\u00a74All your baubles slots have been cleared by admin " + sender.getName()));
                 }
+            } else if (args[0].equalsIgnoreCase("add")) {
+                // /baubles add <player> slotName
+                if (args.length >= 3) {
+                    String playerName = args[1];
+                    String slotName = args[2];
+
+                    BaublesApi.getBaublesHandler(entityplayermp).addSlot(slotName);
+                    PacketHandler.INSTANCE.sendTo(new PacketAddSlot(slotName), entityplayermp);
+                    sender.sendMessage(new TextComponentString("添加执行"));
+                } else {
+                    sender.sendMessage(new TextComponentString("添加失败"));
+                }
             } else {
                 sender.sendMessage(new TextComponentTranslation("\u00a7cInvalid arguments"));
                 sender.sendMessage(new TextComponentTranslation("\u00a7cUse /baubles help to get help"));
             }
-
         }
     }
 }

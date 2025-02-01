@@ -1,5 +1,6 @@
 package baubles.client.gui;
 
+import baubles.api.BaublesApi;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.inv.SlotDefinition;
@@ -106,7 +107,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         this.up = new GuiSlotButton(56, this, guiLeft - 26, guiTop - 9, 27, 14, false);
         this.down = new GuiSlotButton(57, this, guiLeft - 26, guiTop + 7 + getMaxY(), 27, 14, true);
 
-        this.up.visible = this.baublesHandler.getSlots() > this.getActualMaxBaubleSlots();
+        this.up.visible = this.getVRealBaubleSlots() > this.getActualMaxBaubleSlots();
         this.down.visible = this.up.visible;
 
         this.buttonList.add(this.up);
@@ -176,17 +177,20 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
                 SlotDefinition definition = container.getSlot(slotIndex);
 
-                FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
-                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                GlStateManager.enableBlend();
-                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                if (definition != null) {
 
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(0, 0, 200);
-                String str = I18n.format(definition.getTranslationKey(slotIndex));
-                GuiUtils.drawHoveringText(Collections.singletonList(str), mouseX - this.guiLeft, mouseY - this.guiTop, width, height, 300, renderer);
-                GlStateManager.popMatrix();
+                    FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
+                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                    GlStateManager.enableBlend();
+                    GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                    GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(0, 0, 200);
+                    String str = I18n.format(definition.getTranslationKey(slotIndex));
+                    GuiUtils.drawHoveringText(Collections.singletonList(str), mouseX - this.guiLeft, mouseY - this.guiTop, width, height, 300, renderer);
+                    GlStateManager.popMatrix();
+                }
             }
         }
     }
@@ -203,7 +207,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
-        if (this.baublesHandler.getSlots() <= this.getActualMaxBaubleSlots()) return;
+        if (this.getRealBaubleSlots() <= this.getActualMaxBaubleSlots()) return;
         if (ModCompatibility.MT$shouldScroll(this.getSlotUnderMouse())) {
             int dWheel = Mouse.getEventDWheel();
             if (dWheel != 0) {
@@ -224,7 +228,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
 
-        int maxSlots = this.getMaxBaubleSlots();
+        int maxSlots = this.getRealBaubleSlots();
 
         if (maxSlots > 0) {
             if (maxSlots == 1) {
@@ -324,14 +328,51 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     }
 
     public int getMaxY() {
-        return 18 * this.getMaxBaubleSlots();
+        return 18 * this.getRealBaubleSlots();
     }
 
     public int getBaubleSlots() {
+//        int slotNum = 0;
+//        for (int i = 0; i < baublesHandler.getSlots(); i++) {
+//            if (baublesHandler.getSlot(i) != null) {
+//                slotNum += 1;
+//            }
+//        }
+//        return slotNum;
         return this.baublesHandler.getSlots();
     }
 
+    public int getRealBaubleSlots() {
+        int slotNum = 0;
+        for (int i = 0; i < baublesHandler.getSlots(); i++) {
+            if (baublesHandler.getSlot(i) != null) {
+                slotNum += 1;
+            }
+        }
+//        return slotNum;
+        return Math.min(slotNum, this.getActualMaxBaubleSlots());
+//        return this.baublesHandler.getSlots();
+    }
+    public int getVRealBaubleSlots() {
+        int slotNum = 0;
+        for (int i = 0; i < baublesHandler.getSlots(); i++) {
+            if (baublesHandler.getSlot(i) != null) {
+                slotNum += 1;
+            }
+        }
+//        return slotNum;
+        return slotNum;
+//        return this.baublesHandler.getSlots();
+    }
+
     public int getMaxBaubleSlots() {
+//        int slotNum = 0;
+//        for (int i = 0; i < baublesHandler.getSlots(); i++) {
+//            if (baublesHandler.getSlot(i) != null) {
+//                slotNum += 1;
+//            }
+//        }
+//        return Math.min(slotNum, this.getActualMaxBaubleSlots());
         return Math.min(baublesHandler.getSlots(), this.getActualMaxBaubleSlots());
     }
 

@@ -23,11 +23,12 @@ public class Config {
       NORMAL = "[\n \"amulet\",\n \"ring\",\n \"ring\",\n \"belt\",\n \"head\",\n \"body\",\n \"charm\"\n]",
       EXPANDED = "[\n \"amulet\",\n \"amulet\",\n \"ring\",\n \"ring\",\n \"ring\",\n \"ring\",\n \"belt\",\n \"belt\",\n \"head\",\n \"head\",\n \"body\",\n \"body\",\n \"charm\",\n \"charm\"\n]";
 
-    private static File JSON_DIR;
+    public static File JSON_DIR;
 
     // Configuration Options
     public static boolean renderBaubles = true;
     public static boolean expandedMode = false;
+    public static int slotMaxNum = 32;
 
     public static void initialize(File configFile) {
         initConfig(configFile);
@@ -51,6 +52,7 @@ public class Config {
     }
 
     public static void loadConfigs() {
+        slotMaxNum = config.getInt("slotMaxNum", Configuration.CATEGORY_GENERAL, slotMaxNum, 0, 99999, "Used to set the maximum number of slots");
         expandedMode = config.getBoolean("baubleExpanded.enabled", Configuration.CATEGORY_GENERAL, expandedMode, "Set this to true to have more slots than normal.");
         renderBaubles = config.getBoolean("baubleRender.enabled", Configuration.CATEGORY_CLIENT, renderBaubles, "Set this to false to disable rendering of baubles in the player.");
         if (config.hasChanged()) config.save();
@@ -76,18 +78,22 @@ public class Config {
             throw new RuntimeException(e);
         }
 
-        SlotDefinition[] definitions = new SlotDefinition[slots.size()];
-        for (int i = 0; i < slots.size(); i++) {
-            String slot = slots.get(i).getAsString();
-            ResourceLocation location;
-            if (!slot.contains(":")) location = new ResourceLocation(Baubles.MODID, slot);
-            else location = new ResourceLocation(slot);
-            SlotDefinition definition = SlotDefinitions.get(location);
-            if (definition == null) {
-                Baubles.log.error("Could not find slot definition from {}", location);
-                continue;
+        SlotDefinition[] definitions = new SlotDefinition[Config.slotMaxNum];
+        for (int i = 0; i < Config.slotMaxNum; i++) {
+            if (i >= slots.size()) {
+                definitions[i] = null;
+            } else {
+                String slot = slots.get(i).getAsString();
+                ResourceLocation location;
+                if (!slot.contains(":")) location = new ResourceLocation(Baubles.MODID, slot);
+                else location = new ResourceLocation(slot);
+                SlotDefinition definition = SlotDefinitions.get(location);
+                if (definition == null) {
+                    Baubles.log.error("Could not find slot definition from {}", location);
+                    continue;
+                }
+                definitions[i] = definition;
             }
-            definitions[i] = definition;
         }
 
         return definitions;
@@ -108,7 +114,7 @@ public class Config {
         }
     }
 
-    private static void writeSlotsJson(File file) {
+    public static void writeSlotsJson(File file) {
         try (FileWriter writer = new FileWriter(file)) {
             writer.write(getJson());
         } catch (IOException e) {
@@ -120,7 +126,7 @@ public class Config {
         return expandedMode ? EXPANDED : NORMAL;
     }
 
-    private static String readFile(File file) {
+    public static String readFile(File file) {
         StringBuilder builder = new StringBuilder();
 
         try {

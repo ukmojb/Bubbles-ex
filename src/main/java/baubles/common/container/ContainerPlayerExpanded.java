@@ -63,7 +63,10 @@ public class ContainerPlayerExpanded extends Container {
             });
         }
 
-        for (int i = 0; i < Math.min(8, Objects.requireNonNull(baubles).getSlots()); i++) {
+        //这
+        for (int i = 0; i < Math.min(8, getRealBaubleSlots(baubles)); i++) {
+//        for (int i = 0; i < getRealBaubleSlots(baubles); i++) {
+//        for (int i = 0; i < Math.min(8, Objects.requireNonNull(baubles).getSlots()); i++) {
             this.addSlotToContainer(new SlotBauble(player, baubles, i, -22,  6 + (i * 18)));
         }
 
@@ -166,7 +169,7 @@ public class ContainerPlayerExpanded extends Container {
                     BaublesContainer container = (BaublesContainer) baubles;
 
                     boolean check = true;
-                    for (int i = 0; i < this.baubles.getSlots(); i++) {
+                    for (int i = 0; i < getRealBaubleSlots(baubles); i++) {
                         if (container.isItemValidForSlot(i, itemstack1, playerIn)) {
                             if (!mergeBauble(itemstack1, i)) {
                                 check = false;
@@ -264,5 +267,20 @@ public class ContainerPlayerExpanded extends Container {
         }
 
         return flag;
+    }
+
+    public int getRealBaubleSlots(IBaublesItemHandler baublesHandler) {
+        int slotNum = 0;
+        for (int i = 0; i < baublesHandler.getSlots(); i++) {
+            if (baublesHandler.getSlot(i) != null) {
+                slotNum += 1;
+            }
+        }
+        return Math.min(slotNum, this.getActualMaxBaubleSlots());
+//        return this.baublesHandler.getSlots();
+    }
+
+    public int getActualMaxBaubleSlots() {
+        return 8;
     }
 }

@@ -115,7 +115,7 @@ public class Baubles {
     static {
         ResourceLocation MAX_VERSTAPPEN_LOCATION = new ResourceLocation(MODID, "max_verstappen");
 
-        MAX_VERSTAPPEN = new BaubleItem(BaubleType.RING) {
+        MAX_VERSTAPPEN = new BaubleItem(BaubleType.TRINKET) {
 
             @Override
             public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
