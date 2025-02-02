@@ -8,10 +8,14 @@ import baubles.api.inv.SlotDefinitionType;
 import baubles.common.Baubles;
 import baubles.common.Config;
 import baubles.common.init.SlotDefinitions;
+import baubles.common.network.PacketAddSlot;
+import baubles.common.network.PacketHandler;
+import baubles.common.network.PacketSyncSlot;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,6 +26,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -84,19 +92,20 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     }
 
     @Override
-    public void addSlot(String slotName) {
+    public void addSlot(SlotDefinition addSlotDefinition) {
         for (int i = 0; i < slots.length; i++) {
             SlotDefinition slotDefinition = slots[i];
             if (slotDefinition == null) {
-                ResourceLocation location;
-                if (!slotName.contains(":")) location = new ResourceLocation(Baubles.MODID, slotName);
-                else location = new ResourceLocation(slotName);
-                SlotDefinition definition = SlotDefinitions.get(location);
-                this.slots[i] = definition;
-                System.out.println("addSlot-" + slotName + "-" + i);
+                this.slots[i] = addSlotDefinition;
                 break;
             }
         }
+    }
+
+    @Override
+    public void setSlot(int slot, SlotDefinition setSlotDefinition) {
+//        System.out.println("setSlot--" + slot + "--" + setSlotDefinition.getTranslationKey(slot));
+        this.slots[slot] = setSlotDefinition;
     }
 
     // TODO Find a way to use without casting.
@@ -296,7 +305,6 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
             } else {
                 slotTag.setString("Slot", "null");
             }
-            System.out.println("serializeNBT--" + i + "--" + slotTag.getTag("Slot"));
             list1.appendTag(slotTag);
         }
         NBTTagCompound compound = new NBTTagCompound();
@@ -307,6 +315,35 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
+
+        //处理槽位
+        NBTTagList list1 = nbt.getTagList("SlotDefinition", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < list1.tagCount(); i++) {
+            NBTTagCompound slotTag = list1.getCompoundTagAt(i);
+            String slot = slotTag.getString("Slot");
+            SlotDefinition definition;
+
+            if (slot != "null") {
+                ResourceLocation location;
+                if (!slot.contains(":")) location = new ResourceLocation(Baubles.MODID, slot);
+                else location = new ResourceLocation(slot);
+                definition = SlotDefinitions.get(location);
+            } else {
+                definition = null;
+            }
+
+//            System.out.println("deserializeNBT--" + i);
+
+            //同步客户端与重新写入数据
+            //仅在服务端运行
+//            if (entity instanceof EntityPlayer) {
+//                EntityPlayer player = (EntityPlayer) entity;
+//                PacketHandler.INSTANCE.sendTo(new PacketSyncSlot(slot, player.getName(), i), (EntityPlayerMP) player);
+////                PacketHandler.INSTANCE.sendToAllAround(new PacketSyncSlot(player.getName(), i, slot), new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 512));
+//            }
+            slots[i] = definition;
+        }
+
         //处理物品
         NBTTagList list = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         List<ItemStack> itemsToPuke = new ArrayList<>();
@@ -328,26 +365,6 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
             else itemsToPuke.add(new ItemStack(stackTag));
         }
         if (!itemsToPuke.isEmpty()) this.itemsToPuke = itemsToPuke.toArray(new ItemStack[0]);
-        //处理槽位
-        NBTTagList list1 = nbt.getTagList("SlotDefinition", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < list1.tagCount(); i++) {
-            NBTTagCompound slotTag = list1.getCompoundTagAt(i);
-            String slot = slotTag.getString("Slot");
-            SlotDefinition definition;
-            System.out.println("deserializeNBT--" + i + "--" + slot);
-
-            if (slot != "null") {
-                ResourceLocation location;
-                if (!slot.contains(":")) location = new ResourceLocation(Baubles.MODID, slot);
-                else location = new ResourceLocation(slot);
-                definition = SlotDefinitions.get(location);
-            } else {
-                definition = null;
-            }
-//            SlotDefinition slotDefinition = slot != "null" ? new SlotDefinitionType(BaubleType.valueOf(slot)) : null;
-
-            slots[i] = definition;
-        }
     }
 
     private SlotDefinition[] getDefaultSlots() {
@@ -362,6 +379,11 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
             return Arrays.equals(definitions, Config.getSlots()) ? Config.getSlots() : definitions;
         }
         return Config.getSlots();
+    }
+
+    @Override
+    public SlotDefinition getRealSlot(int slot) {
+        return this.slots[slot];
     }
 
     /**
@@ -393,21 +415,35 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         return slotGet;
     }
 
+    //让它正常获取
+    //to do
     private int getSSlotIndex(int slot) {
         int slotGet = offset + slot;
-        if (slotGet < 0){
-            slotGet = this.getSlots() + slotGet;
-        }
-        if (slotGet >= this.getSlots()){
-            slotGet %= this.getSlots();
+//        while (slotGet < this.getRealBaubleSlots()) {
+//            slotGet += this.getRealBaubleSlots();
+//        }
+        if (slotGet >= this.getRealBaubleSlots()){
+            slotGet %= this.getRealBaubleSlots();
         }
         return slotGet;
+
     }
 
+//    private int getSSlotIndex(int slot) {
+//        int slotGet = offset + slot;
+//        if (slotGet < 0){
+//            slotGet = this.getRealBaubleSlots() + slotGet;
+//        }
+//        if (slotGet >= this.getSlots()){
+//            slotGet %= this.getSlots();
+//        }
+//        return slotGet;
+//    }
+
     public int getRealBaubleSlots() {
-        int slotNum = -7;
-        for (int i = 0; i < this.getSlots(); i++) {
-            if (this.getSlot(i) != null) {
+        int slotNum = 0;
+        for (SlotDefinition slot : this.slots) {
+            if (slot != null) {
                 slotNum += 1;
             }
         }

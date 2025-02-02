@@ -6,7 +6,10 @@ import baubles.api.IBauble;
 import baubles.api.IBaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
+import baubles.api.inv.SlotDefinition;
+import baubles.common.Baubles;
 import baubles.common.Config;
+import baubles.common.init.SlotDefinitions;
 import baubles.common.network.PacketAddSlot;
 import baubles.common.network.PacketHandler;
 import net.minecraft.client.Minecraft;
@@ -17,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -114,7 +118,12 @@ public class CommandBaubles extends CommandBase {
                     String playerName = args[1];
                     String slotName = args[2];
 
-                    BaublesApi.getBaublesHandler(entityplayermp).addSlot(slotName);
+                    ResourceLocation location;
+                    if (!slotName.contains(":")) location = new ResourceLocation(Baubles.MODID, slotName);
+                    else location = new ResourceLocation(slotName);
+                    SlotDefinition definition = SlotDefinitions.get(location);
+
+                    BaublesApi.getBaublesHandler(entityplayermp).addSlot(definition);
                     PacketHandler.INSTANCE.sendTo(new PacketAddSlot(slotName), entityplayermp);
                     sender.sendMessage(new TextComponentString("添加执行"));
                 } else {

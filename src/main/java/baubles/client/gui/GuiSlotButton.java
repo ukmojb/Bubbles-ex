@@ -30,7 +30,7 @@ public class GuiSlotButton extends GuiButton {
     @Override
     public boolean mousePressed(@Nonnull Minecraft mc, int mouseX, int mouseY) {
         boolean pressed = super.mousePressed(mc, mouseX, mouseY);
-        if (pressed) {
+        if (pressed && ticks <= 0) {
             this.ticks = 10;
             int amount = isDown ? 1 : -1;
             PacketHandler.INSTANCE.sendToServer(new PacketChangeOffset(amount));

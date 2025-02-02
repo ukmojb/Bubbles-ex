@@ -26,7 +26,11 @@ public interface IBaublesItemHandler extends IItemHandlerModifiable {
      **/
     SlotDefinition getSlot(int slotIndex);
 
-    void addSlot(String slotName);
+    SlotDefinition getRealSlot(int slotIndex);
+
+    void addSlot(SlotDefinition addSlotDefinition);
+
+    void setSlot(int slot, SlotDefinition setSlotDefinition);
 
     /**
      * {@link IItemHandler#isItemValid(int, ItemStack)} but with entity.

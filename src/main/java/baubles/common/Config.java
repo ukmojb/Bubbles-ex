@@ -62,6 +62,39 @@ public class Config {
         config.save();
     }
 
+    public static SlotDefinition[] getJsonSlots() {
+        JsonArray slots;
+
+        String fOut = readFile(JSON_DIR);
+        if ((fOut.equals(NORMAL) && expandedMode) || (fOut.equals(EXPANDED) && !expandedMode)) {
+            writeSlotsJson(JSON_DIR);
+            fOut = readFile(JSON_DIR);
+        }
+
+        try {
+            slots = GSON.fromJson(fOut, JsonArray.class);
+        } catch (Exception e) {
+            Baubles.log.error("Exception while reading slots.json");
+            throw new RuntimeException(e);
+        }
+
+        SlotDefinition[] definitions = new SlotDefinition[slots.size()];
+        for (int i = 0; i < slots.size(); i++) {
+            String slot = slots.get(i).getAsString();
+            ResourceLocation location;
+            if (!slot.contains(":")) location = new ResourceLocation(Baubles.MODID, slot);
+            else location = new ResourceLocation(slot);
+            SlotDefinition definition = SlotDefinitions.get(location);
+            if (definition == null) {
+                Baubles.log.error("Could not find slot definition from {}", location);
+                continue;
+            }
+            definitions[i] = definition;
+        }
+
+        return definitions;
+    }
+
     public static SlotDefinition[] getSlots() {
         JsonArray slots;
 
@@ -110,7 +143,7 @@ public class Config {
         @SubscribeEvent
         public static void postConfigChange(ConfigChangedEvent.PostConfigChangedEvent event) {
             String modId = event.getModID();
-            if (modId.equals(ModCompatibility.ME)) ModCompatibility.ME$applyOffset();
+            if (modId.equals(ModCompatibility.ME) && ModCompatibility.ME$checkMiniEffectIsLegacy()) ModCompatibility.ME$applyOffset();
         }
     }
 

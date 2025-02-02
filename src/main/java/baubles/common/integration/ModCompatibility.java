@@ -3,6 +3,7 @@ package baubles.common.integration;
 import baubles.api.BaubleType;
 import baubles.api.cap.InjectableBauble;
 import baubles.client.gui.GuiPlayerExpanded;
+import baubles.common.Baubles;
 import com.google.common.collect.ImmutableMap;
 import de.ellpeck.actuallyadditions.mod.items.ItemBattery;
 import de.ellpeck.actuallyadditions.mod.items.ItemMagnetRing;
@@ -18,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import org.lwjgl.input.Mouse;
 import snownee.minieffects.handlers.InjectedMiniEffects;
 import snownee.minieffects.handlers.MiniEffectsOffsets;
@@ -83,6 +85,7 @@ public class ModCompatibility {
     // Mini Effects
     public static boolean ME$shouldMoveLeft(InventoryEffectRenderer gui) {
         if (!Loader.isModLoaded(ME)) return true;
+        if (!ME$checkMiniEffectIsLegacy()) return true;
         if (f_miniEffects == null) {
             try {
                 f_miniEffects = InventoryEffectRenderer.class.getDeclaredField("mini$effects");
@@ -103,6 +106,7 @@ public class ModCompatibility {
 
     public static void ME$applyOffset() {
         if (!Loader.isModLoaded(ModCompatibility.ME)) return;
+        if (!ME$checkMiniEffectIsLegacy()) return;
         if (MiniEffectsOffsets.get(GuiPlayerExpanded.class) != null) return;
         if (f_OFFSETS == null) {
             try {
@@ -122,6 +126,21 @@ public class ModCompatibility {
         catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean ME$checkMiniEffectIsLegacy(){
+        for (ModContainer mod : Loader.instance().getActiveModList()) {
+            if (mod.getModId().equals(ME)) {
+                if (mod.getName().equals("Mini Effects - Legacy Extended Life")) {
+                    System.out.println("Mini Effects - Legacy Extended Life");
+                    return true;
+                } else if (mod.getName().equals("Mini Effects")){
+                    Baubles.log.fatal("Baubles needs MiniEffects-Legacy Extended Life, not MiniEffects. Download link https://www.curseforge.com/minecraft/mc-mods/minieffects-legacy-extended-life");
+                    Baubles.log.fatal("饰品栏需要的是MiniEffects-Legacy Extended Life不是Mini Effects，下载链接https://www.curseforge.com/minecraft/mc-mods/minieffects-legacy-extended-life");
+                }
+            }
+        }
+        return false;
     }
 
     // Compatibility

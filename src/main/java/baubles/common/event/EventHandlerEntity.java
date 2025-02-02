@@ -10,6 +10,7 @@ import baubles.api.inv.SlotDefinition;
 import baubles.common.Baubles;
 import baubles.common.network.PacketHandler;
 import baubles.common.network.PacketSync;
+import baubles.common.network.PacketSyncSlot;
 import cofh.core.enchantment.EnchantmentSoulbound;
 import cofh.core.util.helpers.ItemHelper;
 import cofh.core.util.helpers.MathHelper;
@@ -20,6 +21,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -41,7 +43,8 @@ import java.util.*;
 @SuppressWarnings("unused") // gets used by Forge event handler
 public class EventHandlerEntity {
 
-    private final HashMap<UUID, ItemStack[]> baublesSync = new HashMap<UUID, ItemStack[]>();
+    private static final HashMap<UUID, ItemStack[]> baublesSync = new HashMap<UUID, ItemStack[]>();
+    private static final HashMap<UUID, SlotDefinition[]> slotsSync = new HashMap<UUID, SlotDefinition[]>();
 
     @SubscribeEvent
     public void cloneCapabilitiesEvent(PlayerEvent.Clone event) {
@@ -69,6 +72,8 @@ public class EventHandlerEntity {
         Entity entity = event.getEntity();
         if (entity instanceof EntityPlayerMP) {
             EntityPlayerMP player = (EntityPlayerMP) entity;
+
+            syncSlotDefinitions(player, Collections.singletonList(player));
             syncSlots(player, Collections.singletonList(player));
             BaublesContainer container = (BaublesContainer) BaublesApi.getBaublesHandler(player);
             container.pukeItems(player);
@@ -78,11 +83,12 @@ public class EventHandlerEntity {
     @SubscribeEvent
     public void text(PlayerInteractEvent.LeftClickBlock event) {
         Entity entity = event.getEntity();
-        if (entity instanceof EntityPlayerMP) {
-            EntityPlayerMP player = (EntityPlayerMP) entity;
+        if (entity instanceof EntityPlayer ) {
+            EntityPlayer player = (EntityPlayer) entity;
             for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
-                if (BaublesApi.getBaublesHandler(player).getSlot(i) != null) {
-                    player.sendMessage(new TextComponentString(BaublesApi.getBaublesHandler(player).getSlot(i).getTranslationKey(i)));
+                if (BaublesApi.getBaublesHandler(player).getRealSlot(i) != null) {
+                    System.out.println(BaublesApi.getBaublesHandler(player).getRealSlot(i).getTranslationKey(i) + "--" + i);
+//                    System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(i).getDisplayName() + "--" + i);
                 }
             }
         }
@@ -92,6 +98,7 @@ public class EventHandlerEntity {
     public void onStartTracking(PlayerEvent.StartTracking event) {
         Entity target = event.getTarget();
         if (target instanceof EntityPlayerMP) {
+            syncSlotDefinitions((EntityPlayer) target, Collections.singletonList(event.getEntityPlayer()));
             syncSlots((EntityPlayer) target, Collections.singletonList(event.getEntityPlayer()));
         }
     }
@@ -120,7 +127,7 @@ public class EventHandlerEntity {
         }
     }
 
-    private void syncBaubles(EntityPlayer player, IBaublesItemHandler baubles) {
+    public static void syncBaubles(EntityPlayer player, IBaublesItemHandler baubles) {
         ItemStack[] items = baublesSync.get(player.getUniqueID());
         if (items == null) {
             items = new ItemStack[baubles.getSlots()];
@@ -147,16 +154,58 @@ public class EventHandlerEntity {
                 items[i] = stack == null ? ItemStack.EMPTY : stack.copy();
             }
         }
+
+        SlotDefinition[] slotDefinitions = slotsSync.get(player.getUniqueID());
+        if (slotDefinitions == null) {
+            slotDefinitions = new SlotDefinition[baubles.getSlots()];
+            Arrays.fill(slotDefinitions, null);
+            slotsSync.put(player.getUniqueID(), slotDefinitions);
+        }
+        if (slotDefinitions.length != baubles.getSlots()) {
+            SlotDefinition[] old = slotDefinitions;
+            slotDefinitions = new SlotDefinition[baubles.getSlots()];
+            System.arraycopy(old, 0, slotDefinitions, 0, Math.min(old.length, items.length));
+            slotsSync.put(player.getUniqueID(), slotDefinitions);
+        }
+//        Set<EntityPlayer> receivers1 = null;
+//        for (int i = 0; i < baubles.getSlots(); i++) {
+//            SlotDefinition slotDefinition = baubles.getSlot(i);
+//            if (receivers1 == null) {
+//                receivers1 = new HashSet<>(((WorldServer) player.world).getEntityTracker().getTrackingPlayers(player));
+//                receivers1.add(player);
+//            }
+//            syncSlotDefinition(player, i, slotDefinition, receivers1);
+//            slotDefinitions[i] = slotDefinition;
+//        }
     }
 
-    private void syncSlots(EntityPlayer player, Collection<? extends EntityPlayer> receivers) {
+    private static void syncSlots(EntityPlayer player, Collection<? extends EntityPlayer> receivers) {
         IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
         for (int i = 0; i < baubles.getSlots(); i++) {
             syncSlot(player, i, baubles.getStackInSlot(i), receivers);
         }
     }
+    public static void syncSlotDefinitions(EntityPlayer player, Collection<? extends EntityPlayer> receivers) {
+        IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
+        for (int i = 0; i < baubles.getSlots(); i++) {
+            syncSlotDefinition(player, i, baubles.getRealSlot(i), receivers);
+        }
+    }
 
-    private void syncSlot(EntityPlayer player, int slot, ItemStack stack, Collection<? extends EntityPlayer> receivers) {
+    private static void syncSlotDefinition(EntityPlayer player, int slot, SlotDefinition slotDefinition, Collection<? extends EntityPlayer> receivers) {
+        String slotName;
+        if (slotDefinition == null) {
+            slotName = "null";
+        } else {
+            slotName = slotDefinition.getTranslationKey(slot).replace("baubles.type.", "");
+        }
+        PacketSyncSlot pkt = new PacketSyncSlot(player, slot, slotName);
+        for (EntityPlayer receiver : receivers) {
+            PacketHandler.INSTANCE.sendTo(pkt, (EntityPlayerMP) receiver);
+        }
+    }
+
+    private static void syncSlot(EntityPlayer player, int slot, ItemStack stack, Collection<? extends EntityPlayer> receivers) {
         PacketSync pkt = new PacketSync(player, slot, stack);
         for (EntityPlayer receiver : receivers) {
             PacketHandler.INSTANCE.sendTo(pkt, (EntityPlayerMP) receiver);

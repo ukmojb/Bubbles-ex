@@ -2,12 +2,16 @@ package baubles.common.network;
 
 import baubles.api.BaublesApi;
 import baubles.api.cap.BaublesContainer;
+import baubles.api.inv.SlotDefinition;
+import baubles.common.Baubles;
 import baubles.common.container.ContainerPlayerExpanded;
+import baubles.common.init.SlotDefinitions;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -39,7 +43,12 @@ public class PacketAddSlot implements IMessage {
         public IMessage onMessage(PacketAddSlot message, MessageContext ctx) {
             EntityPlayerSP entityPlayerSP = Minecraft.getMinecraft().player;
             if (BaublesApi.getBaublesHandler(entityPlayerSP) != null) {
-                BaublesApi.getBaublesHandler(entityPlayerSP).addSlot(message.slotName);
+                String slotName = message.slotName;
+                ResourceLocation location;
+                if (!slotName.contains(":")) location = new ResourceLocation(Baubles.MODID, slotName);
+                else location = new ResourceLocation(slotName);
+                SlotDefinition definition = SlotDefinitions.get(location);
+                BaublesApi.getBaublesHandler(entityPlayerSP).addSlot(definition);
             }
             return null;
         }
