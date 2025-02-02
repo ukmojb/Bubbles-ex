@@ -132,7 +132,6 @@ public class ModCompatibility {
         for (ModContainer mod : Loader.instance().getActiveModList()) {
             if (mod.getModId().equals(ME)) {
                 if (mod.getName().equals("Mini Effects - Legacy Extended Life")) {
-                    System.out.println("Mini Effects - Legacy Extended Life");
                     return true;
                 } else if (mod.getName().equals("Mini Effects")){
                     Baubles.log.fatal("Baubles needs MiniEffects-Legacy Extended Life, not MiniEffects. Download link https://www.curseforge.com/minecraft/mc-mods/minieffects-legacy-extended-life");
