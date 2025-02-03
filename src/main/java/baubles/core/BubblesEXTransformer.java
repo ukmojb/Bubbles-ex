@@ -4,7 +4,7 @@ import baubles.core.transformers.*;
 import net.minecraft.launchwrapper.IClassTransformer;
 
 @SuppressWarnings("unused")
-public class BubblesTransformer implements IClassTransformer {
+public class BubblesEXTransformer implements IClassTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         switch (transformedName) {

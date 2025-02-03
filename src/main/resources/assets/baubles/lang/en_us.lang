@@ -1,6 +1,7 @@
 #
 # ITEMS
 item.baubles.max_verstappen.name=Max Verstappen
+item.baubles.creeper_cast.name=Creeper Cast
 #
 # GUI
 button.baubles=Baubles
@@ -19,3 +20,23 @@ baubles.type.body=Body
 baubles.type.charm=Charm
 
 baubles.item.desc=Bauble (%s)
+
+# Command
+command.baubles.alias_help=§3You can also use /baub or /bau instead of /baubles.
+command.baubles.view_help=§3Use this to view the baubles inventory of a player.
+command.baubles.clear_help=§3Use this to clear a player's baubles inventory. Default is everything or you can give a slot number.
+command.baubles.add_help=§3Use this to add a bauble slot to a given player.
+command.baubles.remove_help=§3Use this to remove a bauble slot to a given player.
+command.baubles.showing_baubles=§3Showing baubles for %s
+command.baubles.slot_info=§3 [Slot %d] %s %s
+command.baubles.invalid_args=§cInvalid arguments
+command.baubles.use_help=§cUse /baubles help to get help
+command.baubles.cleared_slot=§3Cleared baubles slot %d for %s
+command.baubles.your_slot_cleared=§4Your baubles slot %d has been cleared by admin %s
+command.baubles.cleared_all_slots=§3Cleared all baubles slots for %s
+command.baubles.all_slots_cleared=§4All your baubles slots have been cleared by admin %s
+command.baubles.add_success=§3Slot added successfully
+command.baubles.add_fail=§cFailed to add slot
+command.baubles.add_full=§cThe number of slots has reached the upper limit and cannot be added.
+command.baubles.remove_success=§3Slot removed successfully
+command.baubles.remove_fail=§cFailed to remove slot

@@ -39,12 +39,9 @@ public class PacketChangeOffset implements IMessage {
         public IMessage onMessage(PacketChangeOffset message, MessageContext ctx) {
             IThreadListener mainThread = (WorldServer) ctx.getServerHandler().player.world;
             mainThread.addScheduledTask(() -> {
-                System.out.println(message.offsetChange);
                 ContainerPlayerExpanded container = (ContainerPlayerExpanded) ctx.getServerHandler().player.openContainer;
                 BaublesContainer baublesHandler = (BaublesContainer) container.baubles;
                 baublesHandler.incrOffset(message.offsetChange);
-
-
             });
             return null;
         }

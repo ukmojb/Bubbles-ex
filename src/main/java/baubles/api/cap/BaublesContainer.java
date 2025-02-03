@@ -103,6 +103,17 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     }
 
     @Override
+    public void removeSlot(SlotDefinition addSlotDefinition) {
+        for (int i = (slots.length - 1); i > 0; i--) {
+            SlotDefinition slotDefinition = slots[i];
+            if (slotDefinition == addSlotDefinition) {
+                this.slots[i] = null;
+                break;
+            }
+        }
+    }
+
+    @Override
     public void setSlot(int slot, SlotDefinition setSlotDefinition) {
 //        System.out.println("setSlot--" + slot + "--" + setSlotDefinition.getTranslationKey(slot));
         this.slots[slot] = setSlotDefinition;

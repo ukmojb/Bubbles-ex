@@ -43,7 +43,7 @@ public class BaubleItem extends Item implements IBauble {
                 check = true;
                 if (!worldIn.isRemote) {
                     handler.setStackInSlot(i, stack.copy());
-                    stack.shrink(1);
+                    stack.shrink(stack.getCount());
                 }
                 break;
             }

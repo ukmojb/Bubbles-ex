@@ -29,6 +29,7 @@ public interface IBaublesItemHandler extends IItemHandlerModifiable {
     SlotDefinition getRealSlot(int slotIndex);
 
     void addSlot(SlotDefinition addSlotDefinition);
+    void removeSlot(SlotDefinition addSlotDefinition);
 
     void setSlot(int slot, SlotDefinition setSlotDefinition);
 

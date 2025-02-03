@@ -16,5 +16,6 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketSync.Handler.class, PacketSync.class, 3, Side.CLIENT);
         INSTANCE.registerMessage(PacketSyncSlot.Handler.class, PacketSyncSlot.class, 4, Side.CLIENT);
         INSTANCE.registerMessage(PacketAddSlot.Handler.class, PacketAddSlot.class, 5, Side.CLIENT);
+        INSTANCE.registerMessage(PacketRemoveSlot.Handler.class, PacketRemoveSlot.class, 6, Side.CLIENT);
     }
 }

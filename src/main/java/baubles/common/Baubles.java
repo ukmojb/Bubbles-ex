@@ -15,8 +15,10 @@ import baubles.common.network.PacketHandler;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -39,7 +41,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.util.Objects;
 
-@Mod(modid = Baubles.MODID, name = "BaublesEX", version = Tags.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory", dependencies = "after:mousetweaks@[3.0,)")
+@Mod(modid = Baubles.MODID, name = "BubblesEX", version = Tags.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory", dependencies = "after:mousetweaks@[3.0,)")
 @SuppressWarnings("unused") // mods instance class
 public class Baubles {
 
@@ -53,6 +55,7 @@ public class Baubles {
     public File modDir;
 
     public static final Item MAX_VERSTAPPEN;
+    public static final Item CREEPER_CAST;
 
     public static final SoundEvent TU_TU_TU_TU;
 
@@ -99,6 +102,7 @@ public class Baubles {
     @SubscribeEvent
     public void registerItem(RegistryEvent.Register<Item> event) {
         event.getRegistry().register(MAX_VERSTAPPEN);
+        event.getRegistry().register(CREEPER_CAST);
     }
 
     @SubscribeEvent
@@ -110,12 +114,14 @@ public class Baubles {
     @SideOnly(Side.CLIENT)
     public void registerModel(ModelRegistryEvent event) {
         ModelLoader.setCustomModelResourceLocation(MAX_VERSTAPPEN, 0, new ModelResourceLocation(Objects.requireNonNull(MAX_VERSTAPPEN.getRegistryName()), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(CREEPER_CAST, 0, new ModelResourceLocation(Objects.requireNonNull(CREEPER_CAST.getRegistryName()), "inventory"));
     }
 
     static {
         ResourceLocation MAX_VERSTAPPEN_LOCATION = new ResourceLocation(MODID, "max_verstappen");
+        ResourceLocation CREEPER_CAST_LOCATION = new ResourceLocation(MODID, "creeper_cast");
 
-        MAX_VERSTAPPEN = new BaubleItem(BaubleType.BODY) {
+        MAX_VERSTAPPEN = new BaubleItem(BaubleType.RING) {
 
             @Override
             public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
@@ -126,6 +132,18 @@ public class Baubles {
             }
 
         }.setRegistryName(MAX_VERSTAPPEN_LOCATION).setTranslationKey(MODID + ".max_verstappen").setCreativeTab(CreativeTabs.MISC);
+
+        CREEPER_CAST = new BaubleItem(BaubleType.AMULET) {
+
+            @Override
+            public void onWornTick(ItemStack itemstack, EntityLivingBase player) {
+                World world = player.world;
+                if (!world.isRemote) {
+                    player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 30));
+                }
+            }
+
+        }.setRegistryName(CREEPER_CAST_LOCATION).setTranslationKey(MODID + ".creeper_cast").setCreativeTab(CreativeTabs.MISC);
 
         TU_TU_TU_TU = new SoundEvent(MAX_VERSTAPPEN_LOCATION).setRegistryName(MAX_VERSTAPPEN_LOCATION);
     }

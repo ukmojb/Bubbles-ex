@@ -10,7 +10,7 @@ import java.util.Map;
 @IFMLLoadingPlugin.MCVersion("1.12.2")
 @IFMLLoadingPlugin.SortingIndex(100)
 @IFMLLoadingPlugin.TransformerExclusions("baubles.core.*")
-public class BubblesCore implements IFMLLoadingPlugin {
+public class BubblesEXCore implements IFMLLoadingPlugin {
 
     @Override
     public String[] getASMTransformerClass() {
@@ -33,6 +33,6 @@ public class BubblesCore implements IFMLLoadingPlugin {
 
     @Override
     public String getAccessTransformerClass() {
-        return "baubles.core.BubblesTransformer";
+        return "baubles.core.BubblesEXTransformer";
     }
 }
