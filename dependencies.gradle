@@ -31,9 +31,8 @@ dependencies {
     if (project.runtime_jei.toBoolean()) implementation(jei)
     else compileOnly(jei)
 
-    // Mouse Tweaks (Mouse Rolling)
-    if (project.runtime_mt.toBoolean()) implementation(mt)
-    else compileOnly(mt)
+    // Mouse Tweaks
+    if (project.runtime_mt.toBoolean()) runtimeOnly(mt)
 
     // No Recipe Book
     if (project.runtime_ut.toBoolean()) {

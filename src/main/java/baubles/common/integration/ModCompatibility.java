@@ -18,10 +18,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import org.lwjgl.input.Mouse;
 import snownee.minieffects.handlers.InjectedMiniEffects;
 import snownee.minieffects.handlers.MiniEffectsOffsets;
 import yalter.mousetweaks.MTConfig;
+import yalter.mousetweaks.Main;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -52,11 +54,27 @@ public class ModCompatibility {
             AA = "actuallyadditions"
     ;
 
+    private static boolean isLoaded = false;
+    private static boolean MT_isOld = false;
+
+    private static void initContainers() {
+        if (isLoaded) return;
+        isLoaded = true;
+        for (ModContainer container : Loader.instance().getActiveModList()) {
+            if (container.getModId().equals(MT)) MT_isOld = container.getVersion().startsWith("2.");
+        }
+    }
+
     // Mouse Tweaks scrolling
     public static boolean MT$shouldScroll(Slot slot) {
         if (!Loader.isModLoaded(MT)) return true;
-        boolean wheelTweaksEnabled = MTConfig.wheelTweak;
-        return !wheelTweaksEnabled || slot == null || !slot.getHasStack();
+        return !MT$getWheelTweak() || slot == null || !slot.getHasStack();
+    }
+
+    // TODO test
+    private static boolean MT$getWheelTweak() {
+        initContainers();
+        return MT_isOld ? Main.config.wheelTweak : MTConfig.wheelTweak;
     }
 
     // No Recipe Book
