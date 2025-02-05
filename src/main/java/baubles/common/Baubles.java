@@ -75,9 +75,9 @@ public class Baubles {
         Config.save();
 
         BaubleTypes.registerDefaults();
-        MinecraftForge.EVENT_BUS.register(new BaubleTypes.Register());
+        MinecraftForge.EVENT_BUS.post(new BaubleTypes.Register());
         SlotDefinitions.registerDefaults();
-        MinecraftForge.EVENT_BUS.register(new SlotDefinitions.Register());
+        MinecraftForge.EVENT_BUS.post(new SlotDefinitions.Register());
     }
 
     @EventHandler
