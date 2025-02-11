@@ -11,21 +11,23 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-// TODO Ordering
 /**
  * An interface used by handlers that implement {@link IBaublesItemHandler} for defining how a slot should behave.
  * Handles item insertion, slot limit and clientside values like background texture and translation key to show slot name.
  * New SlotDefinitions needs to be registered in preInit.
+ * NOTE: This class has a natural ordering that is inconsistent with equals. If it's 0, that means their order is same, not themselves.
  *
  * @see SlotDefinitionType
  */
-public interface SlotDefinition {
+public interface SlotDefinition extends Comparable<SlotDefinition> {
 
     /**
      * Registry name of the slot type
      */
     @Nonnull
     ResourceLocation getRegistryName();
+
+    int getOrder();
 
     /**
      * Translation key for bauble slots
@@ -59,4 +61,9 @@ public interface SlotDefinition {
     @Nullable
     @SideOnly(Side.CLIENT)
     ResourceLocation getBackgroundTexture(int slotIndex);
+
+    @Override
+    default int compareTo(SlotDefinition o) {
+        return this.getOrder() - o.getOrder();
+    }
 }

@@ -23,16 +23,18 @@ import java.util.*;
  **/
 public class SlotDefinitionType implements SlotDefinition {
 
+    private final int order;
     private final IBaubleType type;
     private final ResourceLocation backgroundTexture;
 
-    public SlotDefinitionType(IBaubleType type, ResourceLocation backgroundTexture) {
+    public SlotDefinitionType(int order, IBaubleType type, ResourceLocation backgroundTexture) {
+        this.order = order;
         this.type = type;
         this.backgroundTexture = backgroundTexture;
     }
 
-    public SlotDefinitionType(IBaubleType type) {
-        this(type, new ResourceLocation(type.getRegistryName().getNamespace(), "gui/slots/" + type.getRegistryName().getPath()));
+    public SlotDefinitionType(int order, IBaubleType type) {
+        this(order, type, new ResourceLocation(type.getRegistryName().getNamespace(), "gui/slots/" + type.getRegistryName().getPath()));
     }
 
     public SlotDefinitionType init(int slotIndex) {
@@ -65,6 +67,11 @@ public class SlotDefinitionType implements SlotDefinition {
     @Override
     public ResourceLocation getRegistryName() {
         return this.type.getRegistryName();
+    }
+
+    @Override
+    public int getOrder() {
+        return this.order;
     }
 
     /**

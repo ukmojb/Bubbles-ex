@@ -12,7 +12,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -118,20 +117,15 @@ public class ContainerPlayerExpanded extends Container {
     public ItemStack transferStackInSlot(@Nonnull EntityPlayer playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
-
         if (slot != null && slot.getHasStack()) {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
-
             EntityEquipmentSlot entityequipmentslot = EntityLiving.getSlotForItemStack(itemstack);
-
-            int slotShift = 7;
-
+            int slotShift = Math.min(8, baubles.getSlots());
             if (index == 0) {
                 if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, true)) {
                     return ItemStack.EMPTY;
                 }
-
                 slot.onSlotChange(itemstack1, itemstack);
             } else if (index >= 1 && index < 5) {
                 if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, false)) {
@@ -147,7 +141,6 @@ public class ContainerPlayerExpanded extends Container {
                 }
             } else if (entityequipmentslot.getSlotType() == EntityEquipmentSlot.Type.ARMOR && !this.inventorySlots.get(8 - entityequipmentslot.getIndex()).getHasStack()) { // inv -> armor
                 int i = 8 - entityequipmentslot.getIndex();
-
                 if (!this.mergeItemStack(itemstack1, i, i + 1, false)) {
                     return ItemStack.EMPTY;
                 }
@@ -160,19 +153,19 @@ public class ContainerPlayerExpanded extends Container {
                 }
             }
             // inv -> bauble
-            else if (itemstack1.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
+            else if (itemstack1.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null) && !(slot instanceof SlotBauble)) {
                 IBauble bauble = Objects.requireNonNull(itemstack1.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null));
                 if (playerIn.isCreative() || bauble.canEquip(itemstack1, playerIn)) {
                     BaublesContainer container = (BaublesContainer) baubles;
-
                     boolean check = true;
                     for (int i = 0; i < this.baubles.getSlots(); i++) {
-                        if (container.isItemValidForSlot(i, itemstack1, playerIn)) {
+                        if (container.isItemValidForSlot_Workaround(i, itemstack1, playerIn)) {
                             if (!mergeBauble(itemstack1, i)) {
                                 check = false;
                             }
                             else {
                                 bauble.onEquipped(itemstack1, playerIn);
+                                break;
                             }
                         }
                     }
@@ -203,12 +196,9 @@ public class ContainerPlayerExpanded extends Container {
 
             if (itemstack1.isEmpty() && slot instanceof SlotBauble) {
                 IBauble cap = itemstack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-                if (cap != null)
-                    cap.onUnequipped(itemstack, playerIn);
+                if (cap != null) cap.onUnequipped(itemstack, playerIn);
             }
-
             ItemStack itemstack2 = slot.onTake(playerIn, itemstack1);
-
             if (index == 0) {
                 playerIn.dropItem(itemstack2, false);
             }
@@ -225,10 +215,9 @@ public class ContainerPlayerExpanded extends Container {
     private boolean mergeBauble(ItemStack stack, int slotIndex) {
         BaublesContainer container = (BaublesContainer) baubles;
         boolean flag = false;
-
         if (!stack.isEmpty()) {
-            SlotDefinition slot = container.getSlot(slotIndex);
-            ItemStack itemstack = container.getStackInSlot(slotIndex);
+            SlotDefinition slot = container.getSlot_Workaround(slotIndex);
+            ItemStack itemstack = container.getStackInSlot_Workaround(slotIndex);
 
             if (stack.isStackable() && !itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack)) {
                 int j = itemstack.getCount() + stack.getCount();
@@ -251,12 +240,11 @@ public class ContainerPlayerExpanded extends Container {
 
             if (itemstack.isEmpty() && slot.canPutItem(slotIndex, stack)) {
                 if (stack.getCount() > slot.getSlotStackLimit()) {
-                    container.setStackInSlot(slotIndex, stack.splitStack(slot.getSlotStackLimit()));
+                    container.setStackInSlot_Workaround(slotIndex, stack.splitStack(slot.getSlotStackLimit()));
                 }
                 else {
-                    container.setStackInSlot(slotIndex, stack.splitStack(stack.getCount()));
+                    container.setStackInSlot_Workaround(slotIndex, stack.splitStack(stack.getCount()));
                 }
-
                 container.changeOffsetBasedOnSlot(slotIndex);
                 container.setChanged(slotIndex, true);
                 flag = true;

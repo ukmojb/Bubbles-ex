@@ -62,20 +62,17 @@ public class Config {
 
     public static SlotDefinition[] getSlots() {
         JsonArray slots;
-
         String fOut = readFile(JSON_DIR);
         if ((fOut.equals(NORMAL) && expandedMode) || (fOut.equals(EXPANDED) && !expandedMode)) {
             writeSlotsJson(JSON_DIR);
             fOut = readFile(JSON_DIR);
         }
-
         try {
             slots = GSON.fromJson(fOut, JsonArray.class);
         } catch (Exception e) {
             Baubles.log.error("Exception while reading slots.json");
             throw new RuntimeException(e);
         }
-
         SlotDefinition[] definitions = new SlotDefinition[slots.size()];
         for (int i = 0; i < slots.size(); i++) {
             String slot = slots.get(i).getAsString();
@@ -89,7 +86,6 @@ public class Config {
             }
             definitions[i] = definition;
         }
-
         return definitions;
     }
 

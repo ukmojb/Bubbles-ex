@@ -170,18 +170,14 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
             if (mouseY >= yLoc && mouseY < yLoc + getMaxY()) {
                 int slotIndex = (mouseY - yLoc) / 18;
                 BaublesContainer container = ((BaublesContainer) baublesHandler);
-
                 ItemStack stack = container.getStackInSlot(slotIndex);
                 if (!stack.isEmpty()) return;
-
                 SlotDefinition definition = container.getSlot(slotIndex);
-
                 FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 GlStateManager.enableBlend();
                 GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
                 GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(0, 0, 200);
                 String str = I18n.format(definition.getTranslationKey(slotIndex));

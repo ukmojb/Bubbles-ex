@@ -1,5 +1,6 @@
 package baubles.common.init;
 
+import baubles.api.BaubleType;
 import baubles.api.IBaubleType;
 import baubles.api.inv.SlotDefinition;
 import baubles.api.inv.SlotDefinitionType;
@@ -24,9 +25,13 @@ public class SlotDefinitions {
     }
 
     public static void registerDefaults() {
-        for (IBaubleType type : BaubleTypes.getRegistryMap().values()) {
-            register(new SlotDefinitionType(type));
-        }
+        register(new SlotDefinitionType(0, BaubleType.AMULET));
+        register(new SlotDefinitionType(100, BaubleType.RING));
+        register(new SlotDefinitionType(200, BaubleType.BELT));
+        register(new SlotDefinitionType(300, BaubleType.HEAD));
+        register(new SlotDefinitionType(400, BaubleType.BODY));
+        register(new SlotDefinitionType(500, BaubleType.CHARM));
+        register(new SlotDefinitionType(600, BaubleType.TRINKET));
     }
 
     @Nullable

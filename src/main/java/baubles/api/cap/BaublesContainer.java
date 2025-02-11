@@ -15,7 +15,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 
@@ -27,14 +26,14 @@ import java.util.concurrent.Callable;
 /**
  * Default implementation of {@link IBaublesItemHandler}
  **/
-public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
+// TODO Don't use offset in isItemValid and such.
+public class BaublesContainer implements PlayerBaubleHandler, INBTSerializable<NBTTagCompound> {
 
     private final ItemStack[] stacks;
     private final SlotDefinition[] slots;
 
     private int offset = 0; // Can't be higher than getSlots()
     private boolean[] changed;
-    private boolean blockEvents = false;
 
     /**
      * Entity which has the baubles inventory
@@ -71,6 +70,10 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         return this.slots[getSlotIndex(slot)];
     }
 
+    public SlotDefinition getSlot_Workaround(int slot) {
+        return this.slots[slot];
+    }
+
     // TODO Find a way to use without casting.
     public int getOffset() {
         return offset;
@@ -87,13 +90,18 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     // TODO Find a way to use without casting.
     public void changeOffsetBasedOnSlot(int slot) {
-        slot += this.offset;
-        if (slot < this.offset || slot > this.offset + 7) {
+        if (this.getSlots() > 8) {
             this.offset = slot;
         }
     }
 
+    @Override
+    public void changeOffset(int offset) {
+
+    }
+
     // TODO Find a way to use without casting.
+    @Override
     public void resetOffset() {
         this.offset = 0;
     }
@@ -111,7 +119,16 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         if (stack == null || stack.isEmpty()) return false;
         IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
         if (bauble != null) {
-            return bauble.canUnequip(stack, entity) && this.getSlot(slot).canPutItem(slot, stack);
+            return bauble.canEquip(stack, entity) && this.getSlot(slot).canPutItem(this.getSlotIndex(slot), stack);
+        }
+        return false;
+    }
+
+    public boolean isItemValidForSlot_Workaround(int slot, ItemStack stack, EntityLivingBase entity) {
+        if (stack == null || stack.isEmpty()) return false;
+        IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+        if (bauble != null) {
+            return bauble.canEquip(stack, entity) && this.slots[slot].canPutItem(slot, stack);
         }
         return false;
     }
@@ -121,6 +138,13 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         if (stack.isEmpty() || this.isItemValidForSlot(slot, stack, this.entity)) {
             setStack(slot, stack);
             setChanged(slot, true);
+        }
+    }
+
+    public void setStackInSlot_Workaround(int slot, @Nonnull ItemStack stack) {
+        if (stack.isEmpty() || this.isItemValidForSlot_Workaround(slot, stack, this.entity)) {
+            this.stacks[slot] = stack;
+            this.setChanged(slot, true);
         }
     }
 
@@ -137,6 +161,13 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         ItemStack stack = this.getStack(slot);
         if (stack == null) stack = ItemStack.EMPTY;
         return stack;
+    }
+
+    public ItemStack getStackInSlot_Workaround(int slot) {
+        slot = validateSlotIndex(slot);
+        if (slot == -1) return ItemStack.EMPTY;
+        ItemStack stack = this.stacks[slot];
+        return stack == null ? ItemStack.EMPTY : stack;
     }
 
     @Nonnull
@@ -205,16 +236,6 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     public int getSlotLimit(int slot) {
         return this.getSlot(slot).getSlotStackLimit();
     }
-
-//    @Override
-//    public boolean isEventBlocked() {
-//        return blockEvents;
-//    }
-//
-//    @Override
-//    public void setEventBlock(boolean blockEvents) {
-//        this.blockEvents = blockEvents;
-//    }
 
     @Override
     public boolean isChanged(int slot) {
