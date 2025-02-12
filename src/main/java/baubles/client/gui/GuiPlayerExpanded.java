@@ -294,7 +294,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     }
 
     @Override
-    protected void drawActivePotionEffects() {
+    public void drawActivePotionEffects() {
         boolean moveLeft = ME$shouldMoveLeft(this);
         int i = this.guiLeft;
         if (moveLeft) guiLeft -= 27;

@@ -137,7 +137,7 @@ public class CommandBaubles extends CommandBase {
                     else location = new ResourceLocation(slotName);
                     SlotDefinition definition = SlotDefinitions.get(location);
 
-                    if (checkPlayerBaublesIsFull(entityplayermp)) {
+                    if (!checkPlayerBaublesIsFull(entityplayermp)) {
                         BaublesApi.getBaublesHandler(entityplayermp).addSlot(definition);
                         PacketHandler.INSTANCE.sendTo(new PacketAddSlot(slotName), entityplayermp);
                         sender.sendMessage(new TextComponentTranslation("command.baubles.add_success"));

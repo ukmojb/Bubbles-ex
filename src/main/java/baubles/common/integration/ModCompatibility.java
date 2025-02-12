@@ -23,6 +23,7 @@ import net.minecraftforge.fml.common.ModContainer;
 import org.lwjgl.input.Mouse;
 import snownee.minieffects.handlers.InjectedMiniEffects;
 import snownee.minieffects.handlers.MiniEffectsOffsets;
+import snownee.minieffects.api.Vec2i;
 import yalter.mousetweaks.MTConfig;
 
 import java.lang.reflect.Field;
@@ -118,9 +119,9 @@ public class ModCompatibility {
             }
         }
         try {
-            ImmutableMap.Builder<Class<?>, MiniEffectsOffsets.Vec2i> builder = new ImmutableMap.Builder<>();
-            builder.putAll((Map<Class<?>, MiniEffectsOffsets.Vec2i>) f_OFFSETS.get(null));
-            builder.put(GuiPlayerExpanded.class, new MiniEffectsOffsets.Vec2i(-28, 0));
+            ImmutableMap.Builder<Class<?>, Vec2i> builder = new ImmutableMap.Builder<>();
+            builder.putAll((Map<Class<?>, Vec2i>) f_OFFSETS.get(null));
+            builder.put(GuiPlayerExpanded.class, new Vec2i(-28, 0));
             f_OFFSETS.set(null, builder.build());
         }
         catch (IllegalAccessException e) {

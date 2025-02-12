@@ -41,11 +41,13 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.util.Objects;
 
-@Mod(modid = Baubles.MODID, name = "BubblesEX", version = Tags.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory", dependencies = "after:mousetweaks@[3.0,)")
+
+@Mod(modid = Baubles.MODID, name = "BubblesEX", version = Baubles.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory", dependencies = "after:mousetweaks@[3.0,)")
 @SuppressWarnings("unused") // mods instance class
 public class Baubles {
 
     public static final String MODID = "baubles";
+    public static final String MOD_VERSION = "1.5.3";
     public static final Logger log = LogManager.getLogger(MODID.toUpperCase());
     public static final int GUI = 0;
     @SidedProxy(clientSide = "baubles.client.ClientProxy", serverSide = "baubles.common.CommonProxy")

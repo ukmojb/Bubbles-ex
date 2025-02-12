@@ -4,8 +4,13 @@ import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.inv.BaublesInventoryWrapper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import vazkii.botania.common.item.equipment.bauble.ItemSpeedUpBelt;
+import vazkii.botania.common.item.equipment.bauble.ItemSuperTravelBelt;
+
 
 import java.util.Objects;
 
@@ -37,9 +42,12 @@ public class BaublesApi {
      * @return -1 if not found and slot number if it is found
      */
     public static int isBaubleEquipped(EntityPlayer player, Item bauble) {
-        IBaublesItemHandler handler = getBaublesHandler(player);
-        for (int a = 0; a < handler.getSlots(); a++) {
-            if (!handler.getStackInSlot(a).isEmpty() && handler.getStackInSlot(a).getItem() == bauble) return a;
+        for (int i = 0; i < getBaublesHandler(player).getSlots(); i++) {
+            if (BaublesApi.getBaublesHandler(player).getRealSlot(i) != null) {
+                if (getBaublesHandler(player).getStackInSlot(i).getItem() == bauble) {
+                    return i;
+                }
+            }
         }
         return -1;
     }

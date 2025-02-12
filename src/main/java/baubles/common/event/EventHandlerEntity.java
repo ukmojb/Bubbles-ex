@@ -1,5 +1,6 @@
 package baubles.common.event;
 
+import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
@@ -85,12 +86,17 @@ public class EventHandlerEntity {
         Entity entity = event.getEntity();
         if (entity instanceof EntityPlayer ) {
             EntityPlayer player = (EntityPlayer) entity;
+//            BaubleType.valueOf()
             for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
                 if (BaublesApi.getBaublesHandler(player).getRealSlot(i) != null) {
-                    System.out.println(BaublesApi.getBaublesHandler(player).getRealSlot(i).getTranslationKey(i) + "--" + i);
-//                    System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(i).getDisplayName() + "--" + i);
+                    if (!player.isSneaking()) {
+                        System.out.println(BaublesApi.getBaublesHandler(player).getRealSlot(i).getRegistryName() + "--" + i);
+                    } else {
+                        System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(i).getDisplayName() + "--" + i);
+                    }
                 }
             }
+//            System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(7).getDisplayName());
         }
     }
 

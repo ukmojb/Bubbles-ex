@@ -8,6 +8,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import baubles.api.IBauble;
 
+import javax.annotation.Nonnull;
+
 /**
  * An item handler specific for baubles
  * It will always be applied to entity, because I can't find any other reason for it to be not to
@@ -42,6 +44,8 @@ public interface IBaublesItemHandler extends IItemHandlerModifiable {
      **/
     boolean isItemValidForSlot(int slotIndex, ItemStack stack, EntityLivingBase entity);
 
+
+
 //    boolean isEventBlocked();
 //    void setEventBlock(boolean blockEvents);
 
@@ -53,6 +57,7 @@ public interface IBaublesItemHandler extends IItemHandlerModifiable {
 
     void setChanged(int slot, boolean changed);
 
-//    @Deprecated
-//    default void setPlayer(EntityLivingBase player) {}
+    @Deprecated
+    default void setPlayer(EntityLivingBase player) {}
+
 }

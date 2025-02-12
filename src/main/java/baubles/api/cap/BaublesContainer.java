@@ -75,10 +75,6 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         this.stacks = new ItemStack[Config.slotMaxNum];
         this.changed = new boolean[Config.slotMaxNum];
         this.entity = entity;
-//        this.slots = getDefaultSlots();
-//        this.stacks = new ItemStack[slots.length];
-//        this.changed = new boolean[slots.length];
-//        this.entity = entity;
     }
 
     @Override
@@ -430,9 +426,6 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     //to do
     private int getSSlotIndex(int slot) {
         int slotGet = offset + slot;
-//        while (slotGet < this.getRealBaubleSlots()) {
-//            slotGet += this.getRealBaubleSlots();
-//        }
         if (slotGet >= this.getRealBaubleSlots()){
             slotGet %= this.getRealBaubleSlots();
         }
@@ -440,16 +433,6 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     }
 
-//    private int getSSlotIndex(int slot) {
-//        int slotGet = offset + slot;
-//        if (slotGet < 0){
-//            slotGet = this.getRealBaubleSlots() + slotGet;
-//        }
-//        if (slotGet >= this.getSlots()){
-//            slotGet %= this.getSlots();
-//        }
-//        return slotGet;
-//    }
 
     public int getRealBaubleSlots() {
         int slotNum = 0;

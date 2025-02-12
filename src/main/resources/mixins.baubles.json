@@ -1,0 +1,13 @@
+{
+  "package": "baubles.mixins",
+  "refmap": "mixins.baubles.refmap.json",
+  "mixins": [
+    "botania.MixinTravelBelt"
+  ],
+  "server": [
+
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
