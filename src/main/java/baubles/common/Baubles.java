@@ -39,7 +39,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.util.Objects;
 
-@Mod(modid = Baubles.MODID, name = "Baubles", version = Tags.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory", dependencies = "after:minieffects@[2.0.0,)")
+@Mod(modid = Baubles.MODID, name = "Baubles", version = Tags.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory", dependencies = "after:minieffects@[2.3.2,)")
 @SuppressWarnings("unused") // mods instance class
 public class Baubles {
 
