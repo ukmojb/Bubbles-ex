@@ -80,10 +80,14 @@ public class QualityToolsTransformer extends BaseTransformer {
             Label l_con_swith = new Label();
             m.visitJumpInsn(IFEQ, l_con_swith);
 
+            m.visitTypeInsn(NEW, "net/minecraft/util/ResourceLocation");
+            m.visitInsn(DUP);
+            m.visitLdcInsn("baubles");
             m.visitVarInsn(ALOAD, 2);
             m.visitIntInsn(BIPUSH, 8);
             m.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "substring", "(I)Ljava/lang/String;", false);
-            m.visitMethodInsn(INVOKESTATIC, "baubles/api/BaubleType", "getType", "(Ljava/lang/String;)Lbaubles/api/IBaubleType;", false);
+            m.visitMethodInsn(INVOKESPECIAL, "net/minecraft/util/ResourceLocation", "<init>", "(Ljava/lang/String;Ljava/lang/String;)V", false);
+            m.visitMethodInsn(INVOKESTATIC, "baubles/common/init/BaubleTypes", "get", "(Lnet/minecraft/util/ResourceLocation;)Lbaubles/api/IBaubleType;", false);
             m.visitVarInsn(ASTORE, 5); // IBaubleType
 
             m.visitVarInsn(ALOAD, 5);
