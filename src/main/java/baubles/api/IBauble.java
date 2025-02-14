@@ -37,7 +37,7 @@ public interface IBauble {
     }
 
     default boolean canPutOnSlot(IBaublesItemHandler handler, int slotIndex, ItemStack stack) {
-        return this.getType(stack) == handler.getSlotType(slotIndex);
+        return this.getType(stack) == BaubleType.TRINKET || handler.getSlotType(slotIndex) == BaubleType.TRINKET || this.getType(stack) == handler.getSlotType(slotIndex);
     }
 
     /**
