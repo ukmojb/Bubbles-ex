@@ -3,16 +3,13 @@ package baubles.common.container;
 import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.BaublesContainer;
-import baubles.api.cap.IBaublesItemHandler;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
@@ -23,17 +20,17 @@ public class SlotBauble extends SlotItemHandler {
 
     private final int slotIndex;
 
-    private final IBaublesItemHandler baublesHandler;
+    private final BaublesContainer baublesHandler;
     private final EntityPlayer player;
 
-    public SlotBauble(EntityPlayer player, IBaublesItemHandler itemHandler, int slot, int par4, int par5) {
+    public SlotBauble(EntityPlayer player, BaublesContainer itemHandler, int slot, int par4, int par5) {
         super(itemHandler, slot, par4, par5);
         this.baublesHandler = itemHandler;
         this.player = player;
         this.slotIndex = slot;
     }
 
-    public IBaublesItemHandler getBaublesHandler() {
+    public BaublesContainer getBaublesHandler() {
         return this.baublesHandler;
     }
 
@@ -46,7 +43,7 @@ public class SlotBauble extends SlotItemHandler {
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack) {
         IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-        return bauble != null && baublesHandler.isItemValidForSlot(slotIndex, stack, player);
+        return bauble != null && baublesHandler.isItemValidForSlot(this.baublesHandler.getSlotByOffset(this.slotIndex), stack, player);
     }
 
     @Override
@@ -76,10 +73,9 @@ public class SlotBauble extends SlotItemHandler {
                 getStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
             getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(getStack(), player);
         }
-
         ItemStack oldstack = getStack().copy();
-        super.putStack(stack);
-
+        ((IItemHandlerModifiable) this.getItemHandler()).setStackInSlot(this.baublesHandler.getSlotByOffset(this.slotIndex), stack);
+        this.onSlotChanged();
         if (getHasStack() && !ItemStack.areItemStacksEqual(oldstack, getStack()) &&
                 getStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
             Objects.requireNonNull(getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)).onEquipped(getStack(), player);
@@ -88,13 +84,30 @@ public class SlotBauble extends SlotItemHandler {
 
     @Override
     public int getSlotStackLimit() {
-        return 64;
+        return this.baublesHandler.getSlotLimit(this.baublesHandler.getSlotByOffset(this.slotIndex));
+    }
+
+    @Override
+    public int getItemStackLimit(@Nonnull ItemStack stack) {
+        return this.getSlotStackLimit();
     }
 
     @Nullable
     @Override
     public String getSlotTexture() {
-        ResourceLocation bg = this.getBaublesHandler().getSlot(this.slotIndex).getBackgroundTexture(this.slotIndex);
+        ResourceLocation bg = this.getBaublesHandler().getSlotType(this.baublesHandler.getSlotByOffset(this.slotIndex)).getBackgroundTexture();
         return bg == null ? null : bg.toString();
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack getStack() {
+        return this.baublesHandler.getStackInSlot(this.baublesHandler.getSlotByOffset(this.slotIndex));
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack decrStackSize(int amount) {
+        return this.baublesHandler.extractItem(this.baublesHandler.getSlotByOffset(this.slotIndex), amount, false);
     }
 }

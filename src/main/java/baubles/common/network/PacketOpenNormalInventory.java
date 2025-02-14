@@ -9,7 +9,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketOpenNormalInventory implements IMessage, IMessageHandler<PacketOpenNormalInventory, IMessage> {
 
-    public PacketOpenNormalInventory() {}
+    public PacketOpenNormalInventory() {
+    }
 
     @Override
     public IMessage onMessage(PacketOpenNormalInventory message, MessageContext ctx) {
@@ -23,6 +24,11 @@ public class PacketOpenNormalInventory implements IMessage, IMessageHandler<Pack
         return null;
     }
 
-    @Override public void toBytes(ByteBuf buffer) {}
-    @Override public void fromBytes(ByteBuf buffer) {}
+    @Override
+    public void toBytes(ByteBuf buffer) {
+    }
+
+    @Override
+    public void fromBytes(ByteBuf buffer) {
+    }
 }

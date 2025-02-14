@@ -90,16 +90,39 @@ public class BaublesInventoryWrapper implements IInventory {
         }
     }
 
-    @Override public boolean isEmpty() { return false; }
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 
-    @Override public boolean hasCustomName() { return false; }
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
 
-    @Override public void markDirty() {}
+    @Override
+    public void markDirty() {
+    }
 
-    @Override public void openInventory(@Nonnull EntityPlayer player) {}
-    @Override public void closeInventory(@Nonnull EntityPlayer player) {}
+    @Override
+    public void openInventory(@Nonnull EntityPlayer player) {
+    }
 
-    @Override public int getField(int id) { return 0; }
-    @Override public void setField(int id, int value) {}
-    @Override public int getFieldCount() { return 0; }
+    @Override
+    public void closeInventory(@Nonnull EntityPlayer player) {
+    }
+
+    @Override
+    public int getField(int id) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
 }

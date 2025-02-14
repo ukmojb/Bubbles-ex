@@ -1,12 +1,12 @@
 package baubles.api.cap;
 
-import baubles.api.inv.SlotDefinition;
+import baubles.api.IBauble;
+import baubles.api.IBaubleType;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import baubles.api.IBauble;
 
 /**
  * An item handler specific for baubles
@@ -21,21 +21,20 @@ public interface IBaublesItemHandler extends IItemHandlerModifiable {
      **/
     EntityLivingBase getEntity();
 
-    /**
-     * Get the slot definition for item insertion check, naming and background texture
-     **/
-    SlotDefinition getSlot(int slotIndex);
+    IBaubleType getSlotType(int slotIndex);
 
     /**
      * {@link IItemHandler#isItemValid(int, ItemStack)} but with entity.
+     *
      * @param slotIndex index of slot to put
-     * @param stack stack to try to put. It doesn't need to be {@link IBauble}
-     * @param entity entity that has inventory for baubles. It doesn't need to be {@link EntityPlayer}
+     * @param stack     stack to try to put. It doesn't need to be {@link IBauble}
+     * @param entity    entity that has inventory for baubles. It doesn't need to be {@link EntityPlayer}
      * @return true if given stack can be put to the specific slot
      **/
     boolean isItemValidForSlot(int slotIndex, ItemStack stack, EntityLivingBase entity);
 
     // TODO Is this needed? Used for updating IBaubles with willAutoSync true
+
     /**
      * Used internally for syncing. Indicates if the inventory has changed since last sync
      */

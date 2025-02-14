@@ -34,7 +34,7 @@ public class GuiSlotButton extends GuiButton {
             this.ticks = 10;
             int amount = isDown ? 1 : -1;
             PacketHandler.INSTANCE.sendToServer(new PacketChangeOffset(amount));
-            baublesHandler.incrOffset(amount);
+            baublesHandler.setOffset(baublesHandler.getSlotByOffset(amount));
         }
         return pressed;
     }

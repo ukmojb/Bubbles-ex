@@ -6,7 +6,7 @@ import baubles.api.IBaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.client.gui.GuiBaublesButton;
 import baubles.client.gui.GuiPlayerExpanded;
-import baubles.common.init.SlotDefinitions;
+import baubles.common.init.BaubleTypes;
 import baubles.common.integration.ModCompatibility;
 import baubles.common.network.PacketHandler;
 import baubles.common.network.PacketOpenBaublesInventory;
@@ -44,7 +44,7 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void registerTextures(TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();
-        SlotDefinitions.registerTextures(event);
+        BaubleTypes.registerTextures(event);
     }
 
     @SubscribeEvent
@@ -73,8 +73,7 @@ public class ClientEventHandler {
                         }
                     }
                 });
-            }
-            else if (normalInv || expandedInv) {
+            } else if (normalInv || expandedInv) {
                 GuiContainer container = (GuiContainer) event.getGui();
                 event.getButtonList().add(new GuiBaublesButton(55, container, 64, 9, 10, 10,
                         normalInv ? "button.baubles" : "button.normal"));

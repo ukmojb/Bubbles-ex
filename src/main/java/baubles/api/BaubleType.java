@@ -1,16 +1,11 @@
 package baubles.api;
 
 import baubles.common.Baubles;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Default bauble types
@@ -26,19 +21,24 @@ public enum BaubleType implements IBaubleType {
     CHARM("charm");
 
     final ResourceLocation name;
-    final String translationKey, backgroundTexture;
-    final IntList validSlots = new IntArrayList(1);
+    final String translationKey;
+    final ResourceLocation backgroundTexture;
 
     BaubleType(String name, int... validSlots) {
         this.name = new ResourceLocation(Baubles.MODID, name);
         this.translationKey = "baubles.type." + name;
-        this.backgroundTexture = "baubles:gui/slots/" + name;
+        this.backgroundTexture = new ResourceLocation(Baubles.MODID, "gui/slots/" + name);
     }
 
     @Nonnull
     @Override
     public ResourceLocation getRegistryName() {
         return this.name;
+    }
+
+    @Override
+    public int getOrder() {
+        return 0;
     }
 
     @Nonnull
@@ -48,45 +48,51 @@ public enum BaubleType implements IBaubleType {
     }
 
     @Override
+    public ResourceLocation getBackgroundTexture() {
+        return this.backgroundTexture;
+    }
+
+    @Override
     public boolean canApplyEnchantment(Enchantment enchantment, ItemStack stack) {
         if (enchantment.type == null) return false;
         if (IBaubleType.super.canApplyEnchantment(enchantment, stack)) return true;
         switch (enchantment.type) {
-            case ARMOR_HEAD: if (this == HEAD) return true;
-            case ARMOR_CHEST: if (this == AMULET || this == BODY) return true;
-            case ARMOR_LEGS: if (this == BELT) return true;
-            case BREAKABLE: return stack.isItemStackDamageable();
+            case ARMOR_HEAD:
+                if (this == HEAD) return true;
+            case ARMOR_CHEST:
+                if (this == AMULET || this == BODY) return true;
+            case ARMOR_LEGS:
+                if (this == BELT) return true;
+            case BREAKABLE:
+                return stack.isItemStackDamageable();
         }
         return false;
-    }
-
-    public void addSlot(int slot) {
-        validSlots.add(slot);
     }
 
     // Deprecated
     @Deprecated
     public boolean hasSlot(int slot) {
         switch (slot) {
-            default: return false;
-            case 0: return this == AMULET || this == TRINKET;
-            case 1: case 2: return this == RING || this == TRINKET;
-            case 3: return this == BELT || this == TRINKET;
-            case 4: return this == HEAD || this == TRINKET;
-            case 5: return this == BODY || this == TRINKET;
-            case 6: return this == CHARM || this == TRINKET;
+            default:
+                return false;
+            case 0:
+                return this == AMULET || this == TRINKET;
+            case 1:
+            case 2:
+                return this == RING || this == TRINKET;
+            case 3:
+                return this == BELT || this == TRINKET;
+            case 4:
+                return this == HEAD || this == TRINKET;
+            case 5:
+                return this == BODY || this == TRINKET;
+            case 6:
+                return this == CHARM || this == TRINKET;
         }
     }
 
     @Deprecated
     public int[] getValidSlots() {
-        int[] array;
-        if (this == RING) {
-            array = new int[2];
-            array[1] = -1;
-        }
-        else array = new int[1];
-        array[0] = -1;
-        return validSlots.toArray(array);
+        return new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8};
     }
 }

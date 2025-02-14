@@ -1,5 +1,6 @@
 package baubles.api;
 
+import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.render.IRenderBauble;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,11 +28,16 @@ public interface IBauble {
     /**
      * This method return the type of bauble this is.
      * Type is used to determine the slots it can go into.
+     *
      * @deprecated prefer calling {@link IBauble#getType(ItemStack)} wherever possible
      */
     @Deprecated
     default BaubleType getBaubleType(ItemStack itemstack) {
         return BaubleType.TRINKET;
+    }
+
+    default boolean canPutOnSlot(IBaublesItemHandler handler, int slotIndex, ItemStack stack) {
+        return this.getType(stack) == handler.getSlotType(slotIndex);
     }
 
     /**
@@ -84,9 +90,8 @@ public interface IBauble {
      * Runs when an entity that has this item dies.
      *
      * @param slotIndex The slot index item is in
-     * @param stack The stack in question
-     * @param living The entity that has died
-     *
+     * @param stack     The stack in question
+     * @param living    The entity that has died
      * @return Way item drop should be handled when entity dies.
      */
     default DropResult onDeath(int slotIndex, ItemStack stack, EntityLivingBase living) {

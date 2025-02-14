@@ -41,10 +41,12 @@ public interface IRenderBauble {
      * acquired through the event parameter. Transformations are already applied for
      * the RenderType passed in. Make sure to check against the type parameter for
      * rendering.
+     *
      * @deprecated use {@link IRenderBauble#onPlayerBaubleRender(ItemStack, EntityPlayer, RenderType, float, float, float, float, float, float, float)} instead
      */
     @Deprecated
-    default void onPlayerBaubleRender(ItemStack stack, EntityPlayer player, RenderType type, float partialTicks) {}
+    default void onPlayerBaubleRender(ItemStack stack, EntityPlayer player, RenderType type, float partialTicks) {
+    }
 
     enum RenderType {
         /**

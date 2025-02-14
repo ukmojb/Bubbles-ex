@@ -1,20 +1,14 @@
 package baubles.core.transformers;
 
-import baubles.api.BaubleType;
 import baubles.api.IBaubleType;
 import baubles.api.cap.IBaublesItemHandler;
-import baubles.api.inv.SlotDefinition;
-import baubles.api.inv.SlotDefinitionType;
 import baubles.common.Baubles;
-import baubles.common.init.BaubleTypes;
-import net.minecraft.util.ResourceLocation;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
 
 // TODO Remove workarounds and make Quality Tools actually work with Bubbles.
 /**
@@ -72,8 +66,9 @@ public class QualityToolsTransformer extends BaseTransformer {
             m.visitInsn(ICONST_1);
             m.visitInsn(IRETURN);
 
+            // TODO Custom types.
             m.visitLabel(l_con_captrinket_check);
-            m.visitFrame(F_APPEND, 2, new Object[] { "baubles/api/IBauble", "baubles/api/IBaubleType" }, 0, null);
+            m.visitFrame(F_APPEND, 2, new Object[]{"baubles/api/IBauble", "baubles/api/IBaubleType"}, 0, null);
             m.visitVarInsn(ALOAD, 2);
             m.visitLdcInsn("baubles_");
             m.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "startsWith", "(Ljava/lang/String;)Z", false);
@@ -99,7 +94,7 @@ public class QualityToolsTransformer extends BaseTransformer {
             m.visitInsn(IRETURN);
 
             m.visitLabel(l_con_typetrinket_check);
-            m.visitFrame(F_APPEND, 1, new Object[] { "baubles/api/IBaubleType" }, 0, null);
+            m.visitFrame(F_APPEND, 1, new Object[]{"baubles/api/IBaubleType"}, 0, null);
             m.visitVarInsn(ALOAD, 4);
             m.visitVarInsn(ALOAD, 5);
             m.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "equals", "(Ljava/lang/Object;)Z", false);
@@ -134,15 +129,9 @@ public class QualityToolsTransformer extends BaseTransformer {
     @SuppressWarnings("unused")
     public static ArrayList<String> $getBaublesNameForSlot(IBaublesItemHandler handler, int slot) {
         ArrayList<String> list = new ArrayList<>();
-        SlotDefinition definition = handler.getSlot(slot);
-        if (definition instanceof SlotDefinitionType) {
-            for (Map.Entry<ResourceLocation, IBaubleType> type : BaubleTypes.getRegistryMap().entrySet()) {
-                if (((SlotDefinitionType) definition).canPutType(type.getValue())) {
-                    String name = type.getKey().getNamespace().equals(Baubles.MODID) ? type.getKey().getPath() : type.getKey().toString();
-                    list.add("baubles_" + name);
-                }
-            }
-        }
+        IBaubleType type = handler.getSlotType(slot);
+        String name = type.getRegistryName().getNamespace().equals(Baubles.MODID) ? type.getRegistryName().getPath() : type.getRegistryName().toString();
+        list.add("baubles_" + name);
         return list;
     }
 }

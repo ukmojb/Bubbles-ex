@@ -21,8 +21,7 @@ public class WearableBackpacksTransformer extends BaseTransformer {
                     AbstractInsnNode node = iterator.next();
                     if (node.getOpcode() == CHECKCAST) {
                         iterator.remove();
-                    }
-                    else if (node.getOpcode() == INVOKEVIRTUAL) {
+                    } else if (node.getOpcode() == INVOKEVIRTUAL) {
                         method.instructions.insertBefore(node, new MethodInsnNode(INVOKEINTERFACE, "baubles/api/cap/IBaublesItemHandler", "setStackInSlot", "(ILnet/minecraft/item/ItemStack;)V", true));
                         iterator.remove();
                         break;

@@ -2,9 +2,9 @@ package baubles.common.init;
 
 import baubles.api.BaubleType;
 import baubles.api.IBaubleType;
-import baubles.api.inv.SlotDefinitionType;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -37,6 +37,14 @@ public class BaubleTypes {
 
     public static Map<ResourceLocation, IBaubleType> getRegistryMap() {
         return new ImmutableMap.Builder<ResourceLocation, IBaubleType>().putAll(REGISTRY_MAP).build();
+    }
+
+    public static void registerTextures(TextureStitchEvent.Pre event) {
+        for (IBaubleType type : REGISTRY_MAP.values()) {
+            ResourceLocation location = type.getBackgroundTexture();
+            if (location == null) continue;
+            event.getMap().registerSprite(location);
+        }
     }
 
     /**

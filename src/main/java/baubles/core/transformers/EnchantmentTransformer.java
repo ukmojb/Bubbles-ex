@@ -7,8 +7,8 @@ import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.objectweb.asm.tree.*;
 
 import java.util.List;
@@ -64,7 +64,7 @@ public class EnchantmentTransformer extends BaseTransformer {
                 list.add(new InsnNode(ICONST_0));
                 list.add(new InsnNode(IRETURN));
                 list.add(l_con_null);
-                list.add(new FrameNode(F_APPEND, 1, new Object[] { "baubles/api/IBauble" }, 0, null));
+                list.add(new FrameNode(F_APPEND, 1, new Object[]{"baubles/api/IBauble"}, 0, null));
                 list.add(new VarInsnNode(ALOAD, 3));
                 list.add(new VarInsnNode(ALOAD, 1));
                 list.add(new MethodInsnNode(INVOKEINTERFACE, "baubles/api/IBauble", "getType", "(Lnet/minecraft/item/ItemStack;)Lbaubles/api/IBaubleType;", true));

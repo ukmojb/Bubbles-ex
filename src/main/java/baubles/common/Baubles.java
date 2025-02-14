@@ -9,7 +9,6 @@ import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.common.event.CommandBaubles;
 import baubles.common.init.BaubleTypes;
-import baubles.common.init.SlotDefinitions;
 import baubles.common.integration.ModCompatibility;
 import baubles.common.network.PacketHandler;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -17,7 +16,9 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -76,8 +77,6 @@ public class Baubles {
 
         BaubleTypes.registerDefaults();
         MinecraftForge.EVENT_BUS.post(new BaubleTypes.Register());
-        SlotDefinitions.registerDefaults();
-        MinecraftForge.EVENT_BUS.post(new SlotDefinitions.Register());
     }
 
     @EventHandler
@@ -114,9 +113,7 @@ public class Baubles {
 
     static {
         ResourceLocation MAX_VERSTAPPEN_LOCATION = new ResourceLocation(MODID, "max_verstappen");
-
         MAX_VERSTAPPEN = new BaubleItem(BaubleType.RING) {
-
             @Override
             public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
                 World world = player.world;
@@ -125,8 +122,7 @@ public class Baubles {
                 }
             }
 
-        }.setRegistryName(MAX_VERSTAPPEN_LOCATION).setTranslationKey(MODID + ".max_verstappen").setCreativeTab(CreativeTabs.MISC);
-
+        }.setRegistryName(MAX_VERSTAPPEN_LOCATION).setTranslationKey(MODID + ".max_verstappen").setCreativeTab(CreativeTabs.MISC).setMaxStackSize(1);
         TU_TU_TU_TU = new SoundEvent(MAX_VERSTAPPEN_LOCATION).setRegistryName(MAX_VERSTAPPEN_LOCATION);
     }
 }

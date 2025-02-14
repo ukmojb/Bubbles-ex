@@ -61,8 +61,7 @@ public class BotaniaTransformer extends BaseTransformer {
                         break;
                     }
                 }
-            }
-            else if (method.name.equals("shouldPlayerHaveFlight")) {
+            } else if (method.name.equals("shouldPlayerHaveFlight")) {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode node = iterator.next();
@@ -168,8 +167,7 @@ public class BotaniaTransformer extends BaseTransformer {
                         break;
                     }
                 }
-            }
-            else if (method.name.equals("onPlayerJump")) {
+            } else if (method.name.equals("onPlayerJump")) {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode node = iterator.next();
@@ -183,8 +181,7 @@ public class BotaniaTransformer extends BaseTransformer {
                         break;
                     }
                 }
-            }
-            else if (method.name.equals("shouldPlayerHaveStepup")) {
+            } else if (method.name.equals("shouldPlayerHaveStepup")) {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode node = iterator.next();

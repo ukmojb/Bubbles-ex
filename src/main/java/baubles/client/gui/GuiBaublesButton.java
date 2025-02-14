@@ -29,8 +29,7 @@ public class GuiBaublesButton extends GuiButton {
             if (parentGui instanceof GuiPlayerExpanded) {
                 ((GuiPlayerExpanded) parentGui).displayNormalInventory();
                 PacketHandler.INSTANCE.sendToServer(new PacketOpenNormalInventory());
-            }
-            else PacketHandler.INSTANCE.sendToServer(new PacketOpenBaublesInventory());
+            } else PacketHandler.INSTANCE.sendToServer(new PacketOpenBaublesInventory());
         }
         return pressed;
     }

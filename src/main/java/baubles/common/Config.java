@@ -1,7 +1,7 @@
 package baubles.common;
 
-import baubles.api.inv.SlotDefinition;
-import baubles.common.init.SlotDefinitions;
+import baubles.api.IBaubleType;
+import baubles.common.init.BaubleTypes;
 import baubles.common.integration.ModCompatibility;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,8 +20,8 @@ public class Config {
     private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
 
     private static final String
-      NORMAL = "[\n \"amulet\",\n \"ring\",\n \"ring\",\n \"belt\",\n \"head\",\n \"body\",\n \"charm\"\n]",
-      EXPANDED = "[\n \"amulet\",\n \"amulet\",\n \"ring\",\n \"ring\",\n \"ring\",\n \"ring\",\n \"belt\",\n \"belt\",\n \"head\",\n \"head\",\n \"body\",\n \"body\",\n \"charm\",\n \"charm\"\n]";
+            NORMAL = "[\n \"amulet\",\n \"ring\",\n \"ring\",\n \"belt\",\n \"head\",\n \"body\",\n \"charm\"\n]",
+            EXPANDED = "[\n \"amulet\",\n \"amulet\",\n \"ring\",\n \"ring\",\n \"ring\",\n \"ring\",\n \"belt\",\n \"belt\",\n \"head\",\n \"head\",\n \"body\",\n \"body\",\n \"charm\",\n \"charm\"\n]";
 
     private static File JSON_DIR;
 
@@ -60,7 +60,7 @@ public class Config {
         config.save();
     }
 
-    public static SlotDefinition[] getSlots() {
+    public static IBaubleType[] getSlotTypes() {
         JsonArray slots;
         String fOut = readFile(JSON_DIR);
         if ((fOut.equals(NORMAL) && expandedMode) || (fOut.equals(EXPANDED) && !expandedMode)) {
@@ -73,20 +73,20 @@ public class Config {
             Baubles.log.error("Exception while reading slots.json");
             throw new RuntimeException(e);
         }
-        SlotDefinition[] definitions = new SlotDefinition[slots.size()];
+        IBaubleType[] types = new IBaubleType[slots.size()];
         for (int i = 0; i < slots.size(); i++) {
             String slot = slots.get(i).getAsString();
             ResourceLocation location;
             if (!slot.contains(":")) location = new ResourceLocation(Baubles.MODID, slot);
             else location = new ResourceLocation(slot);
-            SlotDefinition definition = SlotDefinitions.get(location);
-            if (definition == null) {
-                Baubles.log.error("Could not find slot definition from {}", location);
+            IBaubleType type = BaubleTypes.get(location);
+            if (type == null) {
+                Baubles.log.error("Could not find bauble type from {}", location);
                 continue;
             }
-            definitions[i] = definition;
+            types[i] = type;
         }
-        return definitions;
+        return types;
     }
 
     public static class ConfigChangeListener {
@@ -122,12 +122,11 @@ public class Config {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             int c;
-            while((c = reader.read()) != -1) {
+            while ((c = reader.read()) != -1) {
                 builder.append((char) c);
             }
             return builder.toString();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

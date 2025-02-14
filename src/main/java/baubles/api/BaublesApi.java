@@ -6,22 +6,27 @@ import baubles.api.inv.BaublesInventoryWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
  * @author Azanor
  */
 public class BaublesApi {
+
     /**
      * Retrieves the baubles item handler capability handler for the supplied player
      */
+    @Nonnull
     public static IBaublesItemHandler getBaublesHandler(EntityPlayer player) {
-        IBaublesItemHandler handler = Objects.requireNonNull(player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null));
-        return handler;
+        return Objects.requireNonNull(player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null));
     }
 
     // TODO Remove it once sure.
+
     /**
      * Retrieves the baubles capability handler wrapped as a IInventory for the supplied player
      */
@@ -29,6 +34,11 @@ public class BaublesApi {
     public static IInventory getBaubles(EntityPlayer player) {
         IBaublesItemHandler handler = Objects.requireNonNull(player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null));
         return new BaublesInventoryWrapper(handler, player);
+    }
+
+    @Nullable
+    public static IBauble getBauble(ItemStack stack) {
+        return stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
     }
 
     /**

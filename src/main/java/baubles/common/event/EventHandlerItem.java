@@ -19,7 +19,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Map;
 
 @SuppressWarnings("unused") // gets used by Forge event handler
 public class EventHandlerItem {
@@ -57,7 +56,8 @@ public class EventHandlerItem {
             return;
         }
 
-        if (!(stack.getItem() instanceof IBauble) || stack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) return;
+        if (!(stack.getItem() instanceof IBauble) || stack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null))
+            return;
         event.addCapability(capabilityResourceLocation, new ICapabilityProvider() {
 
             @Override

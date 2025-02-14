@@ -18,7 +18,8 @@ public class PotionFingersTransformer extends BaseTransformer {
         Iterator<MethodNode> iterator = cls.methods.iterator();
         while (iterator.hasNext()) {
             MethodNode method = iterator.next();
-            if (method.name.equals("updatePotionStatus") || method.name.equals("onUnequipped") || method.name.equals("onEquipped")) iterator.remove();
+            if (method.name.equals("updatePotionStatus") || method.name.equals("onUnequipped") || method.name.equals("onEquipped"))
+                iterator.remove();
             else if (method.name.equals("onWornTick")) wornTickExists = true;
         }
         cls.methods.removeIf(m -> m.name.equals("updatePotionStatus") || m.name.equals("onUnequipped") || m.name.equals("onEquipped"));
@@ -92,7 +93,7 @@ public class PotionFingersTransformer extends BaseTransformer {
             Label l_loop = new Label();
             Label l_loop_continue = new Label();
             m.visitLabel(l_loop);
-            m.visitFrame(F_APPEND, 3, new Object[] { INTEGER, "baubles/api/cap/IBaublesItemHandler", INTEGER }, 0, null);
+            m.visitFrame(F_APPEND, 3, new Object[]{INTEGER, "baubles/api/cap/IBaublesItemHandler", INTEGER}, 0, null);
             m.visitVarInsn(ILOAD, 6);
             m.visitVarInsn(ALOAD, 5);
             m.visitMethodInsn(INVOKEINTERFACE, "baubles/api/cap/IBaublesItemHandler", "getSlots", "()I", true);
@@ -112,7 +113,7 @@ public class PotionFingersTransformer extends BaseTransformer {
             m.visitJumpInsn(IF_ACMPNE, l_con_instance);
             m.visitIincInsn(4, 1);
             m.visitLabel(l_con_instance);
-            m.visitFrame(F_APPEND, 1, new Object[] { "net/minecraft/item/ItemStack" }, 0, null);
+            m.visitFrame(F_APPEND, 1, new Object[]{"net/minecraft/item/ItemStack"}, 0, null);
             m.visitIincInsn(6, 1);
             m.visitJumpInsn(GOTO, l_loop);
             m.visitLabel(l_loop_continue);
@@ -143,13 +144,13 @@ public class PotionFingersTransformer extends BaseTransformer {
             m.visitInsn(RETURN);
         }
         { // Fallback for the Pansmith's fork
-           MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "updatePotionStatus", "(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/potion/Potion;Lnet/minecraft/item/ItemStack;Z)V", null, null);
-           m.visitVarInsn(ALOAD, 0);
-           m.visitVarInsn(ALOAD, 1);
-           m.visitVarInsn(ALOAD, 2);
-           m.visitVarInsn(ILOAD, 4);
-           m.visitMethodInsn(INVOKEVIRTUAL, cls.name, "updatePotionStatus", "(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/potion/Potion;Z)V", false);
-           m.visitInsn(RETURN);
+            MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "updatePotionStatus", "(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/potion/Potion;Lnet/minecraft/item/ItemStack;Z)V", null, null);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitVarInsn(ALOAD, 1);
+            m.visitVarInsn(ALOAD, 2);
+            m.visitVarInsn(ILOAD, 4);
+            m.visitMethodInsn(INVOKEVIRTUAL, cls.name, "updatePotionStatus", "(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/potion/Potion;Z)V", false);
+            m.visitInsn(RETURN);
         }
         writeClass(cls);
         return write(cls);

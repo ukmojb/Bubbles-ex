@@ -8,13 +8,13 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.apache.logging.log4j.LogManager;
 
 public class PacketChangeOffset implements IMessage {
 
     private int offsetChange;
 
-    public PacketChangeOffset() {}
+    public PacketChangeOffset() {
+    }
 
     public PacketChangeOffset(int offsetChange) {
         this.offsetChange = offsetChange;
@@ -37,7 +37,7 @@ public class PacketChangeOffset implements IMessage {
             mainThread.addScheduledTask(() -> {
                 ContainerPlayerExpanded container = (ContainerPlayerExpanded) ctx.getServerHandler().player.openContainer;
                 BaublesContainer baublesHandler = (BaublesContainer) container.baubles;
-                baublesHandler.incrOffset(message.offsetChange);
+                baublesHandler.setOffset(baublesHandler.getSlotByOffset(message.offsetChange));
             });
             return null;
         }

@@ -6,7 +6,6 @@ import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.BaublesContainerProvider;
 import baubles.api.cap.IBaublesItemHandler;
-import baubles.api.inv.SlotDefinition;
 import baubles.common.Baubles;
 import baubles.common.network.PacketHandler;
 import baubles.common.network.PacketSync;
@@ -157,8 +156,10 @@ public class EventHandlerEntity {
         }
     }
 
-    @GameRegistry.ObjectHolder("cofhcore:soulbound") public static Enchantment COFH_SOULBOUND = null;
-    @GameRegistry.ObjectHolder("tombstone:soulbound") public static Enchantment TOMBSTONE_SOULBOUND = null;
+    @GameRegistry.ObjectHolder("cofhcore:soulbound")
+    public static Enchantment COFH_SOULBOUND = null;
+    @GameRegistry.ObjectHolder("tombstone:soulbound")
+    public static Enchantment TOMBSTONE_SOULBOUND = null;
 
     public void dropItemsAt(EntityPlayer player, List<EntityItem> drops, Entity e) {
         IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
@@ -167,17 +168,19 @@ public class EventHandlerEntity {
             if (!baubles.getStackInSlot(i).isEmpty()) {
                 ItemStack stack = baubles.getStackInSlot(i);
                 IBauble bauble = Objects.requireNonNull(stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null));
-                SlotDefinition definition = baubles.getSlot(i);
                 IBauble.DropResult result = bauble.onDeath(i, stack, player);
                 switch (result) {
                     case CUSTOM:
-                    case ALWAYS_KEEP: break;
+                    case ALWAYS_KEEP:
+                        break;
                     case ALWAYS_DROP: {
                         baubles.setStackInSlot(i, ItemStack.EMPTY);
                         player.dropItem(stack, true, false);
                         break;
                     }
-                    case DESTROY: baubles.setStackInSlot(i, ItemStack.EMPTY); break;
+                    case DESTROY:
+                        baubles.setStackInSlot(i, ItemStack.EMPTY);
+                        break;
                     case DEFAULT: {
                         boolean soulboundCheck = hasAnySoulbound(stack) && !this.isFakePlayer(player);
                         boolean vanishingCheck = EnchantmentHelper.hasVanishingCurse(stack);
@@ -205,8 +208,7 @@ public class EventHandlerEntity {
                 if (EnchantmentSoulbound.permanent) {
                     ItemHelper.removeEnchantment(stack, COFH_SOULBOUND);
                     ItemHelper.addEnchantment(stack, COFH_SOULBOUND, level - 1);
-                }
-                else if (MathHelper.RANDOM.nextInt(level + 1) == 0) {
+                } else if (MathHelper.RANDOM.nextInt(level + 1) == 0) {
                     ItemHelper.removeEnchantment(stack, COFH_SOULBOUND);
                     ItemHelper.addEnchantment(stack, COFH_SOULBOUND, level - 1);
                 }

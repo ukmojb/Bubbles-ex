@@ -10,7 +10,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketOpenBaublesInventory implements IMessage, IMessageHandler<PacketOpenBaublesInventory, IMessage> {
 
-    public PacketOpenBaublesInventory() {}
+    public PacketOpenBaublesInventory() {
+    }
 
     @Override
     public IMessage onMessage(PacketOpenBaublesInventory message, MessageContext ctx) {
@@ -22,7 +23,12 @@ public class PacketOpenBaublesInventory implements IMessage, IMessageHandler<Pac
         return null;
     }
 
-    @Override public void toBytes(ByteBuf buffer) {}
-    @Override public void fromBytes(ByteBuf buffer) {}
+    @Override
+    public void toBytes(ByteBuf buffer) {
+    }
+
+    @Override
+    public void fromBytes(ByteBuf buffer) {
+    }
 
 }

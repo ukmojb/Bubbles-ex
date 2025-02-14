@@ -38,22 +38,21 @@ public class ModCompatibility {
             // Scrolling check
             MT = "mousetweaks",
 
-            // No Recipe Book
-            NRB = "norecipebook",
+    // No Recipe Book
+    NRB = "norecipebook",
             UT = "universaltweaks",
 
-            // Cosmetic Armor
-            CA = "cosmeticarmorreworked",
+    // Cosmetic Armor
+    CA = "cosmeticarmorreworked",
 
-            // Wings
-            WINGS = "wings",
+    // Wings
+    WINGS = "wings",
 
-            // Mini Effects
-            ME = "minieffects",
+    // Mini Effects
+    ME = "minieffects",
 
-            // Compatibility
-            AA = "actuallyadditions"
-    ;
+    // Compatibility
+    AA = "actuallyadditions";
 
     private static boolean isLoaded = false;
     private static boolean MT_isOld = false;
@@ -105,16 +104,14 @@ public class ModCompatibility {
             try {
                 f_miniEffects = InventoryEffectRenderer.class.getDeclaredField("mini$effects");
                 f_miniEffects.setAccessible(true);
-            }
-            catch (NoSuchFieldException e) {
+            } catch (NoSuchFieldException e) {
                 throw new RuntimeException(e);
             }
         }
         try {
             InjectedMiniEffects miniEffects = (InjectedMiniEffects) f_miniEffects.get(gui);
             return miniEffects.shouldExpand(Minecraft.getMinecraft(), Mouse.getX(), Mouse.getY());
-        }
-        catch (IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -126,8 +123,7 @@ public class ModCompatibility {
             try {
                 f_OFFSETS = MiniEffectsOffsets.class.getDeclaredField("OFFSETS");
                 f_OFFSETS.setAccessible(true);
-            }
-            catch (NoSuchFieldException e) {
+            } catch (NoSuchFieldException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -136,8 +132,7 @@ public class ModCompatibility {
             builder.putAll((Map<Class<?>, Vec2i>) f_OFFSETS.get(null));
             builder.put(GuiPlayerExpanded.class, new Vec2i(-28, 0));
             f_OFFSETS.set(null, builder.build());
-        }
-        catch (IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -150,11 +145,9 @@ public class ModCompatibility {
         if (loc.getNamespace().equals(AA)) {
             if (item instanceof ItemMagnetRing) {
                 return new InjectableBauble(item, BaubleType.RING, true, 0);
-            }
-            else if (item instanceof ItemBattery) {
+            } else if (item instanceof ItemBattery) {
                 return new InjectableBauble(item, BaubleType.TRINKET, true, 0);
-            }
-            else if (item instanceof ItemPotionRing && loc.getPath().endsWith("advanced")) {
+            } else if (item instanceof ItemPotionRing && loc.getPath().endsWith("advanced")) {
                 return new InjectableBauble(item, BaubleType.RING, true, 0);
             }
         }

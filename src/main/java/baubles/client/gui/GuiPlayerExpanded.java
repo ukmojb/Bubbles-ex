@@ -1,12 +1,12 @@
 package baubles.client.gui;
 
+import baubles.api.IBaubleType;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
-import baubles.api.inv.SlotDefinition;
 import baubles.client.ClientProxy;
 import baubles.common.Baubles;
-import baubles.common.integration.ModCompatibility;
 import baubles.common.container.ContainerPlayerExpanded;
+import baubles.common.integration.ModCompatibility;
 import baubles.common.network.PacketChangeOffset;
 import baubles.common.network.PacketHandler;
 import lain.mods.cos.CosmeticArmorReworked;
@@ -68,8 +68,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
             if (ENABLE_RECIPE_BOOK) {
                 REF_ACTION_PERFORMED = GuiInventory.class.getDeclaredMethod(deobfEnv ? "actionPerformed" : "func_146284_a", GuiButton.class);
                 REF_ACTION_PERFORMED.setAccessible(true);
-            }
-            else REF_ACTION_PERFORMED = null;
+            } else REF_ACTION_PERFORMED = null;
 
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             throw new RuntimeException(e);
@@ -170,9 +169,9 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
             if (mouseY >= yLoc && mouseY < yLoc + getMaxY()) {
                 int slotIndex = (mouseY - yLoc) / 18;
                 BaublesContainer container = ((BaublesContainer) baublesHandler);
-                ItemStack stack = container.getStackInSlot(slotIndex);
+                ItemStack stack = container.getStackInSlot(container.getSlotByOffset(slotIndex));
                 if (!stack.isEmpty()) return;
-                SlotDefinition definition = container.getSlot(slotIndex);
+                IBaubleType type = container.getSlotType(container.getSlotByOffset(slotIndex));
                 FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 GlStateManager.enableBlend();
@@ -180,7 +179,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
                 GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(0, 0, 200);
-                String str = I18n.format(definition.getTranslationKey(slotIndex));
+                String str = I18n.format(type.getTranslationKey());
                 GuiUtils.drawHoveringText(Collections.singletonList(str), mouseX - this.guiLeft, mouseY - this.guiTop, width, height, 300, renderer);
                 GlStateManager.popMatrix();
             }
@@ -203,9 +202,10 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         if (ModCompatibility.MT$shouldScroll(this.getSlotUnderMouse())) {
             int dWheel = Mouse.getEventDWheel();
             if (dWheel != 0) {
+                BaublesContainer container = (BaublesContainer) baublesHandler;
                 int value = -(dWheel / 120);
                 PacketHandler.INSTANCE.sendToServer(new PacketChangeOffset(value));
-                ((BaublesContainer) baublesHandler).incrOffset(value);
+                container.setOffset(container.getSlotByOffset(value));
             }
         }
     }
@@ -214,36 +214,27 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(background);
-
         int k = this.guiLeft;
         int l = this.guiTop;
-
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
-
         int maxSlots = this.getMaxBaubleSlots();
-
         if (maxSlots > 0) {
             if (maxSlots == 1) {
                 this.drawTexturedModalRect(k - 28, l, 176, 34, 28, 28);
-            }
-            else {
+            } else {
                 for (int i = 0; i < maxSlots; i++) {
                     int textureY = 39;
                     int height = 20;
                     int y = l + (i * 18);
-
                     if (i == 0) {
                         textureY = 34;
                         height += 4;
-                    }
-                    else y += 5;
+                    } else y += 5;
                     if (i == maxSlots - 1) height += 4;
-
                     this.drawTexturedModalRect(k - 28, y, 176, textureY, 28, height);
                 }
             }
         }
-
         GuiInventory.drawEntityOnScreen(k + 51, l + 75, 30, (float) (k + 51) - this.oldMouseX, (float) (l + 75 - 50) - this.oldMouseY, this.mc.player);
     }
 
