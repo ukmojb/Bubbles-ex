@@ -3,6 +3,7 @@ package baubles.api;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.inv.BaublesInventoryWrapper;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -22,10 +23,13 @@ public class BaublesApi {
      */
     @Nonnull
     public static IBaublesItemHandler getBaublesHandler(EntityPlayer player) {
-        return Objects.requireNonNull(player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null));
+        return Objects.requireNonNull(getBaublesHandler((EntityLivingBase) player));
     }
 
-    // TODO Remove it once sure.
+    @Nullable
+    public static IBaublesItemHandler getBaublesHandler(EntityLivingBase living) {
+        return living.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+    }
 
     /**
      * Retrieves the baubles capability handler wrapped as a IInventory for the supplied player

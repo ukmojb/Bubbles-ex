@@ -70,6 +70,8 @@ dependencies {
     compileOnly "curse.maven:cofh-core-69162:2920433"
     compileOnly "curse.maven:wb-684624:4203074"
 
+    if (project.runtime_tab.toBoolean()) implementation "curse.maven:tab-279900:5717039"
+
     if (mixins) {
         annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
         annotationProcessor 'com.google.guava:guava:24.1.1-jre'

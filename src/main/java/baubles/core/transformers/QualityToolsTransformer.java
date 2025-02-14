@@ -10,7 +10,6 @@ import org.objectweb.asm.tree.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-// TODO Remove workarounds and make Quality Tools actually work with Bubbles.
 /**
  * Quality Tools checks if item is IBauble instead of checking capabilities.
  * Change it to check capabilities instead. Fixes issues with Wings and EbWizardry.
@@ -66,7 +65,6 @@ public class QualityToolsTransformer extends BaseTransformer {
             m.visitInsn(ICONST_1);
             m.visitInsn(IRETURN);
 
-            // TODO Custom types.
             m.visitLabel(l_con_captrinket_check);
             m.visitFrame(F_APPEND, 2, new Object[]{"baubles/api/IBauble", "baubles/api/IBaubleType"}, 0, null);
             m.visitVarInsn(ALOAD, 2);
@@ -122,6 +120,7 @@ public class QualityToolsTransformer extends BaseTransformer {
             m.visitMethodInsn(INVOKESTATIC, "baubles/core/transformers/QualityToolsTransformer", "$getBaublesNameForSlot", "(Lbaubles/api/cap/IBaublesItemHandler;I)Ljava/util/ArrayList;", false);
             m.visitInsn(ARETURN);
         }
+        writeClass(cls);
         return write(cls);
     }
 

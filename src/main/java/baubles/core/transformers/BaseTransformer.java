@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
-public class BaseTransformer implements Opcodes {
+public abstract class BaseTransformer implements Opcodes {
 
     protected static String getName(String mcpName, String srgName) {
         return FMLLaunchHandler.isDeobfuscatedEnvironment() ? mcpName : srgName;

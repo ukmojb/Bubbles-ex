@@ -24,7 +24,7 @@ public class GuiSlotButton extends GuiButton {
         super(id, x, y, widthIn, heightIn, "");
         this.isDown = isDown;
         this.parent = parent;
-        this.baublesHandler = (BaublesContainer) ((ContainerPlayerExpanded) parent.inventorySlots).baubles;
+        this.baublesHandler = ((ContainerPlayerExpanded) parent.inventorySlots).baubles;
     }
 
     @Override
