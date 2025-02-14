@@ -38,7 +38,7 @@ public class BaublesContainer implements PlayerBaubleHandler, INBTSerializable<N
     /**
      * Entity which has the baubles inventory
      **/
-    private final EntityLivingBase entity;
+    private final EntityLivingBase player;
 
     /**
      * Items to drop when slots get updated
@@ -53,16 +53,16 @@ public class BaublesContainer implements PlayerBaubleHandler, INBTSerializable<N
         this(null);
     }
 
-    public BaublesContainer(EntityLivingBase entity) {
+    public BaublesContainer(EntityLivingBase player) {
         this.slots = getDefaultSlots();
         this.stacks = new ItemStack[slots.length];
         this.changed = new boolean[slots.length];
-        this.entity = entity;
+        this.player = player;
     }
 
     @Override
     public EntityLivingBase getEntity() {
-        return this.entity;
+        return this.player;
     }
 
     @Override
@@ -135,14 +135,14 @@ public class BaublesContainer implements PlayerBaubleHandler, INBTSerializable<N
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-        if (stack.isEmpty() || this.isItemValidForSlot(slot, stack, this.entity)) {
+        if (stack.isEmpty() || this.isItemValidForSlot(slot, stack, this.player)) {
             setStack(slot, stack);
             setChanged(slot, true);
         }
     }
 
     public void setStackInSlot_Workaround(int slot, @Nonnull ItemStack stack) {
-        if (stack.isEmpty() || this.isItemValidForSlot_Workaround(slot, stack, this.entity)) {
+        if (stack.isEmpty() || this.isItemValidForSlot_Workaround(slot, stack, this.player)) {
             this.stacks[slot] = stack;
             this.setChanged(slot, true);
         }
@@ -173,7 +173,7 @@ public class BaublesContainer implements PlayerBaubleHandler, INBTSerializable<N
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (!this.isItemValidForSlot(slot, stack, this.entity)) return stack;
+        if (!this.isItemValidForSlot(slot, stack, this.player)) return stack;
         if (stack.isEmpty()) return ItemStack.EMPTY;
 
         slot = validateSlotIndex(slot);
