@@ -63,6 +63,7 @@ dependencies {
         runtimeOnly "curse.maven:autoreglib-250363:2746011"
         implementation rfg.deobf(botania)
     }
+    else compileOnly rfg.deobf(botania)
 
     if (project.runtime_me.toBoolean()) implementation (rfg.deobf(minieffects)) { transitive = false }
     else compileOnly(minieffects) { transitive = false }
