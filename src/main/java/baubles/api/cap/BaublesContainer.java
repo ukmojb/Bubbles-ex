@@ -71,7 +71,6 @@ public class BaublesContainer implements PlayerBaubleHandler, INBTSerializable<N
         return this.slotTypes[slotIndex];
     }
 
-    // TODO Find a way to use without casting.
     public int getOffset() {
         return offset;
     }
@@ -84,10 +83,10 @@ public class BaublesContainer implements PlayerBaubleHandler, INBTSerializable<N
 
     @Override
     public void setOffset(int offset) {
+        if (this.getSlots() < 9) return;
         this.offset = offset;
     }
 
-    // TODO Find a way to use without casting.
     @Override
     public void resetOffset() {
         this.offset = 0;
