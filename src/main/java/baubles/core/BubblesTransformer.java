@@ -5,6 +5,9 @@ import net.minecraft.launchwrapper.IClassTransformer;
 
 @SuppressWarnings("unused")
 public class BubblesTransformer implements IClassTransformer {
+
+    private boolean isRLArtifact = false;
+
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         switch (transformedName) {
@@ -33,6 +36,16 @@ public class BubblesTransformer implements IClassTransformer {
             // Trinkets And Baubles - Fix a crash
             case "xzeroair.trinkets.util.compat.baubles.BaublesHelper": return TrinketsAndBaublesTransformer.transformBaublesHelper(basicClass);
             case "xzeroair.trinkets.client.gui.TrinketGuiButton": return TrinketsAndBaublesTransformer.transformTrinketGuiButton(basicClass);
+
+            // RLArtifacts - RLCraft moment
+            case "artifacts.Artifacts": this.isRLArtifact = RLArtifactsTransformer.checkArtifacts(basicClass); return basicClass;
+            case "artifacts.client.model.layer.LayerAmulet": return RLArtifactsTransformer.transformLayerAmulet(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerBelt": return RLArtifactsTransformer.transformLayerBelt(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerCloak": return RLArtifactsTransformer.transformLayerCloak(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerDrinkingHat": return RLArtifactsTransformer.transformLayerDrinkingHat(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerGloves": return RLArtifactsTransformer.transformLayerGloves(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerNightVisionGoggles": return RLArtifactsTransformer.transformLayerNightVisionGoggles(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerSnorkel": return RLArtifactsTransformer.transformLayerSnorkel(basicClass, this.isRLArtifact);
 
             default: return basicClass;
         }

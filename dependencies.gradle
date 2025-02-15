@@ -65,6 +65,8 @@ dependencies {
     }
     else compileOnly rfg.deobf(botania)
 
+    if (project.runtime_rla.toBoolean()) implementation "curse.maven:rl-artifacts-819886:4475428"
+
     if (project.runtime_me.toBoolean()) implementation (rfg.deobf(minieffects)) { transitive = false }
     else compileOnly(minieffects) { transitive = false }
 

@@ -57,14 +57,10 @@ public enum BaubleType implements IBaubleType {
         if (enchantment.type == null) return false;
         if (IBaubleType.super.canApplyEnchantment(enchantment, stack)) return true;
         switch (enchantment.type) {
-            case ARMOR_HEAD:
-                if (this == HEAD) return true;
-            case ARMOR_CHEST:
-                if (this == AMULET || this == BODY) return true;
-            case ARMOR_LEGS:
-                if (this == BELT) return true;
-            case BREAKABLE:
-                return stack.isItemStackDamageable();
+            case ARMOR_HEAD: if (this == HEAD) return true;
+            case ARMOR_CHEST: if (this == AMULET || this == BODY) return true;
+            case ARMOR_LEGS: if (this == BELT) return true;
+            case BREAKABLE: return stack.isItemStackDamageable();
         }
         return false;
     }
@@ -73,26 +69,19 @@ public enum BaubleType implements IBaubleType {
     @Deprecated
     public boolean hasSlot(int slot) {
         switch (slot) {
-            default:
-                return false;
-            case 0:
-                return this == AMULET || this == TRINKET;
+            case 0: return this == AMULET || this == TRINKET;
             case 1:
-            case 2:
-                return this == RING || this == TRINKET;
-            case 3:
-                return this == BELT || this == TRINKET;
-            case 4:
-                return this == HEAD || this == TRINKET;
-            case 5:
-                return this == BODY || this == TRINKET;
-            case 6:
-                return this == CHARM || this == TRINKET;
+            case 2: return this == RING || this == TRINKET;
+            case 3: return this == BELT || this == TRINKET;
+            case 4: return this == HEAD || this == TRINKET;
+            case 5: return this == BODY || this == TRINKET;
+            case 6: return this == CHARM || this == TRINKET;
+            default: return false;
         }
     }
 
     @Deprecated
     public int[] getValidSlots() {
-        return new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8};
+        return new int[] { -1, -1 };
     }
 }
