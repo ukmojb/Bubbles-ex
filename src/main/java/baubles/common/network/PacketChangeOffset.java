@@ -1,18 +1,13 @@
 package baubles.common.network;
 
-import baubles.api.BaublesApi;
 import baubles.api.cap.BaublesContainer;
 import baubles.common.container.ContainerPlayerExpanded;
-import baubles.common.event.EventHandlerEntity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Collections;
 
 public class PacketChangeOffset implements IMessage {
 

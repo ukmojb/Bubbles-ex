@@ -2,7 +2,6 @@ package baubles.common.init;
 
 import baubles.api.BaubleType;
 import baubles.api.IBaubleType;
-import baubles.api.inv.SlotDefinitionType;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.eventhandler.Event;

@@ -33,4 +33,5 @@ public class BaubleTypeImpl implements IBaubleType {
     public String getTranslationKey() {
         return translationKey;
     }
+
 }

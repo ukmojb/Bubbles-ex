@@ -7,8 +7,8 @@ import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.objectweb.asm.tree.*;
 
 import java.util.List;

@@ -1,7 +1,5 @@
 package baubles.core.transformers;
 
-import baubles.api.BaublesApi;
-import net.minecraft.item.ItemStack;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 

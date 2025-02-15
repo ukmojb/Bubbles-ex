@@ -1,18 +1,13 @@
 package baubles.common.network;
 
 import baubles.api.BaublesApi;
-import baubles.api.cap.BaublesContainer;
 import baubles.api.inv.SlotDefinition;
 import baubles.common.Baubles;
-import baubles.common.container.ContainerPlayerExpanded;
 import baubles.common.init.SlotDefinitions;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;

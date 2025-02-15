@@ -1,6 +1,5 @@
 package baubles.core.transformers;
 
-import baubles.api.BaubleType;
 import baubles.api.IBaubleType;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.inv.SlotDefinition;
@@ -130,7 +129,7 @@ public class QualityToolsTransformer extends BaseTransformer {
     @SuppressWarnings("unused")
     public static ArrayList<String> $getBaublesNameForSlot(IBaublesItemHandler handler, int slot) {
         ArrayList<String> list = new ArrayList<>();
-        SlotDefinition definition = handler.getSlot(slot);
+        SlotDefinition definition = handler.getRealSlot(slot);
         if (definition instanceof SlotDefinitionType) {
             for (Map.Entry<ResourceLocation, IBaubleType> type : BaubleTypes.getRegistryMap().entrySet()) {
                 if (((SlotDefinitionType) definition).canPutType(type.getValue())) {

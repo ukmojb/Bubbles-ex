@@ -1,6 +1,5 @@
 package baubles.common.event;
 
-import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
@@ -22,11 +21,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -83,21 +80,22 @@ public class EventHandlerEntity {
 
     @SubscribeEvent
     public void text(PlayerInteractEvent.LeftClickBlock event) {
-        Entity entity = event.getEntity();
-        if (entity instanceof EntityPlayer ) {
-            EntityPlayer player = (EntityPlayer) entity;
-//            BaubleType.valueOf()
-            for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
-                if (BaublesApi.getBaublesHandler(player).getRealSlot(i) != null) {
-                    if (!player.isSneaking()) {
-                        System.out.println(BaublesApi.getBaublesHandler(player).getRealSlot(i).getRegistryName() + "--" + i);
-                    } else {
-                        System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(i).getDisplayName() + "--" + i);
-                    }
-                }
-            }
-//            System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(7).getDisplayName());
-        }
+//        Entity entity = event.getEntity();
+//        if (entity instanceof EntityPlayer ) {
+//            EntityPlayer player = (EntityPlayer) entity;
+////            BaubleType.valueOf()
+//            for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
+//                if (BaublesApi.getBaublesHandler(player).getRealSlot(i) != null) {
+////                    BaubleType.valueOf()
+//                    if (!player.isSneaking()) {
+//                        System.out.println(BaublesApi.getBaublesHandler(player).getRealSlot(i).getRegistryName() + "--" + i);
+//                    } else {
+//                        System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(i).getDisplayName() + "--" + i);
+//                    }
+//                }
+//            }
+////            System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(7).getDisplayName());
+//        }
     }
 
     @SubscribeEvent

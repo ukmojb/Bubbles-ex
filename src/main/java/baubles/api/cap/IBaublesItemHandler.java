@@ -1,14 +1,12 @@
 package baubles.api.cap;
 
+import baubles.api.IBauble;
 import baubles.api.inv.SlotDefinition;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import baubles.api.IBauble;
-
-import javax.annotation.Nonnull;
 
 /**
  * An item handler specific for baubles

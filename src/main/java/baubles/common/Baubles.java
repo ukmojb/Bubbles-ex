@@ -19,7 +19,9 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.*;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -42,12 +44,12 @@ import java.io.File;
 import java.util.Objects;
 
 
-@Mod(modid = Baubles.MODID, name = "BubblesEX", version = Baubles.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory", dependencies = "after:mousetweaks@[3.0,)")
+@Mod(modid = Baubles.MODID, name = "BubblesEX", version = Baubles.MOD_VERSION, guiFactory = "baubles.client.gui.BaublesGuiFactory", dependencies = "after:mousetweaks@[3.0,);after:minieffects@[2.3.2,)")
 @SuppressWarnings("unused") // mods instance class
 public class Baubles {
 
     public static final String MODID = "baubles";
-    public static final String MOD_VERSION = "1.5.3";
+    public static final String MOD_VERSION = "1.5.5";
     public static final Logger log = LogManager.getLogger(MODID.toUpperCase());
     public static final int GUI = 0;
     @SidedProxy(clientSide = "baubles.client.ClientProxy", serverSide = "baubles.common.CommonProxy")

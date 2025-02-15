@@ -29,6 +29,7 @@ public class Config {
     public static boolean renderBaubles = true;
     public static boolean expandedMode = false;
     public static int slotMaxNum = 32;
+    public static boolean rightClickEquipped = false;
 
     public static void initialize(File configFile) {
         initConfig(configFile);
@@ -53,6 +54,7 @@ public class Config {
 
     public static void loadConfigs() {
         slotMaxNum = config.getInt("slotMaxNum", Configuration.CATEGORY_GENERAL, slotMaxNum, 0, 99999, "Used to set the maximum number of slots");
+        rightClickEquipped = config.getBoolean("rightClickEquipped", Configuration.CATEGORY_GENERAL, rightClickEquipped, "If false, the player cannot directly wear the ornament by right-clicking it");
         expandedMode = config.getBoolean("baubleExpanded.enabled", Configuration.CATEGORY_GENERAL, expandedMode, "Set this to true to have more slots than normal.");
         renderBaubles = config.getBoolean("baubleRender.enabled", Configuration.CATEGORY_CLIENT, renderBaubles, "Set this to false to disable rendering of baubles in the player.");
         if (config.hasChanged()) config.save();

@@ -12,6 +12,7 @@ import lain.mods.cos.client.GuiCosArmorInventory;
 import mod.acgaming.universaltweaks.config.UTConfigTweaks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.InventoryEffectRenderer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
@@ -21,9 +22,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import org.lwjgl.input.Mouse;
+import snownee.minieffects.api.Vec2i;
 import snownee.minieffects.handlers.InjectedMiniEffects;
 import snownee.minieffects.handlers.MiniEffectsOffsets;
-import snownee.minieffects.api.Vec2i;
 import yalter.mousetweaks.MTConfig;
 
 import java.lang.reflect.Field;
@@ -84,11 +85,12 @@ public class ModCompatibility {
     }
 
     // Mini Effects
-    public static boolean ME$shouldMoveLeft(InventoryEffectRenderer gui) {
+    public static boolean ME$shouldMoveLeft(GuiContainer gui) {
         if (!Loader.isModLoaded(ME)) return true;
         if (!ME$checkMiniEffectIsLegacy()) return true;
         if (f_miniEffects == null) {
             try {
+                System.out.println("sdfsefsefser");
                 f_miniEffects = InventoryEffectRenderer.class.getDeclaredField("mini$effects");
                 f_miniEffects.setAccessible(true);
             }
@@ -97,7 +99,7 @@ public class ModCompatibility {
             }
         }
         try {
-            InjectedMiniEffects miniEffects = (InjectedMiniEffects) f_miniEffects.get(gui);
+            InjectedMiniEffects miniEffects = (InjectedMiniEffects) f_miniEffects.get((InventoryEffectRenderer) gui);
             return miniEffects.shouldExpand(Minecraft.getMinecraft(), Mouse.getX(), Mouse.getY());
         }
         catch (IllegalAccessException e) {

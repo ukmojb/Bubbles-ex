@@ -6,10 +6,11 @@ import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.inv.SlotDefinition;
 import baubles.client.ClientProxy;
 import baubles.common.Baubles;
-import baubles.common.integration.ModCompatibility;
 import baubles.common.container.ContainerPlayerExpanded;
+import baubles.common.integration.ModCompatibility;
 import baubles.common.network.PacketChangeOffset;
 import baubles.common.network.PacketHandler;
+import com.google.common.collect.Ordering;
 import lain.mods.cos.CosmeticArmorReworked;
 import lain.mods.cos.ModConfigs;
 import lain.mods.cos.client.GuiCosArmorButton;
@@ -42,6 +43,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Collections;
 
 import static baubles.common.integration.ModCompatibility.CA;
@@ -293,13 +295,71 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         }
     }
 
+    // I wonder why it doesn't work
     @Override
-    public void drawActivePotionEffects() {
+    protected void drawActivePotionEffects() {
         boolean moveLeft = ME$shouldMoveLeft(this);
-        int i = this.guiLeft;
-        if (moveLeft) guiLeft -= 27;
-        super.drawActivePotionEffects();
-        guiLeft = i;
+//        System.out.println(moveLeft);
+        int b = this.guiLeft;
+        if (moveLeft) this.guiLeft -= 27;
+
+        //InventoryEffectRenderer
+
+        int i = this.guiLeft - 124;
+        int j = this.guiTop;
+        int k = 166;
+        Collection<PotionEffect> collection = this.mc.player.getActivePotionEffects();
+
+        if (!collection.isEmpty())
+        {
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.disableLighting();
+            int l = 33;
+
+            if (collection.size() > 5)
+            {
+                l = 132 / (collection.size() - 1);
+            }
+
+            for (PotionEffect potioneffect : Ordering.natural().sortedCopy(collection))
+            {
+                Potion potion = potioneffect.getPotion();
+                if(!potion.shouldRender(potioneffect)) continue;
+                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                this.mc.getTextureManager().bindTexture(INVENTORY_BACKGROUND);
+                this.drawTexturedModalRect(i, j, 0, 166, 140, 32);
+
+                if (potion.hasStatusIcon())
+                {
+                    int i1 = potion.getStatusIconIndex();
+                    this.drawTexturedModalRect(i + 6, j + 7, 0 + i1 % 8 * 18, 198 + i1 / 8 * 18, 18, 18);
+                }
+
+                potion.renderInventoryEffect(potioneffect, this, i, j, this.zLevel);
+                if (!potion.shouldRenderInvText(potioneffect)) { j += l; continue; }
+                String s1 = I18n.format(potion.getName());
+
+                if (potioneffect.getAmplifier() == 1)
+                {
+                    s1 = s1 + " " + I18n.format("enchantment.level.2");
+                }
+                else if (potioneffect.getAmplifier() == 2)
+                {
+                    s1 = s1 + " " + I18n.format("enchantment.level.3");
+                }
+                else if (potioneffect.getAmplifier() == 3)
+                {
+                    s1 = s1 + " " + I18n.format("enchantment.level.4");
+                }
+
+                this.fontRenderer.drawStringWithShadow(s1, (float)(i + 10 + 18), (float)(j + 6), 16777215);
+                String s = Potion.getPotionDurationString(potioneffect, 1.0F);
+                this.fontRenderer.drawStringWithShadow(s, (float)(i + 10 + 18), (float)(j + 6 + 10), 8355711);
+                j += l;
+            }
+        }
+
+        guiLeft = b;
     }
 
     public void displayNormalInventory() {
@@ -349,20 +409,16 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
                 slotNum += 1;
             }
         }
-//        return slotNum;
         return Math.min(slotNum, this.getActualMaxBaubleSlots());
-//        return this.baublesHandler.getSlots();
     }
     public int getVRealBaubleSlots() {
         int slotNum = 0;
-        for (int i = 0; i < baublesHandler.getSlots(); i++) {
-            if (baublesHandler.getSlot(i) != null) {
+        for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
+            if (BaublesApi.getBaublesHandler(player).getRealSlot(i) != null) {
                 slotNum += 1;
             }
         }
-//        return slotNum;
         return slotNum;
-//        return this.baublesHandler.getSlots();
     }
 
     public int getMaxBaubleSlots() {

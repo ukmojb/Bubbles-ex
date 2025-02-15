@@ -1,16 +1,18 @@
 package baubles.api;
 
+import baubles.api.cap.IBaublesItemHandler;
+import baubles.api.inv.SlotDefinition;
+import baubles.api.inv.SlotDefinitionType;
 import baubles.common.Baubles;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
 /**
  * Default bauble types
@@ -78,6 +80,9 @@ public enum BaubleType implements IBaubleType {
         }
     }
 
+    /*
+    * Please do not use this method!! If used, you will not be able to get the added bauble slot
+    */
     @Deprecated
     public int[] getValidSlots() {
         int[] array;
@@ -88,5 +93,45 @@ public enum BaubleType implements IBaubleType {
         else array = new int[1];
         array[0] = -1;
         return validSlots.toArray(array);
+    }
+
+
+    /*
+     * Please use this method!! This method allows you to get the added bauble slot
+     */
+    public int[] getValidSlots(EntityPlayer player) {
+        int[] array;
+        IBaublesItemHandler handler = BaublesApi.getBaublesHandler(player);
+        int num = 0;
+        for (int i = 0; i < handler.getSlots(); i++) {
+            SlotDefinition slotDefinition = handler.getRealSlot(i);
+            if (slotDefinition == null) continue;
+            SlotDefinitionType slotDefinitionType = (SlotDefinitionType) slotDefinition;
+            boolean pass = slotDefinitionType.canPutType(this);
+            if (pass) num++;
+        }
+
+        array = new int[num];
+        Arrays.fill(array, -1);
+
+        int num0 = 0;
+        for (int i = 0; i < handler.getSlots(); i++) {
+            SlotDefinition slotDefinition = handler.getRealSlot(i);
+            if (slotDefinition == null) continue;
+            SlotDefinitionType slotDefinitionType = (SlotDefinitionType) slotDefinition;
+            boolean pass = slotDefinitionType.canPutType(this);
+            if (pass) {
+                array[num0] = i;
+                num0 += 1;
+            }
+        }
+
+        return validSlots.toArray(array);
+    }
+
+
+
+    public static IBaubleType getType(String typeStr){
+        return BaubleType.valueOf(typeStr);
     }
 }

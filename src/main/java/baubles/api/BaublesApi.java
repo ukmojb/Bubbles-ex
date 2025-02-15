@@ -4,13 +4,8 @@ import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.inv.BaublesInventoryWrapper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import vazkii.botania.common.item.equipment.bauble.ItemSpeedUpBelt;
-import vazkii.botania.common.item.equipment.bauble.ItemSuperTravelBelt;
-
 
 import java.util.Objects;
 

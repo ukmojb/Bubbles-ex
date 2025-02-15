@@ -3,6 +3,7 @@ package baubles.api.cap;
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
+import baubles.common.Config;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -36,6 +37,9 @@ public class BaubleItem extends Item implements IBauble {
     @ParametersAreNonnullByDefault
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
+
+        if (!Config.rightClickEquipped) return super.onItemRightClick(worldIn, playerIn, handIn);
+
         boolean check = false;
         IBaublesItemHandler handler = BaublesApi.getBaublesHandler(playerIn);
         for (int i = 0; i < handler.getSlots(); i++) {

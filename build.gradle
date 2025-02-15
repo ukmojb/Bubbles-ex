@@ -12,7 +12,7 @@ plugins {
 
 version = project.mod_version
 group = project.maven_group
-archivesBaseName = project.archives_base_name
+archivesBaseName = project.mod_name
 
 // Set the toolchain version to decouple the Java we run Gradle with from the Java used to compile and run the mod
 java {
@@ -111,9 +111,10 @@ dependencies {
     var ca = "curse.maven:cosmeticarmor-237307:2937869"
     var wings = "curse.maven:wings-302584:2829351"
     var aa = "curse.maven:actuallyadditions-228404:3117927"
-    var qt = "curse.maven:quality-tools-264756:2732994"
+    var qualitytools = "curse.maven:quality-tools-264756:2732994"
     var botania = "curse.maven:botania-225643:3330934"
     var minieffects = "curse.maven:MiniEffectsLegacyExtendedLife-1081085:6143104"
+    var rlartifacts = "curse.maven:RLArtifacts-819886:4475428"
 
     // JEI Extra Bounds
     if (project.runtime_jei.toBoolean()) implementation(jei)
@@ -136,7 +137,8 @@ dependencies {
 
     // Wings
     if (project.runtime_wings.toBoolean()) {
-        implementation(wings)
+        runtimeOnly "curse.maven:llibrary-243298:2504999"
+        implementation rfg.deobf(wings)
     }
     else compileOnly(wings)
 
@@ -145,14 +147,20 @@ dependencies {
     else compileOnly rfg.deobf(aa)
 
     // Fixes
-    if (project.runtime_qt.toBoolean()) {
+    if (project.runtime_qualitytools.toBoolean()) {
         runtimeOnly "curse.maven:potion-core-242872:2905184"
-        implementation rfg.deobf(qt)
+        implementation rfg.deobf(qualitytools)
     }
 
+    // Botania
     if (project.runtime_botania.toBoolean()) {
         runtimeOnly "curse.maven:autoreglib-250363:2746011"
         implementation rfg.deobf(botania)
+    }
+
+    // RLArtifacts
+    if (project.runtime_rlartifacts.toBoolean()) {
+        implementation rfg.deobf(rlartifacts)
     }
 
     if (project.runtime_minieffects.toBoolean()) implementation (rfg.deobf(minieffects)) { transitive = false }

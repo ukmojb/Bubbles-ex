@@ -1,8 +1,8 @@
 package baubles.api.inv;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.inventory.Slot;
 import baubles.api.cap.IBaublesItemHandler;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.relauncher.Side;

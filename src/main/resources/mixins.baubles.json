@@ -2,10 +2,19 @@
   "package": "baubles.mixins",
   "refmap": "mixins.baubles.refmap.json",
   "mixins": [
-    "botania.MixinTravelBelt"
+    "botania.MixinItemBauble",
+    "botania.MixinTravelBelt",
+    "qualitytools.MixinBaublesHandler",
+    "rlartifacts.MixinLayerCloak",
+    "rlartifacts.MixinLayerDrinkingHat",
+    "rlartifacts.MixinLayerGloves",
+    "rlartifacts.MixinLayerNightVisionGoggles",
+    "rlartifacts.MixinLayerSnorkel",
+    "wings.MixinItemWings"
   ],
   "server": [
-
+  ],
+  "client": [
   ],
   "injectors": {
     "defaultRequire": 1
