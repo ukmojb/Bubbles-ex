@@ -33,9 +33,10 @@ public class BubblesTransformer implements IClassTransformer {
             // Wearable Backpacks - Fix a crash
             case "net.mcft.copy.backpacks.api.BackpackHelper": return WearableBackpacksTransformer.transformBackpackHelper(basicClass);
 
-            // Trinkets And Baubles - Fix a crash
+            // Trinkets And Baubles - Fix crashes
             case "xzeroair.trinkets.util.compat.baubles.BaublesHelper": return TrinketsAndBaublesTransformer.transformBaublesHelper(basicClass);
             case "xzeroair.trinkets.client.gui.TrinketGuiButton": return TrinketsAndBaublesTransformer.transformTrinketGuiButton(basicClass);
+            case "xzeroair.trinkets.container.TrinketInventoryContainer": return TrinketsAndBaublesTransformer.transformTrinketInventoryContainer(basicClass);
 
             // RLArtifacts - RLCraft moment
             case "artifacts.Artifacts": this.isRLArtifact = RLArtifactsTransformer.checkArtifacts(basicClass); return basicClass;

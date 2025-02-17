@@ -84,4 +84,26 @@ public class TrinketsAndBaublesTransformer extends BaseTransformer {
         }
         return write(cls);
     }
+
+    public static byte[] transformTrinketInventoryContainer(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals(getName("transferStackInSlot", "func_82846_b"))) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                boolean check = false;
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKEINTERFACE && ((MethodInsnNode) node).name.equals("isEventBlocked")) {
+                        if (check) {
+                            method.instructions.insert(node, new InsnNode(ICONST_0));
+                            method.instructions.remove(node.getPrevious());
+                            iterator.remove();
+                        }
+                        check = true;
+                    }
+                }
+            }
+        }
+        return write(cls);
+    }
 }
