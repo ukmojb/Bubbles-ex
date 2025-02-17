@@ -152,14 +152,13 @@ public class ContainerPlayerExpanded extends Container {
             else if (itemstack1.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null) && !(slot instanceof SlotBauble)) {
                 IBauble bauble = Objects.requireNonNull(itemstack1.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null));
                 if (playerIn.isCreative() || bauble.canEquip(itemstack1, playerIn)) {
-                    BaublesContainer container = (BaublesContainer) baubles;
+                    BaublesContainer container = baubles;
                     boolean check = true;
                     for (int i = 0; i < this.baubles.getSlots(); i++) {
                         if (container.isItemValidForSlot(i, itemstack1, playerIn)) {
-                            if (!mergeBauble(itemstack1, i)) {
-                                check = false;
-                            } else {
-                                bauble.onEquipped(itemstack1, playerIn);
+                            if (!mergeBauble(itemstack1, i)) check = false;
+                            else {
+                                bauble.onEquipped(baubles.getStackInSlot(i), playerIn);
                                 break;
                             }
                         }
@@ -229,8 +228,7 @@ public class ContainerPlayerExpanded extends Container {
                 container.setOffset(slotIndex);
                 container.setChanged(slotIndex, true);
             }
-
-            if (itemstack.isEmpty() && bauble.canPutOnSlot(container, slotIndex, stack)) {
+            else if (itemstack.isEmpty() && bauble.canPutOnSlot(container, slotIndex, stack)) {
                 if (stack.getCount() > container.getSlotLimit(slotIndex))
                     container.setStackInSlot(slotIndex, stack.splitStack(container.getSlotLimit(slotIndex)));
                 else container.setStackInSlot(slotIndex, stack.splitStack(stack.getCount()));
@@ -239,7 +237,6 @@ public class ContainerPlayerExpanded extends Container {
                 flag = true;
             }
         }
-
         return flag;
     }
 }
