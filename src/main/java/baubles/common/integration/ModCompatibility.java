@@ -8,6 +8,7 @@ import de.ellpeck.actuallyadditions.mod.items.ItemBattery;
 import de.ellpeck.actuallyadditions.mod.items.ItemMagnetRing;
 import de.ellpeck.actuallyadditions.mod.items.ItemPotionRing;
 import lain.mods.cos.client.GuiCosArmorInventory;
+import me.paulf.wings.server.item.ItemWings;
 import mod.acgaming.universaltweaks.config.UTConfigTweaks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -150,6 +151,9 @@ public class ModCompatibility {
             } else if (item instanceof ItemPotionRing && loc.getPath().endsWith("advanced")) {
                 return new InjectableBauble(item, BaubleType.RING, true, 0);
             }
+        }
+        if (loc.getNamespace().equals(WINGS)) {
+            if (item instanceof ItemWings) return new InjectableBauble(item, BaubleType.BODY, false, 1);
         }
         return null;
     }

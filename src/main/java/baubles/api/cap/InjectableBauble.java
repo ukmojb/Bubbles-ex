@@ -20,7 +20,7 @@ public class InjectableBauble implements IBauble {
     private final Item item;
     private final IBaubleType type;
 
-    private final boolean passive; // Don't apply effects as if it's hold in hand
+    private final boolean passive; // Apply effects as if it's hold in hand
     private final int armor; // 0-2   0 = Only inventory update | 1 = Only armor update | 2 = both
 
     public InjectableBauble(Item item, IBaubleType type, boolean passive, int armor) {
