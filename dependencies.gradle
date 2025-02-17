@@ -37,21 +37,21 @@ dependencies {
     // No Recipe Book
     if (project.runtime_ut.toBoolean()) {
         runtimeOnly("com.cleanroommc:configanytime:3.0")
-        implementation(ut) { transitive = false }
+        runtimeOnly(ut) { transitive = false }
     }
-    else compileOnly(ut) { transitive = false }
+    compileOnly(ut) { transitive = false }
 
     // Cosmetic Armors
-    if (project.runtime_ca.toBoolean()) implementation(ca)
-    else compileOnly(ca)
+    if (project.runtime_ca.toBoolean()) runtimeOnly(ca)
+    compileOnly(ca)
 
     // Wings
-    if (project.runtime_wings.toBoolean()) implementation(wings)
-    else compileOnly(wings)
+    if (project.runtime_wings.toBoolean()) runtimeOnly(wings)
+    compileOnly(wings)
 
     // Compatibility
-    if (project.runtime_aa.toBoolean()) implementation rfg.deobf(aa)
-    else compileOnly rfg.deobf(aa)
+    if (project.runtime_aa.toBoolean()) runtimeOnly rfg.deobf(aa)
+    compileOnly rfg.deobf(aa)
 
     // Fixes
     if (project.runtime_qt.toBoolean()) {
@@ -61,14 +61,14 @@ dependencies {
 
     if (project.runtime_botania.toBoolean()) {
         runtimeOnly "curse.maven:autoreglib-250363:2746011"
-        implementation rfg.deobf(botania)
+        runtimeOnly rfg.deobf(botania)
     }
-    else compileOnly rfg.deobf(botania)
+    compileOnly rfg.deobf(botania)
 
     if (project.runtime_rla.toBoolean()) implementation "curse.maven:rl-artifacts-819886:4475428"
 
-    if (project.runtime_me.toBoolean()) implementation (rfg.deobf(minieffects)) { transitive = false }
-    else compileOnly(minieffects) { transitive = false }
+    if (project.runtime_me.toBoolean()) runtimeOnly(minieffects) { transitive = false }
+    compileOnly(minieffects) { transitive = false }
 
     compileOnly "curse.maven:cofh-core-69162:2920433"
     compileOnly "curse.maven:wb-684624:4203074"
