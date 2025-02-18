@@ -28,6 +28,7 @@ public class BaublesApi {
 
     @Nullable
     public static IBaublesItemHandler getBaublesHandler(EntityLivingBase living) {
+        if (living == null) return null;
         return living.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
     }
 
