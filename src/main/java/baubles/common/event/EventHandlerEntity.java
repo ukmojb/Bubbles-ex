@@ -182,13 +182,14 @@ public class EventHandlerEntity {
                         baubles.setStackInSlot(i, ItemStack.EMPTY);
                         break;
                     case DEFAULT: {
-                        boolean soulboundCheck = hasAnySoulbound(stack) && !this.isFakePlayer(player);
                         boolean vanishingCheck = EnchantmentHelper.hasVanishingCurse(stack);
-                        if (!soulboundCheck) {
-                            if (vanishingCheck) baubles.setStackInSlot(i, ItemStack.EMPTY);
-                            else player.dropItem(stack, true, false);
+                        if (!this.isFakePlayer(player)) {
+                            if (EnchantmentHelper.getEnchantmentLevel(TOMBSTONE_SOULBOUND, stack) != 0) break;
+                            if (this.handleCofhSouldbound(stack)) break;
+                            if (!EnchantmentHelper.hasVanishingCurse(stack)) player.dropItem(stack, true, false);
+                            baubles.setStackInSlot(i, ItemStack.EMPTY);
+                            break;
                         }
-                        this.handleCofhSouldbound(stack);
                         break;
                     }
                 }
@@ -201,7 +202,7 @@ public class EventHandlerEntity {
         return EnchantmentHelper.getEnchantmentLevel(COFH_SOULBOUND, stack) > 0 || EnchantmentHelper.getEnchantmentLevel(TOMBSTONE_SOULBOUND, stack) > 0;
     }
 
-    private void handleCofhSouldbound(ItemStack stack) {
+    private boolean handleCofhSouldbound(ItemStack stack) {
         if (COFH_SOULBOUND != null) {
             int level = EnchantmentHelper.getEnchantmentLevel(COFH_SOULBOUND, stack);
             if (level > 1) {
@@ -212,8 +213,10 @@ public class EventHandlerEntity {
                     ItemHelper.removeEnchantment(stack, COFH_SOULBOUND);
                     ItemHelper.addEnchantment(stack, COFH_SOULBOUND, level - 1);
                 }
+                return true;
             }
         }
+        return false;
     }
 
     private boolean isFakePlayer(EntityPlayer player) {
