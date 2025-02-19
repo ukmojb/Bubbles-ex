@@ -39,14 +39,16 @@ public class BubblesTransformer implements IClassTransformer {
             case "xzeroair.trinkets.container.TrinketInventoryContainer": return TrinketsAndBaublesTransformer.transformTrinketInventoryContainer(basicClass);
 
             // RLArtifacts - RLCraft moment
-            case "artifacts.Artifacts": this.isRLArtifact = RLArtifactsTransformer.checkArtifacts(basicClass); return basicClass;
-            case "artifacts.client.model.layer.LayerAmulet": return RLArtifactsTransformer.transformLayerAmulet(basicClass, this.isRLArtifact);
-            case "artifacts.client.model.layer.LayerBelt": return RLArtifactsTransformer.transformLayerBelt(basicClass, this.isRLArtifact);
-            case "artifacts.client.model.layer.LayerCloak": return RLArtifactsTransformer.transformLayerCloak(basicClass, this.isRLArtifact);
-            case "artifacts.client.model.layer.LayerDrinkingHat": return RLArtifactsTransformer.transformLayerDrinkingHat(basicClass, this.isRLArtifact);
-            case "artifacts.client.model.layer.LayerGloves": return RLArtifactsTransformer.transformLayerGloves(basicClass, this.isRLArtifact);
-            case "artifacts.client.model.layer.LayerNightVisionGoggles": return RLArtifactsTransformer.transformLayerNightVisionGoggles(basicClass, this.isRLArtifact);
-            case "artifacts.client.model.layer.LayerSnorkel": return RLArtifactsTransformer.transformLayerSnorkel(basicClass, this.isRLArtifact);
+            case "artifacts.Artifacts": this.isRLArtifact = ArtifactsTransformer.checkArtifacts(basicClass); return basicClass;
+            case "artifacts.client.model.layer.LayerAmulet": return ArtifactsTransformer.transformLayerAmulet(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerBelt": return ArtifactsTransformer.transformLayerBelt(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerCloak": return ArtifactsTransformer.transformLayerCloak(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerDrinkingHat": return ArtifactsTransformer.transformLayerDrinkingHat(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerGloves": return ArtifactsTransformer.transformLayerGloves(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerNightVisionGoggles": return ArtifactsTransformer.transformLayerNightVisionGoggles(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerSnorkel": return ArtifactsTransformer.transformLayerSnorkel(basicClass, this.isRLArtifact);
+            case "artifacts.common.item.BaubleAmulet": return ArtifactsTransformer.transformBaubleAmulet(basicClass, this.isRLArtifact);
+            case "artifacts.common.item.BaubleBottledCloud": return ArtifactsTransformer.transformBaubleBottledCloud(basicClass); // Non-RL
 
             default: return basicClass;
         }

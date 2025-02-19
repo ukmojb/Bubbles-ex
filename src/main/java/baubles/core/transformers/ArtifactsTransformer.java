@@ -19,7 +19,7 @@ import java.util.ListIterator;
  * I'm giving to middle finger to developers of every single mod that has hardcoded the slots and also Azanor.
  * Fuck you Azanor. I hope no one makes you create another public API ever again.
  **/
-public class RLArtifactsTransformer extends BaseTransformer {
+public class ArtifactsTransformer extends BaseTransformer {
 
     public static boolean checkArtifacts(byte[] basicClass) {
         ClassNode cls = read(basicClass);
@@ -42,7 +42,7 @@ public class RLArtifactsTransformer extends BaseTransformer {
                         while (node.getOpcode() != INVOKEINTERFACE);
                         InsnList list = new InsnList();
                         list.add(new VarInsnNode(ALOAD, 1));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/RLArtifactsTransformer", "LayerAmulet$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;)I", false));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/ArtifactsTransformer", "LayerAmulet$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;)I", false));
                         method.instructions.insertBefore(node, list);
                         break;
                     }
@@ -69,7 +69,7 @@ public class RLArtifactsTransformer extends BaseTransformer {
                         while (node.getOpcode() != INVOKEINTERFACE);
                         InsnList list = new InsnList();
                         list.add(new VarInsnNode(ALOAD, 1));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/RLArtifactsTransformer", "LayerBelt$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;)I", false));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/ArtifactsTransformer", "LayerBelt$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;)I", false));
                         method.instructions.insertBefore(node, list);
                         break;
                     }
@@ -96,7 +96,7 @@ public class RLArtifactsTransformer extends BaseTransformer {
                         while (node.getOpcode() != INVOKEINTERFACE);
                         InsnList list = new InsnList();
                         list.add(new VarInsnNode(ALOAD, 1));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/RLArtifactsTransformer", "LayerCloak$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;)I", false));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/ArtifactsTransformer", "LayerCloak$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;)I", false));
                         method.instructions.insertBefore(node, list);
                         break;
                     }
@@ -123,7 +123,7 @@ public class RLArtifactsTransformer extends BaseTransformer {
                         while (node.getOpcode() != INVOKEINTERFACE);
                         InsnList list = new InsnList();
                         list.add(new VarInsnNode(ALOAD, 1));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/RLArtifactsTransformer", "LayerDrinkingHat$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;)I", false));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/ArtifactsTransformer", "LayerDrinkingHat$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;)I", false));
                         method.instructions.insertBefore(node, list);
                         break;
                     }
@@ -151,7 +151,7 @@ public class RLArtifactsTransformer extends BaseTransformer {
                         InsnList list = new InsnList();
                         list.add(new VarInsnNode(ALOAD, 1));
                         list.add(new VarInsnNode(ALOAD, 2));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/RLArtifactsTransformer", "LayerGloves$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/EnumHandSide;)I", false));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/ArtifactsTransformer", "LayerGloves$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/EnumHandSide;)I", false));
                         method.instructions.insertBefore(node, list);
                         break;
                     }
@@ -178,7 +178,7 @@ public class RLArtifactsTransformer extends BaseTransformer {
                         while (node.getOpcode() != INVOKEINTERFACE);
                         InsnList list = new InsnList();
                         list.add(new VarInsnNode(ALOAD, 1));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/RLArtifactsTransformer", "LayerNightVisionGoggles$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;)I", false));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/ArtifactsTransformer", "LayerNightVisionGoggles$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;)I", false));
                         method.instructions.insertBefore(node, list);
                         break;
                     }
@@ -204,7 +204,68 @@ public class RLArtifactsTransformer extends BaseTransformer {
                         while (node.getOpcode() != INVOKEINTERFACE);
                         InsnList list = new InsnList();
                         list.add(new VarInsnNode(ALOAD, 1));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/RLArtifactsTransformer", "LayerSnorkel$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;)I", false));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/core/transformers/ArtifactsTransformer", "LayerSnorkel$getRenderStack", "(Lbaubles/api/BaubleType;Lnet/minecraft/entity/player/EntityPlayer;)I", false));
+                        method.instructions.insertBefore(node, list);
+                        break;
+                    }
+                }
+            }
+        }
+        return write(cls);
+    }
+
+    /**
+     * MODDERS LOOK AT API PACKAGE {@link baubles.api.BaublesApi#isBaubleEquipped(EntityPlayer, Item)} CHALLENGE
+     * FUCKING IMPOSSIBLE
+     **/
+    public static byte[] transformBaubleAmulet(byte[] basicClass, boolean isRLArtifact) {
+        if (!isRLArtifact) return basicClass;
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("onLivingDeath")) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == GETSTATIC && ((FieldInsnNode) node).name.equals("AMULET")) {
+                        for (int i = 0; i < 5; i++) {
+                            iterator.remove();
+                            node = iterator.next();
+                        }
+                        InsnList list = new InsnList();
+                        list.add(new InsnNode(ACONST_NULL));
+                        list.add(new VarInsnNode(ASTORE, 4));
+                        list.add(new VarInsnNode(ALOAD, 1));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/api/BaublesApi", "getBaublesHandler", "(Lnet/minecraft/entity/player/EntityPlayer;)Lbaubles/api/cap/IBaublesItemHandler;", false));
+                        list.add(new MethodInsnNode(INVOKEINTERFACE, "baubles/api/cap/IBaublesItemHandler", "getSlots", "()I", true));
+                        method.instructions.insertBefore(node, list);
+                        break;
+                    }
+                }
+            }
+        }
+        return write(cls);
+    }
+
+    /**
+     * MODDERS LOOK AT API PACKAGE {@link baubles.api.BaublesApi#isBaubleEquipped(EntityPlayer, Item)} CHALLENGE
+     * FUCKING IMPOSSIBLE
+     **/
+    public static byte[] transformBaubleBottledCloud(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("onClientTick")) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == GETSTATIC && ((FieldInsnNode) node).name.equals("BELT")) {
+                        for (int i = 0; i < 4; i++) {
+                            iterator.remove();
+                            node = iterator.next();
+                        }
+                        InsnList list = new InsnList();
+                        list.add(new VarInsnNode(ALOAD, 1));
+                        list.add(new FieldInsnNode(GETSTATIC, "artifacts/common/init/ModItems", "BOTTLED_CLOUD", "Lartifacts/common/item/BaubleBase;"));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/api/BaublesApi", "isBaubleEquipped", "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/Item;)I", false));
                         method.instructions.insertBefore(node, list);
                         break;
                     }
