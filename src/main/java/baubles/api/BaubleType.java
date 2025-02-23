@@ -84,4 +84,8 @@ public enum BaubleType implements IBaubleType {
     public int[] getValidSlots() {
         return new int[] { -1, -1 };
     }
+
+    public static IBaubleType getType(String typeStr){
+        return BaubleType.valueOf(typeStr);
+    }
 }
