@@ -12,7 +12,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Default bauble types
@@ -99,34 +101,35 @@ public enum BaubleType implements IBaubleType {
     /*
      * Please use this method!! This method allows you to get the added bauble slot
      */
-    public int[] getValidSlots(EntityPlayer player) {
-        int[] array;
+    public List<Integer> getValidSlots(EntityPlayer player) {
+        List<Integer> array = new ArrayList<Integer>();
         IBaublesItemHandler handler = BaublesApi.getBaublesHandler(player);
-        int num = 0;
-        for (int i = 0; i < handler.getSlots(); i++) {
-            SlotDefinition slotDefinition = handler.getRealSlot(i);
-            if (slotDefinition == null) continue;
-            SlotDefinitionType slotDefinitionType = (SlotDefinitionType) slotDefinition;
-            boolean pass = slotDefinitionType.canPutType(this);
-            if (pass) num++;
-        }
-
-        array = new int[num];
-        Arrays.fill(array, -1);
-
-        int num0 = 0;
         for (int i = 0; i < handler.getSlots(); i++) {
             SlotDefinition slotDefinition = handler.getRealSlot(i);
             if (slotDefinition == null) continue;
             SlotDefinitionType slotDefinitionType = (SlotDefinitionType) slotDefinition;
             boolean pass = slotDefinitionType.canPutType(this);
             if (pass) {
-                array[num0] = i;
-                num0 += 1;
+                array.add(i);
             }
         }
 
-        return validSlots.toArray(array);
+//        array = new int[num];
+//        Arrays.fill(array, -1);
+//
+//        int num0 = 0;
+//        for (int i = 0; i < handler.getSlots(); i++) {
+//            SlotDefinition slotDefinition = handler.getRealSlot(i);
+//            if (slotDefinition == null) continue;
+//            SlotDefinitionType slotDefinitionType = (SlotDefinitionType) slotDefinition;
+//            boolean pass = slotDefinitionType.canPutType(this);
+//            if (pass) {
+//                array[num0] = i;
+//                num0 += 1;
+//            }
+//        }
+
+        return array;
     }
 
 

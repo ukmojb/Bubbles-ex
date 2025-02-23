@@ -20,12 +20,14 @@ import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /*
@@ -44,28 +46,36 @@ abstract class MixinLayerBELT {
 
     @Shadow @Final private static ModelBase BUBBLE_MODEL;
 
+    @Shadow protected abstract ModelBase setTexturesGetModel(EntityPlayer player);
+
     @Inject(method = "setTexturesGetModel", at = @At(value = "HEAD", target = "Lartifacts/client/model/layer/LayerBelt;setTexturesGetModel(Lnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/client/model/ModelBase;"), cancellable = true)
     private void setTexturesGetModel(EntityPlayer player, CallbackInfoReturnable<ModelBase> cir) {
         IBaublesItemHandler handler = BaublesApi.getBaublesHandler(player);
-        for (int i = 0; i < BaubleType.BELT.getValidSlots(player).length; i++) {
-            ItemStack stack = handler.getStackInSlot(BaubleType.BELT.getValidSlots()[i]);
+        ModelBase modelBase = null;
+        for (int i = 0; i < BaubleType.BELT.getValidSlots(player).size(); i++) {
+            int num = BaubleType.BELT.getValidSlots(player).get((int) i);
+            ItemStack stack = handler.getStacks()[num];
+            if (stack.isEmpty()) continue;
             if (RenderHelper.shouldItemStackRender(player, stack)) {
                 ResourceLocation textures = getTextures(stack);
+//                if (player.world.getTotalWorldTime() % 60 == 0) System.out.println(stack.getDisplayName() + "--" + i + "--" + (stack.getItem() == ModItems.BOTTLED_CLOUD));
                 if (textures != null) {
                     Minecraft.getMinecraft().getTextureManager().bindTexture(textures);
                     if (stack.getItem() == ModItems.ANTIDOTE_VESSEL) {
-                        cir.setReturnValue(ANTIDOTE_MODEL);
+                        modelBase = ANTIDOTE_MODEL;
                     } else if (stack.getItem() == ModItems.BUBBLE_WRAP) {
-                        cir.setReturnValue(BUBBLE_MODEL);
-                    } else {
-                        cir.setReturnValue(stack.getItem() == ModItems.OBSIDIAN_SKULL ? SKULL_MODEL : BOTTLE_MODEL);
+                        modelBase = BUBBLE_MODEL;
+                    } else if (stack.getItem() == ModItems.OBSIDIAN_SKULL) {
+                        modelBase = SKULL_MODEL;
+                    } else if (stack.getItem() == ModItems.BOTTLED_CLOUD || stack.getItem() == ModItems.BOTTLED_FART) {
+                        modelBase = BOTTLE_MODEL;
                     }
                 }
             }
         }
-
-        cir.setReturnValue(null);
+        cir.setReturnValue(modelBase);
     }
+
 }
 
 @Mixin(value = LayerAmulet.class, remap = false)
@@ -90,22 +100,25 @@ abstract class MixinLayerAmulet {
     @Inject(method = "setTexturesGetModel", at = @At(value = "HEAD", target = "Lartifacts/client/model/layer/LayerAmulet;setTexturesGetModel(Lnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/client/model/ModelBase;"), cancellable = true)
     private void setTexturesGetModel(EntityPlayer player, CallbackInfoReturnable<ModelBase> cir) {
         IBaublesItemHandler handler = BaublesApi.getBaublesHandler(player);
-        for (int i = 0; i < BaubleType.AMULET.getValidSlots(player).length; i++) {
-            ItemStack stack = handler.getStackInSlot(BaubleType.AMULET.getValidSlots(player)[i]);
+        ModelBase modelBase = null;
+        for (int i = 0; i < BaubleType.AMULET.getValidSlots(player).size(); i++) {
+            int num = BaubleType.AMULET.getValidSlots(player).get((int) i);
+            ItemStack stack = handler.getStacks()[num];
             if (RenderHelper.shouldItemStackRender(player, stack)) {
                 ResourceLocation textures = getTextures(stack);
                 if (textures != null) {
                     Minecraft.getMinecraft().getTextureManager().bindTexture(textures);
                     if (stack.getItem() == ModItems.PANIC_NECKLACE) {
-                        cir.setReturnValue(PANIC_MODEL);
+                        modelBase = PANIC_MODEL;
+                    } else if (stack.getItem() == ModItems.ULTIMATE_PENDANT) {
+                        modelBase = ULTIMATE_MODEL;
                     } else {
-                        cir.setReturnValue(stack.getItem() == ModItems.ULTIMATE_PENDANT ? ULTIMATE_MODEL : AMULET_MODEL);
+                        modelBase = AMULET_MODEL;
                     }
                 }
             }
         }
-
-        cir.setReturnValue(null);
+        cir.setReturnValue(modelBase);
     }
 }
 
@@ -121,24 +134,19 @@ abstract class MixinLayerGloves {
     private void setTextures(EntityPlayer player, EnumHandSide hand, boolean overlay, CallbackInfoReturnable<Boolean> cir) {
 //        ItemStack stack = BaublesApi.getBaublesHandler(player).getStackInSlot(BaubleType.RING.getValidSlots(player)[hand == EnumHandSide.LEFT ? 0 : 1]);
 
-        if (BaubleType.RING.getValidSlots(player).length > 2) {
-            IBaublesItemHandler handler = BaublesApi.getBaublesHandler(player);
-            for (int i = 2; i < BaubleType.RING.getValidSlots(player).length; i++) {
-                ItemStack stack = handler.getStackInSlot(BaubleType.RING.getValidSlots(player)[i]);
-//                if (player.world.getTotalWorldTime() % 10 == 0) System.out.println(stack.getDisplayName() + "--" + BaubleType.RING.getValidSlots(player)[i]);
-                if (!RenderHelper.shouldItemStackRender(player, stack)) {
-                    cir.setReturnValue(false);
-                } else {
-                    ResourceLocation textures = overlay ? this.getOverlayTextures(stack) : this.getTextures(stack);
-                    if (textures != null) {
-                        Minecraft.getMinecraft().getTextureManager().bindTexture(textures);
-                        cir.setReturnValue(true);
-                    } else {
-                        cir.setReturnValue(false);
-                    }
+        for (int i = 0; i < BaubleType.RING.getValidSlots(player).size(); i++) {
+            int num = BaubleType.RING.getValidSlots(player).get((int) i);
+            ItemStack stack = BaublesApi.getBaublesHandler(player).getStacks()[num];
+            if (RenderHelper.shouldItemStackRender(player, stack)) {
+                ResourceLocation textures = overlay ? this.getOverlayTextures(stack) : this.getTextures(stack);
+                if (textures != null) {
+                    Minecraft.getMinecraft().getTextureManager().bindTexture(textures);
+                    cir.setReturnValue(true);
                 }
             }
         }
+
+        cir.setReturnValue(false);
     }
 }
 

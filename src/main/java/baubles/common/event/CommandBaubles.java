@@ -14,9 +14,11 @@ import baubles.common.network.PacketRemoveSlot;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -132,7 +134,7 @@ public class CommandBaubles extends CommandBase {
 
                     if (!checkPlayerBaublesIsFull(entityplayermp)) {
                         BaublesApi.getBaublesHandler(entityplayermp).addSlot(definition);
-                        PacketHandler.INSTANCE.sendTo(new PacketAddSlot(slotName), entityplayermp);
+                        PacketHandler.INSTANCE.sendTo(new PacketAddSlot(entityplayermp, slotName), entityplayermp);
                         sender.sendMessage(new TextComponentTranslation("command.baubles.add_success"));
                     } else {
                         sender.sendMessage(new TextComponentTranslation("command.baubles.add_full"));
@@ -152,7 +154,7 @@ public class CommandBaubles extends CommandBase {
                     SlotDefinition definition = SlotDefinitions.get(location);
 
                     BaublesApi.getBaublesHandler(entityplayermp).removeSlot(definition);
-                    PacketHandler.INSTANCE.sendTo(new PacketRemoveSlot(slotName), entityplayermp);
+                    PacketHandler.INSTANCE.sendTo(new PacketRemoveSlot(entityplayermp, slotName), entityplayermp);
                     sender.sendMessage(new TextComponentTranslation("command.baubles.remove_success"));
                 } else {
                     sender.sendMessage(new TextComponentTranslation("command.baubles.remove_fail"));

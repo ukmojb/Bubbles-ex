@@ -211,7 +211,7 @@ processResources {
     }
     
     if (project.use_access_transformer.toBoolean()) {
-        rename '(.+_at.cfg)', 'META-INF/$1' // Make sure Access Transformer files are in META-INF folder
+        rename '(baubles_at.cfg)', 'META-INF/$1' // Make sure Access Transformer files are in META-INF folder
     }
 }
 

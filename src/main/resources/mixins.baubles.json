@@ -5,6 +5,8 @@
     "botania.MixinItemBauble",
     "botania.MixinTravelBelt",
     "qualitytools.MixinBaublesHandler",
+    "rlartifacts.MixinLayerAmulet",
+    "rlartifacts.MixinLayerBELT",
     "rlartifacts.MixinLayerCloak",
     "rlartifacts.MixinLayerDrinkingHat",
     "rlartifacts.MixinLayerGloves",

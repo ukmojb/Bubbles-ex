@@ -55,6 +55,8 @@ public interface IBaublesItemHandler extends IItemHandlerModifiable {
 
     void setChanged(int slot, boolean changed);
 
+    ItemStack[] getStacks();
+
     @Deprecated
     default void setPlayer(EntityLivingBase player) {}
 

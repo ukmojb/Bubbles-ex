@@ -392,6 +392,11 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         return stack == null ? ItemStack.EMPTY : stack;
     }
 
+    @Override
+    public ItemStack[] getStacks() {
+        return stacks;
+    }
+
     /**
      * Use {@link BaublesContainer#setStackInSlot(int, ItemStack)}
      **/
