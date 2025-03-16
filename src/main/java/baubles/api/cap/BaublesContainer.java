@@ -45,7 +45,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     /**
      * Entity which has the baubles inventory
      **/
-    private final EntityLivingBase entity;
+    private final EntityLivingBase player;
 
     /**
      * Items to drop when slots get updated
@@ -60,16 +60,16 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         this(null);
     }
 
-    public BaublesContainer(EntityLivingBase entity) {
+    public BaublesContainer(EntityLivingBase player) {
         this.slots = getDefaultSlots();
         this.stacks = new ItemStack[Config.slotMaxNum];
         this.changed = new boolean[Config.slotMaxNum];
-        this.entity = entity;
+        this.player = player;
     }
 
     @Override
     public EntityLivingBase getEntity() {
-        return this.entity;
+        return this.player;
     }
 
     @Override
@@ -152,7 +152,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-        if (stack.isEmpty() || this.isItemValidForSlot(slot, stack, this.entity)) {
+        if (stack.isEmpty() || this.isItemValidForSlot(slot, stack, this.player)) {
             setStack(slot, stack);
             setChanged(slot, true);
         }
@@ -177,14 +177,24 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     @Nonnull
     @Override
+    public ItemStack getStackInSlotAdaptability(int slot) {
+        slot = validateSlotIndex(slot);
+        if (slot == -1) return ItemStack.EMPTY;
+        ItemStack stack = this.getStackAdaptability(slot);
+        if (stack == null) stack = ItemStack.EMPTY;
+        return stack;
+    }
+
+    @Nonnull
+    @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (!this.isItemValidForSlot(slot, stack, this.entity)) return stack;
+        if (!this.isItemValidForSlot(slot, stack, this.player)) return stack;
         if (stack.isEmpty()) return ItemStack.EMPTY;
 
         slot = validateSlotIndex(slot);
         if (slot == -1) return ItemStack.EMPTY;
 
-        ItemStack existing = getStack(slot);
+        ItemStack existing = getStackAdaptability(slot);
 
         int limit = getStackLimit(slot, stack);
 
@@ -216,7 +226,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         slot = validateSlotIndex(slot);
         if (slot == -1) return ItemStack.EMPTY;
 
-        ItemStack existing = this.getStack(slot);
+        ItemStack existing = this.getStackAdaptability(slot);
         if (existing.isEmpty()) return ItemStack.EMPTY;
 
         int toExtract = Math.min(amount, existing.getMaxStackSize());
@@ -286,7 +296,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     public NBTTagCompound serializeNBT() {
         NBTTagList list = new NBTTagList();
         for (int i = 0; i < slots.length; i++) {
-            ItemStack stack = getStack(i);
+            ItemStack stack = getStackAdaptability(i);
             if (stack == null || stack.isEmpty()) continue;
             NBTTagCompound stackTag = new NBTTagCompound();
             stackTag.setInteger("Slot", i);
@@ -329,15 +339,6 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
                 definition = null;
             }
 
-//            System.out.println("deserializeNBT--" + i);
-
-            //同步客户端与重新写入数据
-            //仅在服务端运行
-//            if (entity instanceof EntityPlayer) {
-//                EntityPlayer player = (EntityPlayer) entity;
-//                PacketHandler.INSTANCE.sendTo(new PacketSyncSlot(slot, player.getName(), i), (EntityPlayerMP) player);
-////                PacketHandler.INSTANCE.sendToAllAround(new PacketSyncSlot(player.getName(), i, slot), new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 512));
-//            }
             slots[i] = definition;
         }
 
@@ -365,11 +366,11 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     }
 
     private SlotDefinition[] getDefaultSlots() {
-        if (entity instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) entity;
-            SlotDefinition[] definitions = new SlotDefinition[BaublesApi.getBaublesHandler(player).getSlots()];
-            for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
-                SlotDefinition slotDefinition = BaublesApi.getBaublesHandler(player).getSlot(i);
+        if (player instanceof EntityPlayer) {
+            EntityPlayer entityPlayer = (EntityPlayer) player;
+            SlotDefinition[] definitions = new SlotDefinition[BaublesApi.getBaublesHandler(entityPlayer).getSlots()];
+            for (int i = 0; i < BaublesApi.getBaublesHandler(entityPlayer).getSlots(); i++) {
+                SlotDefinition slotDefinition = BaublesApi.getBaublesHandler(entityPlayer).getSlot(i);
                 definitions[i] = slotDefinition;
             }
             if (definitions.length == 0) return Config.getSlots();
@@ -388,13 +389,17 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
      **/
     private ItemStack getStack(int slot) {
         if (slot == -1) return ItemStack.EMPTY;
-        ItemStack stack = this.stacks[getSSlotIndex(slot)];
+        ItemStack stack = this.stacks[getSSSlotIndex(slot)];
         return stack == null ? ItemStack.EMPTY : stack;
     }
 
-    @Override
-    public ItemStack[] getStacks() {
-        return stacks;
+    /**
+     * Use {@link BaublesContainer#getStackAdaptability(int)} (int)}
+     **/
+    private ItemStack getStackAdaptability(int slot) {
+        if (slot == -1) return ItemStack.EMPTY;
+        ItemStack stack = this.stacks[getSSlotIndex(slot)];
+        return stack == null ? ItemStack.EMPTY : stack;
     }
 
     /**
@@ -418,9 +423,17 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     }
 
     //让它正常获取
-    //to do
     private int getSSlotIndex(int slot) {
         int slotGet = offset + slot;
+        if (slotGet >= this.getRealBaubleSlots()){
+            slotGet %= this.getRealBaubleSlots();
+        }
+        return slotGet;
+
+    }
+
+    private int getSSSlotIndex(int slot) {
+        int slotGet = slot;
         if (slotGet >= this.getRealBaubleSlots()){
             slotGet %= this.getRealBaubleSlots();
         }

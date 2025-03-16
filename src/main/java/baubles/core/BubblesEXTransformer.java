@@ -1,19 +1,19 @@
 package baubles.core;
 
 
-import baubles.core.transformers.BotaniaTransformer;
-import baubles.core.transformers.EnchantmentTransformer;
-import baubles.core.transformers.PotionFingersTransformer;
-import baubles.core.transformers.WearableBackpacksTransformer;
+import baubles.core.transformers.*;
 import net.minecraft.launchwrapper.IClassTransformer;
 
 @SuppressWarnings("unused")
 public class BubblesEXTransformer implements IClassTransformer {
 
+    private boolean isRLArtifact = false;
+
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (transformedName.startsWith("baubles.core"))
             return basicClass;
+        
 
         switch (transformedName) {
             // Minecraft - Apply baubles enchantments
@@ -30,10 +30,26 @@ public class BubblesEXTransformer implements IClassTransformer {
             // Potion Fingers - Vazkii moment
             case "vazkii.potionfingers.ItemRing": return PotionFingersTransformer.transformItemRing(basicClass);
             // Quality Tools - Make it check if item has bauble capability and make it work with custom bauble types. And also make it work with slot definitions.
-//            case "com.tmtravlr.qualitytools.baubles.BaublesHandler": return QualityToolsTransformer.transformBaublesHandler(basicClass);
+            case "com.tmtravlr.qualitytools.baubles.BaublesHandler": return QualityToolsTransformer.transformBaublesHandler(basicClass);
             // Wearable Backpacks - Fix a crash
             case "net.mcft.copy.backpacks.api.BackpackHelper": return WearableBackpacksTransformer.transformBackpackHelper(basicClass);
-            default: return basicClass;
+
+            //RLArtifacts
+            // RLArtifacts - RLCraft moment
+            case "artifacts.Artifacts": this.isRLArtifact = RLArtifactsTransformer.checkArtifacts(basicClass); return basicClass;
+            case "artifacts.client.model.layer.LayerAmulet": return RLArtifactsTransformer.transformLayerAmulet(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerBelt": return RLArtifactsTransformer.transformLayerBelt(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerCloak": return RLArtifactsTransformer.transformLayerCloak(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerDrinkingHat": return RLArtifactsTransformer.transformLayerDrinkingHat(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerGloves": return RLArtifactsTransformer.transformLayerGloves(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerNightVisionGoggles": return RLArtifactsTransformer.transformLayerNightVisionGoggles(basicClass, this.isRLArtifact);
+            case "artifacts.client.model.layer.LayerSnorkel": return RLArtifactsTransformer.transformLayerSnorkel(basicClass, this.isRLArtifact);
+            case "artifacts.common.item.BaubleAmulet": return RLArtifactsTransformer.transformBaubleAmulet(basicClass, this.isRLArtifact);
+            case "artifacts.common.item.BaubleBottledCloud": return RLArtifactsTransformer.transformBaubleBottledCloud(basicClass);
+
+
+            default:
+                return basicClass;
         }
     }
 }

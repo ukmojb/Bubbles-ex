@@ -167,6 +167,7 @@ public class ContainerPlayerExpanded extends Container {
                 if (playerIn.isCreative() || bauble.canEquip(itemstack1, playerIn)) {
                     BaublesContainer container = (BaublesContainer) baubles;
 
+
                     boolean check = true;
                     for (int i = 0; i < getRealBaubleSlots(baubles); i++) {
                         if (container.isItemValidForSlot(i, itemstack1, playerIn)) {
@@ -230,7 +231,7 @@ public class ContainerPlayerExpanded extends Container {
 
         if (!stack.isEmpty()) {
             SlotDefinition slot = container.getSlot(slotIndex);
-            ItemStack itemstack = container.getStackInSlot(slotIndex);
+            ItemStack itemstack = container.getStackInSlotAdaptability(slotIndex);
 
             if (stack.isStackable() && !itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack)) {
                 int j = itemstack.getCount() + stack.getCount();

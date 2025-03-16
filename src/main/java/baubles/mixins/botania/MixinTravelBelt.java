@@ -100,13 +100,13 @@ public class MixinTravelBelt extends ItemBauble {
     }
 
     private ItemStack getTrueBelt(EntityPlayer player) {
-        ItemStack belt = BaublesApi.getBaublesHandler(player).getStackInSlot(BaublesApi.isBaubleEquipped(player, this));
+        ItemStack belt = BaublesApi.getBaublesHandler(player).getStackInSlotAdaptability(BaublesApi.isBaubleEquipped(player, this));
 
         if (belt.isEmpty()) {
-            belt = BaublesApi.getBaublesHandler(player).getStackInSlot(BaublesApi.isBaubleEquipped(player, ModItems.superTravelBelt));
+            belt = BaublesApi.getBaublesHandler(player).getStackInSlotAdaptability(BaublesApi.isBaubleEquipped(player, ModItems.superTravelBelt));
         }
         if (belt.isEmpty()) {
-            belt = BaublesApi.getBaublesHandler(player).getStackInSlot(BaublesApi.isBaubleEquipped(player, ModItems.speedUpBelt));
+            belt = BaublesApi.getBaublesHandler(player).getStackInSlotAdaptability(BaublesApi.isBaubleEquipped(player, ModItems.speedUpBelt));
         }
         return belt;
     }

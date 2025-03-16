@@ -174,7 +174,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
                 int slotIndex = (mouseY - yLoc) / 18;
                 BaublesContainer container = ((BaublesContainer) baublesHandler);
 
-                ItemStack stack = container.getStackInSlot(slotIndex);
+                ItemStack stack = container.getStackInSlotAdaptability(slotIndex);
                 if (!stack.isEmpty()) return;
 
                 SlotDefinition definition = container.getSlot(slotIndex);

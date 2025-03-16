@@ -97,6 +97,20 @@ public enum BaubleType implements IBaubleType {
         return validSlots.toArray(array);
     }
 
+    /*
+     * Please use this method!! This method allows you to get the added bauble slot
+     */
+    public int[] getValidSlotsArrays(EntityPlayer player) {
+        List<Integer> list = getValidSlots(player);
+        int[] array = new int[list.size()];
+
+        for (int i = 0; i < list.size(); i++) {
+            array[i] = list.get(i);
+        }
+
+        return array;
+    }
+
 
     /*
      * Please use this method!! This method allows you to get the added bauble slot
@@ -113,21 +127,6 @@ public enum BaubleType implements IBaubleType {
                 array.add(i);
             }
         }
-
-//        array = new int[num];
-//        Arrays.fill(array, -1);
-//
-//        int num0 = 0;
-//        for (int i = 0; i < handler.getSlots(); i++) {
-//            SlotDefinition slotDefinition = handler.getRealSlot(i);
-//            if (slotDefinition == null) continue;
-//            SlotDefinitionType slotDefinitionType = (SlotDefinitionType) slotDefinition;
-//            boolean pass = slotDefinitionType.canPutType(this);
-//            if (pass) {
-//                array[num0] = i;
-//                num0 += 1;
-//            }
-//        }
 
         return array;
     }

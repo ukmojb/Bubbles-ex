@@ -17,8 +17,8 @@ public class BaublesApi {
      * Retrieves the baubles item handler capability handler for the supplied player
      */
     public static IBaublesItemHandler getBaublesHandler(EntityPlayer player) {
-        IBaublesItemHandler handler = Objects.requireNonNull(player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null));
-        return handler;
+        if (player == null) return null;
+        return Objects.requireNonNull(player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null));
     }
 
     // TODO Remove it once sure.
@@ -39,7 +39,7 @@ public class BaublesApi {
     public static int isBaubleEquipped(EntityPlayer player, Item bauble) {
         for (int i = 0; i < getBaublesHandler(player).getSlots(); i++) {
             if (BaublesApi.getBaublesHandler(player).getRealSlot(i) != null) {
-                if (getBaublesHandler(player).getStackInSlot(i).getItem() == bauble) {
+                if (getBaublesHandler(player).getStackInSlotAdaptability(i).getItem() == bauble) {
                     return i;
                 }
             }

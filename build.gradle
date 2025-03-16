@@ -115,6 +115,9 @@ dependencies {
     var botania = "curse.maven:botania-225643:3330934"
     var minieffects = "curse.maven:MiniEffectsLegacyExtendedLife-1081085:6143104"
     var rlartifacts = "curse.maven:RLArtifacts-819886:4475428"
+    var ExU2 = "curse.maven:ExU2-225561:2678374"
+    var Angel_Ring = "curse.maven:Angel Ring-256224:2518561"
+    var Tombstone = "curse.maven:Corail's Tombstone-243707:6261464"
 
     // JEI Extra Bounds
     if (project.runtime_jei.toBoolean()) implementation(jei)
@@ -161,6 +164,17 @@ dependencies {
     // RLArtifacts
     if (project.runtime_rlartifacts.toBoolean()) {
         implementation rfg.deobf(rlartifacts)
+    }
+
+    // ExU2
+    if (project.runtime_ExU2.toBoolean()) {
+        implementation rfg.deobf(ExU2)
+        implementation rfg.deobf(Angel_Ring)
+    }
+
+    // Corail's Tombstone
+    if (project.runtime_ExU2.toBoolean()) {
+        implementation rfg.deobf(Tombstone)
     }
 
     if (project.runtime_minieffects.toBoolean()) implementation (rfg.deobf(minieffects)) { transitive = false }

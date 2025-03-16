@@ -93,7 +93,7 @@ public class CommandBaubles extends CommandBase {
             if (args[0].equalsIgnoreCase("view")) {
                 sender.sendMessage(new TextComponentTranslation("command.baubles.showing_baubles", entityplayermp.getName()));
                 for (int a = 0; a < baubles.getSlots(); a++) {
-                    ItemStack st = baubles.getStackInSlot(a);
+                    ItemStack st = baubles.getStackInSlotAdaptability(a);
                     if (!st.isEmpty() && st.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
                         IBauble bauble = Objects.requireNonNull(st.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null));
                         IBaubleType bt = bauble.getType(st);

@@ -52,7 +52,7 @@ public final class BaublesRenderLayer implements LayerRenderer<EntityPlayer> {
 
     private void dispatchRenders(IBaublesItemHandler inv, EntityPlayer player, RenderType type, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale, float partialTicks) {
         for (int i = 0; i < inv.getSlots(); i++) {
-            ItemStack stack = inv.getStackInSlot(i);
+            ItemStack stack = inv.getStackInSlotAdaptability(i);
             if (!stack.isEmpty()) {
                 IBauble bauble = Objects.requireNonNull(stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null));
                 if (bauble.shouldRender(stack, player)) {
