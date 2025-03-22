@@ -109,7 +109,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
         this.up = new GuiSlotButton(56, this, guiLeft - 26, guiTop - 9, 27, 14, false);
         this.down = new GuiSlotButton(57, this, guiLeft - 26, guiTop + 7 + getMaxY(), 27, 14, true);
 
-        this.up.visible = this.getVRealBaubleSlots() > this.getActualMaxBaubleSlots();
+        this.up.visible = this.getRealBaubleSlots() > this.getActualMaxBaubleSlots();
         this.down.visible = this.up.visible;
 
         this.buttonList.add(this.up);
@@ -174,7 +174,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
                 int slotIndex = (mouseY - yLoc) / 18;
                 BaublesContainer container = ((BaublesContainer) baublesHandler);
 
-                ItemStack stack = container.getStackInSlotAdaptability(slotIndex);
+                ItemStack stack = container.getStackInSlot(slotIndex);
                 if (!stack.isEmpty()) return;
 
                 SlotDefinition definition = container.getSlot(slotIndex);
@@ -209,7 +209,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
-        if (this.getRealBaubleSlots() <= this.getActualMaxBaubleSlots()) return;
+        if (Math.min(this.getRealBaubleSlots(), this.getActualMaxBaubleSlots()) <= this.getActualMaxBaubleSlots()) return;
         if (ModCompatibility.MT$shouldScroll(this.getSlotUnderMouse())) {
             int dWheel = Mouse.getEventDWheel();
             if (dWheel != 0) {
@@ -230,7 +230,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
 
-        int maxSlots = this.getRealBaubleSlots();
+        int maxSlots = Math.min(this.getRealBaubleSlots(), this.getActualMaxBaubleSlots());
 
         if (maxSlots > 0) {
             if (maxSlots == 1) {
@@ -331,7 +331,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     }
 
     public int getMaxY() {
-        return 18 * this.getRealBaubleSlots();
+        return 18 * Math.min(this.getRealBaubleSlots(), this.getActualMaxBaubleSlots());
     }
 
     public int getBaubleSlots() {
@@ -348,16 +348,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     public int getRealBaubleSlots() {
         int slotNum = 0;
         for (int i = 0; i < baublesHandler.getSlots(); i++) {
-            if (baublesHandler.getSlot(i) != null) {
-                slotNum += 1;
-            }
-        }
-        return Math.min(slotNum, this.getActualMaxBaubleSlots());
-    }
-    public int getVRealBaubleSlots() {
-        int slotNum = 0;
-        for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
-            if (BaublesApi.getBaublesHandler(player).getRealSlot(i) != null) {
+            if (baublesHandler.getRealSlot(i) != null) {
                 slotNum += 1;
             }
         }
@@ -365,13 +356,6 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
     }
 
     public int getMaxBaubleSlots() {
-//        int slotNum = 0;
-//        for (int i = 0; i < baublesHandler.getSlots(); i++) {
-//            if (baublesHandler.getSlot(i) != null) {
-//                slotNum += 1;
-//            }
-//        }
-//        return Math.min(slotNum, this.getActualMaxBaubleSlots());
         return Math.min(baublesHandler.getSlots(), this.getActualMaxBaubleSlots());
     }
 

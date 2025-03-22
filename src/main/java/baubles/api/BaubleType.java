@@ -83,8 +83,8 @@ public enum BaubleType implements IBaubleType {
     }
 
     /*
-    * Please do not use this method!! If used, you will not be able to get the added bauble slot
-    */
+     * Please do not use this method!! If used, you will not be able to get the added bauble slot
+     */
     @Deprecated
     public int[] getValidSlots() {
         int[] array;

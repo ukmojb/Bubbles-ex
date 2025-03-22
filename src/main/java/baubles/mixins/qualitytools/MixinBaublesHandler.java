@@ -47,7 +47,7 @@ public abstract class MixinBaublesHandler {
 
                 for (String slotName : slotNames) {
 
-                    QualityToolsHelper.applyAttributesForSlot(player, baublesHandler.getStackInSlotAdaptability(i), slotName, modifiersToRemove);
+                    QualityToolsHelper.applyAttributesForSlot(player, baublesHandler.getStackInSlot(i), slotName, modifiersToRemove);
                 }
             }
         }

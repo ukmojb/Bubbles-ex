@@ -90,11 +90,11 @@ public class EventHandlerEntity {
 //                    if (!player.isSneaking()) {
 //                        System.out.println(BaublesApi.getBaublesHandler(player).getRealSlot(i).getRegistryName() + "--" + i);
 //                    } else {
-//                        System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlotAdaptability(i).getDisplayName() + "--" + i);
+//                        System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(i).getDisplayName() + "--" + i);
 //                    }
 //                }
 //            }
-////            System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlotAdaptability(7).getDisplayName());
+////            System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(7).getDisplayName());
 //        }
     }
 
@@ -119,7 +119,7 @@ public class EventHandlerEntity {
             EntityPlayer player = event.player;
             IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
             for (int i = 0; i < baubles.getSlots(); i++) {
-                ItemStack stack = baubles.getStackInSlotAdaptability(i);
+                ItemStack stack = baubles.getStackInSlot(i);
                 IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
                 if (bauble != null) {
                     bauble.onWornTick(stack, player);
@@ -146,7 +146,7 @@ public class EventHandlerEntity {
         }
         Set<EntityPlayer> receivers = null;
         for (int i = 0; i < baubles.getSlots(); i++) {
-            ItemStack stack = baubles.getStackInSlotAdaptability(i);
+            ItemStack stack = baubles.getStackInSlot(i);
             IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
             if (baubles.isChanged(i) || bauble != null && bauble.willAutoSync(stack, player) && !ItemStack.areItemStacksEqual(stack, items[i])) {
                 if (receivers == null) {
@@ -186,7 +186,7 @@ public class EventHandlerEntity {
     private static void syncSlots(EntityPlayer player, Collection<? extends EntityPlayer> receivers) {
         IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
         for (int i = 0; i < baubles.getSlots(); i++) {
-            syncSlot(player, i, baubles.getStackInSlotAdaptability(i), receivers);
+            syncSlot(player, i, baubles.getStackInSlot(i), receivers);
         }
     }
     public static void syncSlotDefinitions(EntityPlayer player, Collection<? extends EntityPlayer> receivers) {
@@ -232,8 +232,8 @@ public class EventHandlerEntity {
         IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
         player.captureDrops = true;
         for (int i = 0; i < baubles.getSlots(); ++i) {
-            if (!baubles.getStackInSlotAdaptability(i).isEmpty()) {
-                ItemStack stack = baubles.getStackInSlotAdaptability(i);
+            if (!baubles.getStackInSlot(i).isEmpty()) {
+                ItemStack stack = baubles.getStackInSlot(i);
                 IBauble bauble = Objects.requireNonNull(stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null));
                 SlotDefinition definition = baubles.getSlot(i);
                 IBauble.DropResult result = bauble.onDeath(i, stack, player);
@@ -273,6 +273,8 @@ public class EventHandlerEntity {
                 if (EnchantmentSoulbound.permanent) {
                     ItemHelper.removeEnchantment(stack, COFH_SOULBOUND);
                     ItemHelper.addEnchantment(stack, COFH_SOULBOUND, level - 1);
+                }
+                else if (MathHelper.RANDOM.nextInt(level + 1) == 0) {
                 } else if (MathHelper.RANDOM.nextInt(level + 1) == 0) {
                     ItemHelper.removeEnchantment(stack, COFH_SOULBOUND);
                     ItemHelper.addEnchantment(stack, COFH_SOULBOUND, level - 1);

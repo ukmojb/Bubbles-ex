@@ -23,7 +23,7 @@ public class MixinItemWings {
         boolean canRight = true;
         ItemStack handStack = player.getHeldItem(hand);
         for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack stack = handler.getStackInSlotAdaptability(i);
+            ItemStack stack = handler.getStackInSlot(i);
             if (stack.getItem() instanceof ItemWings) {
                 canRight = false;
                 break;

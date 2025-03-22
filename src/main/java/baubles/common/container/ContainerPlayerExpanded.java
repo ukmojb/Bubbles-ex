@@ -63,9 +63,10 @@ public class ContainerPlayerExpanded extends Container {
         }
 
         //这
-        for (int i = 0; i < Math.min(8, getRealBaubleSlots(baubles)); i++) {
+        for (int i = 0; i < Math.min(getRealBaubleSlots(baubles), this.getActualMaxBaubleSlots()); i++) {
 //        for (int i = 0; i < getRealBaubleSlots(baubles); i++) {
 //        for (int i = 0; i < Math.min(8, Objects.requireNonNull(baubles).getSlots()); i++) {
+//            System.out.println("asdkjawjdnakjbwdn-" + i);
             this.addSlotToContainer(new SlotBauble(player, baubles, i, -22,  6 + (i * 18)));
         }
 
@@ -167,9 +168,8 @@ public class ContainerPlayerExpanded extends Container {
                 if (playerIn.isCreative() || bauble.canEquip(itemstack1, playerIn)) {
                     BaublesContainer container = (BaublesContainer) baubles;
 
-
                     boolean check = true;
-                    for (int i = 0; i < getRealBaubleSlots(baubles); i++) {
+                    for (int i = 0; i < Math.min(getRealBaubleSlots(baubles), this.getActualMaxBaubleSlots()); i++) {
                         if (container.isItemValidForSlot(i, itemstack1, playerIn)) {
                             if (!mergeBauble(itemstack1, i)) {
                                 check = false;
@@ -231,7 +231,7 @@ public class ContainerPlayerExpanded extends Container {
 
         if (!stack.isEmpty()) {
             SlotDefinition slot = container.getSlot(slotIndex);
-            ItemStack itemstack = container.getStackInSlotAdaptability(slotIndex);
+            ItemStack itemstack = container.getStackInSlot(slotIndex);
 
             if (stack.isStackable() && !itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack)) {
                 int j = itemstack.getCount() + stack.getCount();
@@ -272,12 +272,12 @@ public class ContainerPlayerExpanded extends Container {
     public int getRealBaubleSlots(IBaublesItemHandler baublesHandler) {
         int slotNum = 0;
         for (int i = 0; i < baublesHandler.getSlots(); i++) {
-            if (baublesHandler.getSlot(i) != null) {
+            if (baublesHandler.getRealSlot(i) != null) {
                 slotNum += 1;
             }
         }
-        return Math.min(slotNum, this.getActualMaxBaubleSlots());
-//        return this.baublesHandler.getSlots();
+
+        return slotNum;
     }
 
     public int getActualMaxBaubleSlots() {

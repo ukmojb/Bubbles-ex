@@ -60,11 +60,11 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         this(null);
     }
 
-    public BaublesContainer(EntityLivingBase player) {
+    public BaublesContainer(EntityLivingBase entity) {
         this.slots = getDefaultSlots();
         this.stacks = new ItemStack[Config.slotMaxNum];
         this.changed = new boolean[Config.slotMaxNum];
-        this.player = player;
+        this.player = entity;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     @Override
     public SlotDefinition getSlot(int slot) {
-        return this.slots[getSSlotIndex(slot)];
+        return this.slots[getSlotIndex(slot)];
     }
 
     @Override
@@ -177,13 +177,14 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     @Nonnull
     @Override
-    public ItemStack getStackInSlotAdaptability(int slot) {
+    public ItemStack getStackInSlotNA(int slot) {
         slot = validateSlotIndex(slot);
         if (slot == -1) return ItemStack.EMPTY;
-        ItemStack stack = this.getStackAdaptability(slot);
+        ItemStack stack = this.getStackNA(slot);
         if (stack == null) stack = ItemStack.EMPTY;
         return stack;
     }
+
 
     @Nonnull
     @Override
@@ -194,7 +195,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         slot = validateSlotIndex(slot);
         if (slot == -1) return ItemStack.EMPTY;
 
-        ItemStack existing = getStackAdaptability(slot);
+        ItemStack existing = getStack(slot);
 
         int limit = getStackLimit(slot, stack);
 
@@ -226,7 +227,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         slot = validateSlotIndex(slot);
         if (slot == -1) return ItemStack.EMPTY;
 
-        ItemStack existing = this.getStackAdaptability(slot);
+        ItemStack existing = this.getStack(slot);
         if (existing.isEmpty()) return ItemStack.EMPTY;
 
         int toExtract = Math.min(amount, existing.getMaxStackSize());
@@ -296,7 +297,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     public NBTTagCompound serializeNBT() {
         NBTTagList list = new NBTTagList();
         for (int i = 0; i < slots.length; i++) {
-            ItemStack stack = getStackAdaptability(i);
+            ItemStack stack = getStack(i);
             if (stack == null || stack.isEmpty()) continue;
             NBTTagCompound stackTag = new NBTTagCompound();
             stackTag.setInteger("Slot", i);
@@ -339,6 +340,15 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
                 definition = null;
             }
 
+//            System.out.println("deserializeNBT--" + i);
+
+            //同步客户端与重新写入数据
+            //仅在服务端运行
+//            if (entity instanceof EntityPlayer) {
+//                EntityPlayer player = (EntityPlayer) entity;
+//                PacketHandler.INSTANCE.sendTo(new PacketSyncSlot(slot, player.getName(), i), (EntityPlayerMP) player);
+////                PacketHandler.INSTANCE.sendToAllAround(new PacketSyncSlot(player.getName(), i, slot), new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 512));
+//            }
             slots[i] = definition;
         }
 
@@ -367,10 +377,10 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     private SlotDefinition[] getDefaultSlots() {
         if (player instanceof EntityPlayer) {
-            EntityPlayer entityPlayer = (EntityPlayer) player;
-            SlotDefinition[] definitions = new SlotDefinition[BaublesApi.getBaublesHandler(entityPlayer).getSlots()];
-            for (int i = 0; i < BaublesApi.getBaublesHandler(entityPlayer).getSlots(); i++) {
-                SlotDefinition slotDefinition = BaublesApi.getBaublesHandler(entityPlayer).getSlot(i);
+            EntityPlayer player1 = (EntityPlayer) player;
+            SlotDefinition[] definitions = new SlotDefinition[BaublesApi.getBaublesHandler(player1).getSlots()];
+            for (int i = 0; i < BaublesApi.getBaublesHandler(player1).getSlots(); i++) {
+                SlotDefinition slotDefinition = BaublesApi.getBaublesHandler(player1).getSlot(i);
                 definitions[i] = slotDefinition;
             }
             if (definitions.length == 0) return Config.getSlots();
@@ -389,24 +399,26 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
      **/
     private ItemStack getStack(int slot) {
         if (slot == -1) return ItemStack.EMPTY;
-        ItemStack stack = this.stacks[getSSSlotIndex(slot)];
+        ItemStack stack = this.stacks[getSlotIndex(slot)];
         return stack == null ? ItemStack.EMPTY : stack;
     }
 
-    /**
-     * Use {@link BaublesContainer#getStackAdaptability(int)} (int)}
-     **/
-    private ItemStack getStackAdaptability(int slot) {
+    private ItemStack getStackNA(int slot) {
         if (slot == -1) return ItemStack.EMPTY;
-        ItemStack stack = this.stacks[getSSlotIndex(slot)];
+        ItemStack stack = this.stacks[slot];
         return stack == null ? ItemStack.EMPTY : stack;
+    }
+
+    @Override
+    public ItemStack[] getStacks() {
+        return stacks;
     }
 
     /**
      * Use {@link BaublesContainer#setStackInSlot(int, ItemStack)}
      **/
     private void setStack(int slot, ItemStack stack) {
-        this.stacks[getSSlotIndex(slot)] = stack;
+        this.stacks[getSlotIndex(slot)] = stack;
     }
 
     private int validateSlotIndex(int slot) {
@@ -418,28 +430,22 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     private int getSlotIndex(int slot) {
         int slotGet = offset + slot;
-        if (slotGet >= getSlots()) slotGet %= this.getSlots();
+        if (slotGet >= this.getRealBaubleSlots()){
+            slotGet %= this.getRealBaubleSlots();
+        }
         return slotGet;
     }
 
     //让它正常获取
-    private int getSSlotIndex(int slot) {
+    //to do
+    private int getSlotIndexNA(int slot) {
         int slotGet = offset + slot;
         if (slotGet >= this.getRealBaubleSlots()){
             slotGet %= this.getRealBaubleSlots();
         }
         return slotGet;
-
     }
-
-    private int getSSSlotIndex(int slot) {
-        int slotGet = slot;
-        if (slotGet >= this.getRealBaubleSlots()){
-            slotGet %= this.getRealBaubleSlots();
-        }
-        return slotGet;
-
-    }
+    
 
 
     public int getRealBaubleSlots() {

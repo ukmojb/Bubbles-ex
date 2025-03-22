@@ -281,7 +281,7 @@ public class RLArtifactsTransformer extends BaseTransformer {
         int slot = -1;
         for (int i = 0; i < BaubleType.AMULET.getValidSlots(player).size(); i++) {
             int num = BaubleType.AMULET.getValidSlots(player).get((int) i);
-            ItemStack stack = handler.getStackInSlot(num);
+            ItemStack stack = handler.getStackInSlotNA(num);
             if (!stack.isEmpty()) slot = BaublesApi.isBaubleEquipped(player, stack.getItem());
         }
         return slot;
@@ -293,7 +293,7 @@ public class RLArtifactsTransformer extends BaseTransformer {
         int slot = -1;
         for (int i = 0; i < BaubleType.BELT.getValidSlots(player).size(); i++) {
             int num = BaubleType.BELT.getValidSlots(player).get((int) i);
-            ItemStack stack = handler.getStackInSlot(num);
+            ItemStack stack = handler.getStackInSlotNA(num);
             Item item = stack.getItem();
             if (!stack.isEmpty()) slot = BaublesApi.isBaubleEquipped(player, stack.getItem());
 
@@ -312,7 +312,7 @@ public class RLArtifactsTransformer extends BaseTransformer {
         int slot = -1;
         for (int i = 0; i < BaubleType.BODY.getValidSlots(player).size(); i++) {
             int num = BaubleType.BODY.getValidSlots(player).get((int) i);
-            ItemStack stack = handler.getStackInSlot(num);
+            ItemStack stack = handler.getStackInSlotNA(num);
             if (!stack.isEmpty()) slot = BaublesApi.isBaubleEquipped(player, stack.getItem());
             if (stack.getItem() == ModItems.STAR_CLOAK) return slot;
         }
@@ -325,7 +325,7 @@ public class RLArtifactsTransformer extends BaseTransformer {
         int slot = -1;
         for (int i = 0; i < BaubleType.HEAD.getValidSlots(player).size(); i++) {
             int num = BaubleType.HEAD.getValidSlots(player).get((int) i);
-            ItemStack stack = handler.getStackInSlot(num);
+            ItemStack stack = handler.getStackInSlotNA(num);
             if (!stack.isEmpty()) slot = BaublesApi.isBaubleEquipped(player, stack.getItem());
             if (stack.getItem() == ModItems.DRINKING_HAT) return slot;
         }
@@ -338,9 +338,9 @@ public class RLArtifactsTransformer extends BaseTransformer {
         int slot = -1;
         for (int i = 0; i < BaubleType.RING.getValidSlots(player).size(); i++) {
             int num = BaubleType.RING.getValidSlots(player).get((int) i);
-            ItemStack stack = handler.getStackInSlot(num);
+            ItemStack stack = handler.getStackInSlotNA(num);
             if (!stack.isEmpty()) slot = BaublesApi.isBaubleEquipped(player, stack.getItem());
-            Item item = handler.getStackInSlot(i).getItem();
+            Item item = handler.getStackInSlotNA(i).getItem();
             if (item == ModItems.POWER_GLOVE || item == ModItems.FERAL_CLAWS || item == ModItems.MECHANICAL_GLOVE || item == ModItems.FIRE_GAUNTLET || item == ModItems.POCKET_PISTON) {
                 return slot;
             }
@@ -354,7 +354,7 @@ public class RLArtifactsTransformer extends BaseTransformer {
         int slot = -1;
         for (int i = 0; i < BaubleType.HEAD.getValidSlots(player).size(); i++) {
             int num = BaubleType.HEAD.getValidSlots(player).get((int) i);
-            ItemStack stack = handler.getStackInSlot(num);
+            ItemStack stack = handler.getStackInSlotNA(num);
             if (!stack.isEmpty()) slot = BaublesApi.isBaubleEquipped(player, stack.getItem());
             if (stack.getItem() == ModItems.NIGHT_VISION_GOGGLES) return slot;
         }
@@ -367,7 +367,7 @@ public class RLArtifactsTransformer extends BaseTransformer {
         int slot = -1;
         for (int i = 0; i < BaubleType.HEAD.getValidSlots(player).size(); i++) {
             int num = BaubleType.HEAD.getValidSlots(player).get((int) i);
-            ItemStack stack = handler.getStackInSlot(num);
+            ItemStack stack = handler.getStackInSlotNA(num);
             if (!stack.isEmpty()) slot = BaublesApi.isBaubleEquipped(player, stack.getItem());
             if (stack.getItem() == ModItems.SNORKEL) return slot;
         }

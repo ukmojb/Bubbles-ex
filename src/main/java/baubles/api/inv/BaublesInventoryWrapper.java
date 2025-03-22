@@ -46,7 +46,7 @@ public class BaublesInventoryWrapper implements IInventory {
     @Nonnull
     @Override
     public ItemStack getStackInSlot(int index) {
-        return handler.getStackInSlotAdaptability(index);
+        return handler.getStackInSlot(index);
     }
 
     @Nonnull

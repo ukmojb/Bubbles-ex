@@ -13,7 +13,7 @@ public class BubblesEXTransformer implements IClassTransformer {
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (transformedName.startsWith("baubles.core"))
             return basicClass;
-        
+
 
         switch (transformedName) {
             // Minecraft - Apply baubles enchantments

@@ -82,7 +82,7 @@ public class EnchantmentTransformer extends BaseTransformer {
         if (!(entity instanceof EntityPlayer)) return list;
         IBaublesItemHandler handler = BaublesApi.getBaublesHandler((EntityPlayer) entity);
         for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack stack = handler.getStackInSlotAdaptability(i);
+            ItemStack stack = handler.getStackInSlot(i);
             if (stack.isEmpty()) continue;
             IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
             if (bauble == null) continue;
