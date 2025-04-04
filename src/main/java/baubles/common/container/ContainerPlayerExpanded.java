@@ -1,5 +1,6 @@
 package baubles.common.container;
 
+import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.BaublesContainer;
@@ -22,11 +23,11 @@ public class ContainerPlayerExpanded extends Container {
     public final InventoryCrafting craftMatrix = new InventoryCrafting(this, 2, 2);
     public final InventoryCraftResult craftResult = new InventoryCraftResult();
     private final EntityPlayer thePlayer;
-    public IBaublesItemHandler baubles;
+    public BaublesContainer baubles;
 
     public ContainerPlayerExpanded(InventoryPlayer playerInv, EntityPlayer player) {
         this.thePlayer = player;
-        baubles = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+        baubles = (BaublesContainer) BaublesApi.getBaublesHandler(player);
 
         this.addSlotToContainer(new SlotCrafting(playerInv.player, this.craftMatrix, this.craftResult, 0, 154, 28));
 
@@ -64,9 +65,6 @@ public class ContainerPlayerExpanded extends Container {
 
         //这
         for (int i = 0; i < Math.min(getRealBaubleSlots(baubles), this.getActualMaxBaubleSlots()); i++) {
-//        for (int i = 0; i < getRealBaubleSlots(baubles); i++) {
-//        for (int i = 0; i < Math.min(8, Objects.requireNonNull(baubles).getSlots()); i++) {
-//            System.out.println("asdkjawjdnakjbwdn-" + i);
             this.addSlotToContainer(new SlotBauble(player, baubles, i, -22,  6 + (i * 18)));
         }
 
@@ -103,9 +101,8 @@ public class ContainerPlayerExpanded extends Container {
     @Override
     public void onContainerClosed(@Nonnull EntityPlayer player) {
         super.onContainerClosed(player);
-        ((BaublesContainer) this.baubles).resetOffset();
+        this.baubles.resetOffset();
         this.craftResult.clear();
-
         if (!player.world.isRemote) {
             this.clearContainer(player, player.world, this.craftMatrix);
         }
@@ -128,7 +125,7 @@ public class ContainerPlayerExpanded extends Container {
 
             EntityEquipmentSlot entityequipmentslot = EntityLiving.getSlotForItemStack(itemstack);
 
-            int slotShift = 7;
+            int slotShift = Math.min(8, baubles.getSlots());
 
             if (index == 0) {
                 if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, true)) {
@@ -226,7 +223,7 @@ public class ContainerPlayerExpanded extends Container {
     }
 
     private boolean mergeBauble(ItemStack stack, int slotIndex) {
-        BaublesContainer container = (BaublesContainer) baubles;
+        BaublesContainer container = baubles;
         boolean flag = false;
 
         if (!stack.isEmpty()) {
@@ -249,10 +246,9 @@ public class ContainerPlayerExpanded extends Container {
                 }
 
                 container.changeOffsetBasedOnSlot(slotIndex);
-                container.setChanged(slotIndex, true);
             }
 
-            if (itemstack.isEmpty() && slot.canPutItem(slotIndex, stack)) {
+            else if (itemstack.isEmpty() && slot.canPutItem(slotIndex, stack)) {
                 if (stack.getCount() > slot.getSlotStackLimit()) {
                     container.setStackInSlot(slotIndex, stack.splitStack(slot.getSlotStackLimit()));
                 }
@@ -261,7 +257,6 @@ public class ContainerPlayerExpanded extends Container {
                 }
 
                 container.changeOffsetBasedOnSlot(slotIndex);
-                container.setChanged(slotIndex, true);
                 flag = true;
             }
         }

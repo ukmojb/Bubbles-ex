@@ -37,17 +37,14 @@ public class EventHandlerItem {
     public void itemCapabilityAttach(AttachCapabilitiesEvent<ItemStack> event) {
         ItemStack stack = event.getObject();
         if (stack.isEmpty()) return;
-
         InjectableBauble bauble = ModCompatibility.getBaubleToInject(stack);
         if (bauble != null) {
             event.addCapability(capabilityResourceLocation, new ICapabilityProvider() {
-
                 @Override
                 public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
                     return capability == BaublesCapabilities.CAPABILITY_ITEM_BAUBLE;
                 }
 
-                @Nullable
                 @Override
                 public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
                     return capability == BaublesCapabilities.CAPABILITY_ITEM_BAUBLE ? BaublesCapabilities.CAPABILITY_ITEM_BAUBLE.cast(bauble) : null;
@@ -64,7 +61,6 @@ public class EventHandlerItem {
                 return capability == BaublesCapabilities.CAPABILITY_ITEM_BAUBLE;
             }
 
-            @Nullable
             @Override
             public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
                 return capability == BaublesCapabilities.CAPABILITY_ITEM_BAUBLE ? BaublesCapabilities.CAPABILITY_ITEM_BAUBLE.cast((IBauble) stack.getItem()) : null;

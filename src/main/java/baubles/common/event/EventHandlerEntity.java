@@ -23,6 +23,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
@@ -35,14 +36,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.*;
 
 @SuppressWarnings("unused") // gets used by Forge event handler
 public class EventHandlerEntity {
 
-    private static final HashMap<UUID, ItemStack[]> baublesSync = new HashMap<UUID, ItemStack[]>();
-    private static final HashMap<UUID, SlotDefinition[]> slotsSync = new HashMap<UUID, SlotDefinition[]>();
+//    private static final HashMap<UUID, ItemStack[]> baublesSync = new HashMap<UUID, ItemStack[]>();
+//    private static final HashMap<UUID, SlotDefinition[]> slotsSync = new HashMap<UUID, SlotDefinition[]>();
 
     @SubscribeEvent
     public void cloneCapabilitiesEvent(PlayerEvent.Clone event) {
@@ -78,25 +80,6 @@ public class EventHandlerEntity {
         }
     }
 
-    @SubscribeEvent
-    public void text(PlayerInteractEvent.LeftClickBlock event) {
-//        Entity entity = event.getEntity();
-//        if (entity instanceof EntityPlayer ) {
-//            EntityPlayer player = (EntityPlayer) entity;
-////            BaubleType.valueOf()
-//            for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
-//                if (BaublesApi.getBaublesHandler(player).getRealSlot(i) != null) {
-////                    BaubleType.valueOf()
-//                    if (!player.isSneaking()) {
-//                        System.out.println(BaublesApi.getBaublesHandler(player).getRealSlot(i).getRegistryName() + "--" + i);
-//                    } else {
-//                        System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(i).getDisplayName() + "--" + i);
-//                    }
-//                }
-//            }
-////            System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(7).getDisplayName());
-//        }
-    }
 
     @SubscribeEvent
     public void onStartTracking(PlayerEvent.StartTracking event) {
@@ -108,8 +91,26 @@ public class EventHandlerEntity {
     }
 
     @SubscribeEvent
-    public void onPlayerLoggedOut(PlayerLoggedOutEvent event) {
-        baublesSync.remove(event.player.getUniqueID());
+    public void text(PlayerInteractEvent.LeftClickBlock event) {
+        Entity entity = event.getEntity();
+        if (entity instanceof EntityPlayer ) {
+            EntityPlayer player = (EntityPlayer) entity;
+//            BaubleType.valueOf()
+//            for (int i = 0; i < BaublesApi.getBaublesHandler(player).getSlots(); i++) {
+//                if (BaublesApi.getBaublesHandler(player).getRealSlot(i) != null) {
+////                    BaubleType.valueOf()
+//                    if (!player.isSneaking()) {
+//                        System.out.println(BaublesApi.getBaublesHandler(player).getRealSlot(i).getRegistryName() + "--" + i);
+//                    } else {
+//                        System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(i).getDisplayName() + "--" + i);
+//                    }
+//                }
+//            }
+//            NBTTagCompound nbt = new NBTTagCompound();
+//            player.writeToNBT(nbt);
+//            System.out.println(nbt.toString());
+//            System.out.println(BaublesApi.getBaublesHandler(player).getStackInSlot(7).getDisplayName());
+        }
     }
 
     @SubscribeEvent
@@ -120,67 +121,16 @@ public class EventHandlerEntity {
             IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
             for (int i = 0; i < baubles.getSlots(); i++) {
                 ItemStack stack = baubles.getStackInSlot(i);
-                IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-                if (bauble != null) {
-                    bauble.onWornTick(stack, player);
-                }
+                if (stack.isEmpty()) continue;
+                IBauble bauble = Objects.requireNonNull(BaublesApi.getBauble(stack));
+                bauble.onWornTick(stack, player);
             }
-            if (!player.world.isRemote) {
-                syncBaubles(player, baubles);
-            }
-        }
-    }
 
-    public static void syncBaubles(EntityPlayer player, IBaublesItemHandler baubles) {
-        ItemStack[] items = baublesSync.get(player.getUniqueID());
-        if (items == null) {
-            items = new ItemStack[baubles.getSlots()];
-            Arrays.fill(items, ItemStack.EMPTY);
-            baublesSync.put(player.getUniqueID(), items);
-        }
-        if (items.length != baubles.getSlots()) {
-            ItemStack[] old = items;
-            items = new ItemStack[baubles.getSlots()];
-            System.arraycopy(old, 0, items, 0, Math.min(old.length, items.length));
-            baublesSync.put(player.getUniqueID(), items);
-        }
-        Set<EntityPlayer> receivers = null;
-        for (int i = 0; i < baubles.getSlots(); i++) {
-            ItemStack stack = baubles.getStackInSlot(i);
-            IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-            if (baubles.isChanged(i) || bauble != null && bauble.willAutoSync(stack, player) && !ItemStack.areItemStacksEqual(stack, items[i])) {
-                if (receivers == null) {
-                    receivers = new HashSet<>(((WorldServer) player.world).getEntityTracker().getTrackingPlayers(player));
-                    receivers.add(player);
-                }
-                syncSlot(player, i, stack, receivers);
-                baubles.setChanged(i, false);
-                items[i] = stack == null ? ItemStack.EMPTY : stack.copy();
+            if (event.side == Side.SERVER && event.player.world.getWorldTime() % 10 == 0) {
+                syncSlotDefinitions(player, Collections.singletonList(player));
+                syncSlots(player, Collections.singletonList(player));
             }
         }
-
-        SlotDefinition[] slotDefinitions = slotsSync.get(player.getUniqueID());
-        if (slotDefinitions == null) {
-            slotDefinitions = new SlotDefinition[baubles.getSlots()];
-            Arrays.fill(slotDefinitions, null);
-            slotsSync.put(player.getUniqueID(), slotDefinitions);
-        }
-        if (slotDefinitions.length != baubles.getSlots()) {
-            SlotDefinition[] old = slotDefinitions;
-            slotDefinitions = new SlotDefinition[baubles.getSlots()];
-            System.arraycopy(old, 0, slotDefinitions, 0, Math.min(old.length, items.length));
-            slotsSync.put(player.getUniqueID(), slotDefinitions);
-        }
-//        Set<EntityPlayer> receivers1 = null;
-//        for (int i = 0; i < baubles.getSlots(); i++) {
-//            SlotDefinition slotDefinition = baubles.getSlot(i);
-//            if (receivers1 == null) {
-//                receivers1 = new HashSet<>(((WorldServer) player.world).getEntityTracker().getTrackingPlayers(player));
-//                receivers1.add(player);
-//            }
-//            syncSlotDefinition(player, i, slotDefinition, receivers1);
-//            slotDefinitions[i] = slotDefinition;
-//        }
     }
 
     private static void syncSlots(EntityPlayer player, Collection<? extends EntityPlayer> receivers) {

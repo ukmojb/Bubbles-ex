@@ -96,7 +96,14 @@ public class SlotBauble extends SlotItemHandler {
         } else {
             bg = this.getBaublesHandler().getSlot(this.slotIndex).getBackgroundTexture(this.slotIndex);
         }
-//        ResourceLocation bg = this.getBaublesHandler().getSlot(this.slotIndex).getBackgroundTexture(this.slotIndex);
+
         return bg == null ? null : bg.toString();
     }
+
+    @Nonnull
+    @Override
+    public ItemStack getStack() {
+        return this.baublesHandler.getStackInSlot(this.slotIndex);
+    }
+
 }

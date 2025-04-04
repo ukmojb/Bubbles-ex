@@ -47,7 +47,7 @@ public interface IBaublesItemHandler extends IItemHandlerModifiable {
 //    boolean isEventBlocked();
 //    void setEventBlock(boolean blockEvents);
 
-    // TODO Is this needed? Used for updating IBaubles with willAutoSync true
+    void onContentsChanged(int slotIndex);
     /**
      * Used internally for syncing. Indicates if the inventory has changed since last sync
      */

@@ -226,18 +226,18 @@ public class RLArtifactsTransformer extends BaseTransformer {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode node = iterator.next();
-                    if (node.getOpcode() == GETSTATIC && ((FieldInsnNode) node).name.equals("AMULET")) {
-                        for (int i = 0; i < 5; i++) {
-                            iterator.remove();
-                            node = iterator.next();
-                        }
-                        InsnList list = new InsnList();
-                        list.add(new InsnNode(ACONST_NULL));
-                        list.add(new VarInsnNode(ASTORE, 4));
-                        list.add(new VarInsnNode(ALOAD, 1));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/api/BaublesApi", "getBaublesHandler", "(Lnet/minecraft/entity/player/EntityPlayer;)Lbaubles/api/cap/IBaublesItemHandler;", false));
-                        list.add(new MethodInsnNode(INVOKEINTERFACE, "baubles/api/cap/IBaublesItemHandler", "getSlots", "()I", true));
-                        method.instructions.insertBefore(node, list);
+                    if (node.getOpcode() == INVOKEVIRTUAL && ((MethodInsnNode) node).name.equals("getValidSlots") &&
+                            ((MethodInsnNode) node).desc.equals("()[I")) {
+
+                        MethodInsnNode original = (MethodInsnNode) node;
+
+                        method.instructions.insertBefore(original, new VarInsnNode(ALOAD, 1));
+
+                        method.instructions.set(original, new MethodInsnNode(INVOKEVIRTUAL,
+                                original.owner,
+                                "getValidSlotsArrays",
+                                "(Lnet/minecraft/entity/player/EntityPlayer;)[I",
+                                false));
                         break;
                     }
                 }

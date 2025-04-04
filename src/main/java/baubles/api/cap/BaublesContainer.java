@@ -6,17 +6,22 @@ import baubles.api.inv.SlotDefinition;
 import baubles.common.Baubles;
 import baubles.common.Config;
 import baubles.common.init.SlotDefinitions;
+import baubles.common.network.PacketHandler;
+import baubles.common.network.PacketSync;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.Constants;
@@ -28,18 +33,18 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
  * Default implementation of {@link IBaublesItemHandler}
  **/
-public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
+public class BaublesContainer implements IBaublesItemHandler, INBTSerializable<NBTTagCompound> {
 
     private final ItemStack[] stacks;
     private SlotDefinition[] slots;
 
     private int offset = 0; // Can't be higher than getSlots()
-    private boolean[] changed;
     private boolean blockEvents = false;
 
     /**
@@ -63,7 +68,6 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     public BaublesContainer(EntityLivingBase entity) {
         this.slots = getDefaultSlots();
         this.stacks = new ItemStack[Config.slotMaxNum];
-        this.changed = new boolean[Config.slotMaxNum];
         this.player = entity;
     }
 
@@ -132,8 +136,22 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         this.offset = 0;
     }
 
-    protected void onContentsChanged(int slot) {
-        setChanged(slot, true);
+    @Override
+    public void onContentsChanged(int slot) {
+        if (!this.player.world.isRemote && player instanceof EntityPlayer) {
+            WorldServer world = (WorldServer) this.player.world;
+            MinecraftServer server = world.getMinecraftServer();
+            EntityPlayer entityPlayer = (EntityPlayer) player;
+            if (server != null) {
+                Set<?> receivers = world.getEntityTracker().getTrackingPlayers(player);
+                PacketSync sync = new PacketSync(entityPlayer, slot, this.getStackInSlot(slot));
+                for (Object o : receivers) {
+                    EntityPlayerMP receiver = (EntityPlayerMP) o;
+                    PacketHandler.INSTANCE.sendTo(sync, receiver);
+                }
+                if (this.player instanceof EntityPlayer) PacketHandler.INSTANCE.sendTo(sync, (EntityPlayerMP) player);
+            }
+        }
     }
 
     protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
@@ -253,30 +271,15 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
         return this.getSlot(slot).getSlotStackLimit();
     }
 
-//    @Override
-//    public boolean isEventBlocked() {
-//        return blockEvents;
-//    }
-//
-//    @Override
-//    public void setEventBlock(boolean blockEvents) {
-//        this.blockEvents = blockEvents;
-//    }
-
+    @Deprecated
     @Override
     public boolean isChanged(int slot) {
-        if (changed == null) {
-            changed = new boolean[this.getSlots()];
-        }
-        return changed[slot];
+        return false;
     }
-
+    @Deprecated
     @Override
     public void setChanged(int slot, boolean change) {
-        if (changed == null) {
-            changed = new boolean[this.getSlots()];
-        }
-        this.changed[slot] = change;
+
     }
 
     public void pukeItems(World world, double x, double y, double z) {
@@ -295,25 +298,25 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
 
     @Override
     public NBTTagCompound serializeNBT() {
+
         NBTTagList list = new NBTTagList();
         for (int i = 0; i < slots.length; i++) {
-            ItemStack stack = getStack(i);
+            ItemStack stack = getStackNA(i);
             if (stack == null || stack.isEmpty()) continue;
             NBTTagCompound stackTag = new NBTTagCompound();
             stackTag.setInteger("Slot", i);
             stack.writeToNBT(stackTag);
             list.appendTag(stackTag);
         }
+
         NBTTagList list1 = new NBTTagList();
         for (int i = 0; i < slots.length; i++) {
             SlotDefinition slotDefinition = slots[i];
             NBTTagCompound slotTag = new NBTTagCompound();
             if (slotDefinition != null) {
                 slotTag.setString("Slot", slotDefinition.getTranslationKey(i).replace("baubles.type.", ""));
-            } else {
-                slotTag.setString("Slot", "null");
+                list1.appendTag(slotTag);
             }
-            list1.appendTag(slotTag);
         }
         NBTTagCompound compound = new NBTTagCompound();
         compound.setTag("Items", list);
@@ -324,35 +327,23 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
 
-        //处理槽位
+        //SlotDefinition
         NBTTagList list1 = nbt.getTagList("SlotDefinition", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list1.tagCount(); i++) {
             NBTTagCompound slotTag = list1.getCompoundTagAt(i);
             String slot = slotTag.getString("Slot");
-            SlotDefinition definition;
+//            SlotDefinition definition;
 
             if (slot != "null") {
                 ResourceLocation location;
                 if (!slot.contains(":")) location = new ResourceLocation(Baubles.MODID, slot);
                 else location = new ResourceLocation(slot);
-                definition = SlotDefinitions.get(location);
-            } else {
-                definition = null;
+                SlotDefinition definition = SlotDefinitions.get(location);
+                slots[i] = definition;
             }
-
-//            System.out.println("deserializeNBT--" + i);
-
-            //同步客户端与重新写入数据
-            //仅在服务端运行
-//            if (entity instanceof EntityPlayer) {
-//                EntityPlayer player = (EntityPlayer) entity;
-//                PacketHandler.INSTANCE.sendTo(new PacketSyncSlot(slot, player.getName(), i), (EntityPlayerMP) player);
-////                PacketHandler.INSTANCE.sendToAllAround(new PacketSyncSlot(player.getName(), i, slot), new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 512));
-//            }
-            slots[i] = definition;
         }
 
-        //处理物品
+        //ItemStack
         NBTTagList list = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         List<ItemStack> itemsToPuke = new ArrayList<>();
         for (int i = 0; i < list.tagCount(); i++) {
@@ -439,7 +430,7 @@ public class BaublesContainer implements IBaublesItemHandler, IItemHandlerModifi
     //让它正常获取
     //to do
     private int getSlotIndexNA(int slot) {
-        int slotGet = offset + slot;
+        int slotGet = slot;
         if (slotGet >= this.getRealBaubleSlots()){
             slotGet %= this.getRealBaubleSlots();
         }

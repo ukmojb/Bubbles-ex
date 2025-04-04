@@ -27,6 +27,7 @@ public class BubblesEXTransformer implements IClassTransformer {
             case "vazkii.botania.common.item.equipment.bauble.ItemMonocle": return BotaniaTransformer.transformItemMonocle(basicClass);
 //            case "vazkii.botania.common.item.equipment.bauble.ItemTravelBelt": return BotaniaTransformer.transformItemTravelBelt(basicClass);
             case "vazkii.botania.common.item.equipment.bauble.ItemWaterRing": return BotaniaTransformer.transformItemWaterRing(basicClass);
+//            case "vazkii.botania.common.item.equipment.bauble.ItemBauble": return BotaniaTransformer.transformItemBauble(basicClass);
             // Potion Fingers - Vazkii moment
             case "vazkii.potionfingers.ItemRing": return PotionFingersTransformer.transformItemRing(basicClass);
             // Quality Tools - Make it check if item has bauble capability and make it work with custom bauble types. And also make it work with slot definitions.

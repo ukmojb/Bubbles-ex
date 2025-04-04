@@ -6,7 +6,9 @@ import baubles.api.inv.BaublesInventoryWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -45,5 +47,10 @@ public class BaublesApi {
             }
         }
         return -1;
+    }
+
+    @Nullable
+    public static IBauble getBauble(ItemStack stack) {
+        return stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
     }
 }

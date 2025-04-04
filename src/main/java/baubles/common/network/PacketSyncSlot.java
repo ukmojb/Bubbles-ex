@@ -70,35 +70,3 @@ public class PacketSyncSlot implements IMessage {
         }
     }
 }
-
-
-//public static class Handler implements IMessageHandler<PacketSyncSlot, IMessage> {
-//        @Override
-//        public IMessage onMessage(PacketSyncSlot message, MessageContext ctx) {
-//            return null;
-//        }
-////        @Override
-////        public IMessage onMessage(PacketSyncSlot message, MessageContext ctx) {
-////            System.out.println("PacketSyncSlot");
-////            Minecraft.getMinecraft().addScheduledTask(() -> {
-////                World world = Baubles.proxy.getClientWorld();
-////                if (world == null) return;
-////                EntityPlayer player = world.getPlayerEntityByName(message.playerName);
-////                if (player != null) {
-////                    IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
-////                    String slotName = message.slotName;
-////                    if (message.slotName != "null") {
-////                        ResourceLocation location;
-////                        if (!slotName.contains(":")) location = new ResourceLocation(Baubles.MODID, slotName);
-////                        else location = new ResourceLocation(slotName);
-////                        SlotDefinition definition = SlotDefinitions.get(location);
-////                        baubles.setSlot(message.slot, definition);
-////                    } else {
-////                        baubles.setSlot(message.slot, null);
-////                    }
-////                }
-////            });
-////            return null;
-////        }
-//    }
-
