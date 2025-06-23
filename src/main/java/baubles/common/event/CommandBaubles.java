@@ -7,6 +7,7 @@ import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.inv.SlotDefinition;
 import baubles.common.Baubles;
+import baubles.common.Config;
 import baubles.common.init.SlotDefinitions;
 import baubles.common.network.PacketAddSlot;
 import baubles.common.network.PacketHandler;
@@ -24,10 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class CommandBaubles extends CommandBase {
     private final List<String> aliases;
@@ -73,7 +71,7 @@ public class CommandBaubles extends CommandBase {
         } else if (args.length == 2 && ("view".equals(args[0]) || "clear".equals(args[0]) || "add".equals(args[0]) || "remove".equals(args[0]))) {
             return getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
         } else if (args.length == 3 && ("add".equals(args[0]) || "remove".equals(args[0]))) {
-            return getListOfStringsMatchingLastWord(args, "amulet", "ring", "belt", "trinket", "head", "body", "charm");
+            return new ArrayList<String>(getListOfStringsMatchingLastWord(args, "amulet", "ring", "belt", "trinket", "head", "body", "charm")) {{ addAll(Arrays.asList(Config.newSlotType)); }};
         }
         return Collections.emptyList();
     }

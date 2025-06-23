@@ -339,7 +339,12 @@ public class BaublesContainer implements IBaublesItemHandler, INBTSerializable<N
                 if (!slot.contains(":")) location = new ResourceLocation(Baubles.MODID, slot);
                 else location = new ResourceLocation(slot);
                 SlotDefinition definition = SlotDefinitions.get(location);
-                slots[i] = definition;
+
+                if (definition == null) {
+                    slots[i] = SlotDefinitions.get(new ResourceLocation(Baubles.MODID, "trinket"));
+                } else {
+                    slots[i] = definition;
+                }
             }
         }
 

@@ -1,9 +1,11 @@
 package baubles.common.integration;
 
 import baubles.api.BaubleType;
+import baubles.api.IBaubleType;
 import baubles.api.cap.InjectableBauble;
 import baubles.client.gui.GuiPlayerExpanded;
 import baubles.common.Baubles;
+import baubles.common.Config;
 import com.google.common.collect.ImmutableMap;
 import de.ellpeck.actuallyadditions.mod.items.ItemBattery;
 import de.ellpeck.actuallyadditions.mod.items.ItemMagnetRing;
@@ -28,6 +30,7 @@ import snownee.minieffects.handlers.MiniEffectsOffsets;
 import yalter.mousetweaks.MTConfig;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Map;
 
 public class ModCompatibility {
@@ -90,7 +93,6 @@ public class ModCompatibility {
         if (!ME$checkMiniEffectIsLegacy()) return true;
         if (f_miniEffects == null) {
             try {
-                System.out.println("sdfsefsefser");
                 f_miniEffects = InventoryEffectRenderer.class.getDeclaredField("mini$effects");
                 f_miniEffects.setAccessible(true);
             }
@@ -159,6 +161,16 @@ public class ModCompatibility {
             }
             else if (item instanceof ItemPotionRing && loc.getPath().endsWith("advanced")) {
                 return new InjectableBauble(item, BaubleType.RING, true, 0);
+            }
+        }
+        for (String str : Config.changeBaubleType) {
+            String[] strings = str.split(" -> ");
+            Item item1 = Item.getByNameOrId(strings[0]);
+            IBaubleType type = BaubleType.allValueOf(strings[1]);
+            int armor = Integer.parseInt(strings[2]);
+
+            if (item1 != null && item1.equals(item)) {
+                return new InjectableBauble(item1, type, true, armor);
             }
         }
         return null;

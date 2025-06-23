@@ -38,6 +38,7 @@ public class InjectableBauble implements IBauble {
 
     @Override
     public void onWornTick(ItemStack itemstack, EntityLivingBase player) {
+        if (this.armor == -1) return;
         if (this.armor != 1) item.onUpdate(itemstack, player.world, player, 0, !passive);
         if (this.armor != 0 && player instanceof EntityPlayer) item.onArmorTick(player.world, (EntityPlayer) player, itemstack);
     }

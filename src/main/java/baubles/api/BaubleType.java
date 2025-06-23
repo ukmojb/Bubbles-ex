@@ -4,6 +4,7 @@ import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.inv.SlotDefinition;
 import baubles.api.inv.SlotDefinitionType;
 import baubles.common.Baubles;
+import baubles.common.Config;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.enchantment.Enchantment;
@@ -13,13 +14,13 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Default bauble types
  **/
 public enum BaubleType implements IBaubleType {
+
 
     AMULET("amulet"),
     RING("ring"),
@@ -32,8 +33,15 @@ public enum BaubleType implements IBaubleType {
     final ResourceLocation name;
     final String translationKey, backgroundTexture;
     final IntList validSlots = new IntArrayList(1);
+    final List<BaubleType> newTypeList = new ArrayList<>();
 
     BaubleType(String name, int... validSlots) {
+        this.name = new ResourceLocation(Baubles.MODID, name);
+        this.translationKey = "baubles.type." + name;
+        this.backgroundTexture = "baubles:gui/slots/" + name;
+    }
+
+    BaubleType(String name) {
         this.name = new ResourceLocation(Baubles.MODID, name);
         this.translationKey = "baubles.type." + name;
         this.backgroundTexture = "baubles:gui/slots/" + name;
@@ -134,6 +142,38 @@ public enum BaubleType implements IBaubleType {
 
 
     public static IBaubleType getType(String typeStr){
-        return BaubleType.valueOf(typeStr);
+        return BaubleType.allValueOf(typeStr);
     }
+
+
+    public static IBaubleType[] allValues(){
+
+
+        List<IBaubleType> typesList = new ArrayList<>();
+        typesList.add(AMULET);
+        typesList.add(RING);
+        typesList.add(BELT);
+        typesList.add(TRINKET);
+        typesList.add(HEAD);
+        typesList.add(BODY);
+        typesList.add(CHARM);
+
+        for (String newTypeStr : Config.getNewSlotTypeAdded()){
+            IBaubleType newType = new BaubleTypeImpl(newTypeStr);
+            typesList.add(newType);
+        }
+
+        return typesList.toArray(new IBaubleType[0]);
+    }
+
+    public static IBaubleType allValueOf(String typeName){
+        for (IBaubleType baubleType : allValues()) {
+//        System.out.println("adadsgawhd--" + typeName + baubleType.getRegistryName().getPath());
+            if (baubleType.getRegistryName().getPath().equals(typeName)) {
+                return baubleType;
+            }
+        }
+        return null;
+    }
+
 }

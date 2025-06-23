@@ -1,9 +1,12 @@
 package baubles.common.event;
 
+import baubles.api.BaubleType;
 import baubles.api.IBauble;
+import baubles.api.IBaubleType;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.InjectableBauble;
 import baubles.common.Baubles;
+import baubles.common.Config;
 import baubles.common.integration.ModCompatibility;
 import de.ellpeck.actuallyadditions.mod.items.InitItems;
 import net.minecraft.item.Item;
@@ -19,6 +22,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("unused") // gets used by Forge event handler
 public class EventHandlerItem {
@@ -70,10 +75,11 @@ public class EventHandlerItem {
 
     @SubscribeEvent
     public void remapEntries(RegistryEvent.MissingMappings<Item> event) {
+        List<String> modIds = Arrays.asList(Arrays.stream(Config.changeBaubleType).map(a -> a.split(" -> ")[0].split(":")[0]).toArray(String[]::new));
         for (RegistryEvent.MissingMappings.Mapping<Item> mapping : event.getAllMappings()) {
             ResourceLocation key = mapping.key;
+            String path = key.getPath();
             if (key.getNamespace().equals(ModCompatibility.AA)) {
-                String path = key.getPath();
                 if (path.endsWith("advanced_bauble")) mapping.remap(InitItems.itemPotionRingAdvanced);
                 else if (path.startsWith("magnet")) mapping.remap(InitItems.itemMagnetRing);
                 else if (path.equals("battery_bauble")) mapping.remap(InitItems.itemBattery);
@@ -81,6 +87,17 @@ public class EventHandlerItem {
                 else if (path.endsWith("triple_bauble")) mapping.remap(InitItems.itemBatteryTriple);
                 else if (path.endsWith("quadruple_bauble")) mapping.remap(InitItems.itemBatteryQuadruple);
                 else if (path.endsWith("quintuple_bauble")) mapping.remap(InitItems.itemBatteryQuintuple);
+            }
+            if (modIds.contains(key.getNamespace())) {
+                for (String str : Config.changeBaubleType) {
+                    String[] strings = str.split(" -> ");
+                    Item item1 = Item.getByNameOrId(strings[0]);
+                    IBaubleType type = BaubleType.allValueOf(strings[1]);
+
+                    if (strings[0].equals(key.toString()) && item1 != null) {
+                        mapping.remap(item1);
+                    }
+                }
             }
         }
     }

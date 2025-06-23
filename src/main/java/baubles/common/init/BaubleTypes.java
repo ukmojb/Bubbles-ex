@@ -20,13 +20,16 @@ public class BaubleTypes {
     }
 
     public static void registerDefaults() {
-        register(BaubleType.AMULET);
-        register(BaubleType.RING);
-        register(BaubleType.BELT);
-        register(BaubleType.TRINKET);
-        register(BaubleType.HEAD);
-        register(BaubleType.BODY);
-        register(BaubleType.CHARM);
+        for (IBaubleType baubleType : BaubleType.allValues()) {
+            register(baubleType);
+        }
+//        register(BaubleType.AMULET);
+//        register(BaubleType.RING);
+//        register(BaubleType.BELT);
+//        register(BaubleType.TRINKET);
+//        register(BaubleType.HEAD);
+//        register(BaubleType.BODY);
+//        register(BaubleType.CHARM);
     }
 
     @Nullable

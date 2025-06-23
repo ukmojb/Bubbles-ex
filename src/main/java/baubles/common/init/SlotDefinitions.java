@@ -24,6 +24,9 @@ public class SlotDefinitions {
     }
 
     public static void registerDefaults() {
+//        for (IBaubleType type : BaubleTypes.getRegistryMap().values()) {
+//            register(new SlotDefinitionType(type));
+//        }
         for (IBaubleType type : BaubleTypes.getRegistryMap().values()) {
             register(new SlotDefinitionType(type));
         }

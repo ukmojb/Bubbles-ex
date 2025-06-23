@@ -1,5 +1,6 @@
 package baubles.common;
 
+import baubles.api.BaubleType;
 import baubles.api.inv.SlotDefinition;
 import baubles.common.init.SlotDefinitions;
 import baubles.common.integration.ModCompatibility;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.*;
+import java.util.Arrays;
 
 public class Config {
 
@@ -26,6 +28,8 @@ public class Config {
     // Configuration Options
     public static boolean renderBaubles = true;
     public static int slotMaxNum = 32;
+    public static String[] newSlotType = new String[]{};
+    public static String[] changeBaubleType = new String[]{};
     public static boolean rightClickEquipped = false;
 
     public static void initialize(File configFile) {
@@ -50,6 +54,8 @@ public class Config {
     }
 
     public static void loadConfigs() {
+        changeBaubleType = config.get(Configuration.CATEGORY_GENERAL, "changeBaubleType", changeBaubleType, "Use this to change the bauble type of the item.\nexample: minecraft:apple -> body -> -1\n0 = Only inventory update | 1 = Only armor update | 2 = both | -1 = nothing").getStringList();
+        newSlotType = config.get(Configuration.CATEGORY_GENERAL, "newSlotType", newSlotType, "Used to add the new type of slots.\nexample: ear\nNext, you'll need to place the \"ear.png\" file into assets/baubles/textures/gui/slots/ as part of your resource pack, just like the others.\nAnd add \"baubles.type.ear=Ear\" to the language file (example: en_us.lang)").getStringList();
         slotMaxNum = config.getInt("slotMaxNum", Configuration.CATEGORY_GENERAL, slotMaxNum, 0, 99999, "Used to set the maximum number of slots");
         rightClickEquipped = config.getBoolean("rightClickEquipped", Configuration.CATEGORY_GENERAL, rightClickEquipped, "If false, the player cannot directly wear the ornament by right-clicking it");
         renderBaubles = config.getBoolean("baubleRender.enabled", Configuration.CATEGORY_CLIENT, renderBaubles, "Set this to false to disable rendering of baubles in the player.");
@@ -58,6 +64,11 @@ public class Config {
 
     public static void save() {
         config.save();
+    }
+
+    public static String[] getNewSlotTypeAdded() {
+
+        return Arrays.stream(newSlotType).map(s -> "baubles:" + s).toArray(String[]::new);
     }
 
     public static SlotDefinition[] getSlots() {

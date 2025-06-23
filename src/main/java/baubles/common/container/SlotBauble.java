@@ -3,6 +3,7 @@ package baubles.common.container;
 import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
+import baubles.api.cap.InjectableBauble;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
@@ -42,6 +43,7 @@ public class SlotBauble extends SlotItemHandler {
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack) {
         IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+
         return bauble != null && baublesHandler.isItemValidForSlot(slotIndex, stack, player);
     }
 
@@ -72,6 +74,7 @@ public class SlotBauble extends SlotItemHandler {
                 getStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
             getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(getStack(), player);
         }
+
 
         ItemStack oldstack = getStack().copy();
         super.putStack(stack);

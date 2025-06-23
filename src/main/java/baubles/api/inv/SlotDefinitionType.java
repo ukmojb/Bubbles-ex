@@ -92,6 +92,7 @@ public class SlotDefinitionType implements SlotDefinition {
     public boolean canPutItem(int slotIndex, ItemStack stack) {
         IBauble bauble = stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
         IBaubleType type = Objects.requireNonNull(bauble).getType(stack);
-        return this.canPutType(type);
+
+        return this.canPutType(type) || (type.getRegistryName().toString().equals(this.type.getRegistryName().toString()));
     }
 }

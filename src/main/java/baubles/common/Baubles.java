@@ -8,6 +8,7 @@ import baubles.api.cap.BaublesCapabilities.CapabilityBaubles;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.common.event.CommandBaubles;
+import baubles.common.event.EventHandlerItem;
 import baubles.common.init.BaubleTypes;
 import baubles.common.init.SlotDefinitions;
 import baubles.common.integration.ModCompatibility;
@@ -49,7 +50,7 @@ import java.util.Objects;
 public class Baubles {
 
     public static final String MODID = "baubles";
-    public static final String MOD_VERSION = "1.6.0";
+    public static final String MOD_VERSION = "1.6.1";
     public static final Logger log = LogManager.getLogger(MODID.toUpperCase());
     public static final int GUI = 0;
     @SidedProxy(clientSide = "baubles.client.ClientProxy", serverSide = "baubles.common.CommonProxy")
@@ -76,10 +77,10 @@ public class Baubles {
         CapabilityManager.INSTANCE.register(IBaublesItemHandler.class, new CapabilityBaubles<>(), BaublesContainer::new);
         CapabilityManager.INSTANCE.register(IBauble.class, new BaublesCapabilities.CapabilityItemBaubleStorage(), () -> new BaubleItem(BaubleType.TRINKET));
 
-        proxy.registerEventHandlers();
         PacketHandler.init();
         ModCompatibility.Wings$applyEvents();
         Config.save();
+        proxy.registerEventHandlers();
 
         BaubleTypes.registerDefaults();
         MinecraftForge.EVENT_BUS.register(new BaubleTypes.Register());

@@ -34,10 +34,22 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void tooltipEvent(ItemTooltipEvent event) {
-        if (!event.getItemStack().isEmpty() && event.getItemStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
+//        if (!event.getItemStack().isEmpty() && event.getItemStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
+//            IBauble bauble = event.getItemStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+//            IBaubleType bt = Objects.requireNonNull(bauble).getType(event.getItemStack());
+//            event.getToolTip().add(TextFormatting.GOLD + I18n.format("baubles.item.desc", I18n.format(bt.getTranslationKey())));
+//        }
+        if (!event.getItemStack().isEmpty() &&
+                event.getItemStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
+
             IBauble bauble = event.getItemStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-            IBaubleType bt = Objects.requireNonNull(bauble).getType(event.getItemStack());
-            event.getToolTip().add(TextFormatting.GOLD + I18n.format("baubles.item.desc", I18n.format(bt.getTranslationKey())));
+            if (bauble != null) {
+                IBaubleType bt = bauble.getType(event.getItemStack());
+                if (bt != null) {
+                    event.getToolTip().add(TextFormatting.GOLD + I18n.format("baubles.item.desc",
+                            I18n.format(bt.getTranslationKey())));
+                }
+            }
         }
     }
 
