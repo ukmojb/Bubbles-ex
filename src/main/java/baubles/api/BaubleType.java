@@ -116,6 +116,7 @@ public enum BaubleType implements IBaubleType {
             array[i] = list.get(i);
         }
 
+        System.out.println(array.length);
         return array;
     }
 
@@ -168,7 +169,6 @@ public enum BaubleType implements IBaubleType {
 
     public static IBaubleType allValueOf(String typeName){
         for (IBaubleType baubleType : allValues()) {
-//        System.out.println("adadsgawhd--" + typeName + baubleType.getRegistryName().getPath());
             if (baubleType.getRegistryName().getPath().equals(typeName)) {
                 return baubleType;
             }

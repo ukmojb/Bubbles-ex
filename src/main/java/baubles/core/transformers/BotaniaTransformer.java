@@ -290,26 +290,26 @@ public class BotaniaTransformer extends BaseTransformer {
         return write(cls);
     }
 
-    public static byte[] transformItemBauble(byte[] basicClass) {
-        ClassNode cls = read(basicClass);
-        for (MethodNode method : cls.methods) {
-            if (method.name.equals("getBaubleUUID")) {
-                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
-                while (iterator.hasNext()) {
-                    AbstractInsnNode node = iterator.next();
-                    if (node.getOpcode() == ALOAD) {
+//    public static byte[] transformItemBauble(byte[] basicClass) {
+//        ClassNode cls = read(basicClass);
+//        for (MethodNode method : cls.methods) {
+//            if (method.name.equals("getBaubleUUID")) {
+//                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+//                while (iterator.hasNext()) {
+//                    AbstractInsnNode node = iterator.next();
+//                    if (node.getOpcode() == ALOAD) {
 //                        InsnList list = new InsnList();
 //                        list.add(new VarInsnNode(ALOAD, 3));
-////                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/api/BaublesApi", "getBaublesHandler", "(Lnet/minecraft/entity/player/EntityPlayer;)Lbaubles/api/cap/IBaublesItemHandler;", false));
-////                        list.add(new MethodInsnNode(INVOKEINTERFACE, "baubles/api/cap/IBaublesItemHandler", "getSlots", "()I", true));
+//                        list.add(new MethodInsnNode(INVOKESTATIC, "baubles/api/BaublesApi", "getBaublesHandler", "(Lnet/minecraft/entity/player/EntityPlayer;)Lbaubles/api/cap/IBaublesItemHandler;", false));
+//                        list.add(new MethodInsnNode(INVOKEINTERFACE, "baubles/api/cap/IBaublesItemHandler", "getSlots", "()I", true));
 //                        method.instructions.insertBefore(node, list);
 //                        method.instructions.remove(node);
 //                        break;
-                    }
-                }
-                break;
-            }
-        }
-        return write(cls);
-    }
+//                    }
+//                }
+//                break;
+//            }
+//        }
+//        return write(cls);
+//    }
 }

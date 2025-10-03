@@ -50,7 +50,7 @@ import java.util.Objects;
 public class Baubles {
 
     public static final String MODID = "baubles";
-    public static final String MOD_VERSION = "1.6.1";
+    public static final String MOD_VERSION = "1.6.3";
     public static final Logger log = LogManager.getLogger(MODID.toUpperCase());
     public static final int GUI = 0;
     @SidedProxy(clientSide = "baubles.client.ClientProxy", serverSide = "baubles.common.CommonProxy")

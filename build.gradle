@@ -118,6 +118,7 @@ dependencies {
     var ExU2 = "curse.maven:ExU2-225561:2678374"
     var Angel_Ring = "curse.maven:Angel Ring-256224:2518561"
     var Tombstone = "curse.maven:Corail's Tombstone-243707:6261464"
+    var TrinketsAndBaubles = "curse.maven:TrinketsAndBaubles-279900:5717039"
 
     // JEI Extra Bounds
     if (project.runtime_jei.toBoolean()) implementation(jei)
@@ -173,8 +174,13 @@ dependencies {
     }
 
     // Corail's Tombstone
-    if (project.runtime_ExU2.toBoolean()) {
+    if (project.runtime_Corails_Tombstone.toBoolean()) {
         implementation rfg.deobf(Tombstone)
+    }
+
+    //Trinkets and Baubles
+    if (project.runtime_TrinketsAndBaubles.toBoolean()) {
+        implementation rfg.deobf(TrinketsAndBaubles)
     }
 
     if (project.runtime_minieffects.toBoolean()) implementation (rfg.deobf(minieffects)) { transitive = false }
@@ -182,6 +188,8 @@ dependencies {
 
     compileOnly "curse.maven:cofh-core-69162:2920433"
     compileOnly "curse.maven:wb-684624:4203074"
+
+    implementation 'curse.maven:modularui-624243:4786372-sources-4786373'
 
 
     if (project.use_mixins.toBoolean()) {

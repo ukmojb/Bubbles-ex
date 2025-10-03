@@ -1,13 +1,17 @@
 package baubles.core.transformers;
 
 import artifacts.common.init.ModItems;
+import artifacts.common.item.AttributeModifierBauble;
 import artifacts.common.item.BaubleAmulet;
+import artifacts.common.util.BaubleHelper;
 import artifacts.common.util.RenderHelper;
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,8 +19,11 @@ import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import org.objectweb.asm.tree.*;
 
+import javax.annotation.Nullable;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Set;
 
 
 public class RLArtifactsTransformer extends BaseTransformer {
@@ -267,6 +274,62 @@ public class RLArtifactsTransformer extends BaseTransformer {
                         list.add(new FieldInsnNode(GETSTATIC, "artifacts/common/init/ModItems", "BOTTLED_CLOUD", "Lartifacts/common/item/BaubleBase;"));
                         list.add(new MethodInsnNode(INVOKESTATIC, "baubles/api/BaublesApi", "isBaubleEquipped", "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/Item;)I", false));
                         method.instructions.insertBefore(node, list);
+                        break;
+                    }
+                }
+            }
+        }
+        return write(cls);
+    }
+
+    public static byte[] transformAttributeModifierBauble(byte[] basicClass, boolean isRLArtifact) {
+        if (!isRLArtifact) return basicClass;
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("applyModifiers")) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKEVIRTUAL && ((MethodInsnNode) node).name.equals("getValidSlots") &&
+                            ((MethodInsnNode) node).desc.equals("()[I")) {
+
+                        MethodInsnNode original = (MethodInsnNode) node;
+
+                        method.instructions.insertBefore(original, new VarInsnNode(ALOAD, 2));
+
+                        method.instructions.set(original, new MethodInsnNode(INVOKEVIRTUAL,
+                                original.owner,
+                                "getValidSlotsArrays",
+                                "(Lnet/minecraft/entity/player/EntityPlayer;)[I",
+                                false));
+                        break;
+                    }
+                }
+            }
+        }
+        return write(cls);
+    }
+
+    public static byte[] transformBaubleHelper(byte[] basicClass, boolean isRLArtifact) {
+        if (!isRLArtifact) return basicClass;
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("getAmountBaubleEquipped")) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKEVIRTUAL && ((MethodInsnNode) node).name.equals("getSlots") &&
+                            ((MethodInsnNode) node).desc.equals("()[I")) {
+
+                        MethodInsnNode original = (MethodInsnNode) node;
+
+//                        method.instructions.insertBefore(original, new VarInsnNode(ALOAD, 2));
+
+                        method.instructions.set(original, new MethodInsnNode(INVOKEVIRTUAL,
+                                original.owner,
+                                "getRealBaubleSlots",
+                                "()I",
+                                false));
                         break;
                     }
                 }

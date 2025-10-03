@@ -47,6 +47,8 @@ public class BubblesEXTransformer implements IClassTransformer {
             case "artifacts.client.model.layer.LayerSnorkel": return RLArtifactsTransformer.transformLayerSnorkel(basicClass, this.isRLArtifact);
             case "artifacts.common.item.BaubleAmulet": return RLArtifactsTransformer.transformBaubleAmulet(basicClass, this.isRLArtifact);
             case "artifacts.common.item.BaubleBottledCloud": return RLArtifactsTransformer.transformBaubleBottledCloud(basicClass);
+            case "artifacts.common.item.AttributeModifierBauble": return RLArtifactsTransformer.transformAttributeModifierBauble(basicClass, this.isRLArtifact);
+            case "artifacts.common.util.BaubleHelper": return RLArtifactsTransformer.transformBaubleHelper(basicClass, this.isRLArtifact);
 
 
             default:

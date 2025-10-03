@@ -187,24 +187,37 @@ public class EventHandlerEntity {
                 IBauble bauble = Objects.requireNonNull(stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null));
                 SlotDefinition definition = baubles.getSlot(i);
                 IBauble.DropResult result = bauble.onDeath(i, stack, player);
-                switch (result) {
-                    case CUSTOM:
-                    case ALWAYS_KEEP: break;
-                    case ALWAYS_DROP: {
-                        baubles.setStackInSlot(i, ItemStack.EMPTY);
-                        player.dropItem(stack, true, false);
-                        break;
+
+                boolean shouldDrop = true;
+                if (stack.getItem() instanceof IBauble) {
+                    IBauble bauble1 = (IBauble) stack.getItem();
+                    if (!bauble1.canUnequip(stack, player)) {
+                        shouldDrop = false;
                     }
-                    case DESTROY: baubles.setStackInSlot(i, ItemStack.EMPTY); break;
-                    case DEFAULT: {
-                        if (!this.isFakePlayer(player)) {
-                            if (EnchantmentHelper.getEnchantmentLevel(TOMBSTONE_SOULBOUND, stack) != 0) break;
-                            if (this.handleCofhSouldbound(stack)) break;
-                            if (!EnchantmentHelper.hasVanishingCurse(stack)) player.dropItem(stack, true, false);
+                }
+                if (shouldDrop) {
+                    switch (result) {
+                        case CUSTOM:
+                        case ALWAYS_KEEP:
+                            break;
+                        case ALWAYS_DROP: {
                             baubles.setStackInSlot(i, ItemStack.EMPTY);
+                            player.dropItem(stack, true, false);
                             break;
                         }
-                        break;
+                        case DESTROY:
+                            baubles.setStackInSlot(i, ItemStack.EMPTY);
+                            break;
+                        case DEFAULT: {
+                            if (!this.isFakePlayer(player)) {
+                                if (EnchantmentHelper.getEnchantmentLevel(TOMBSTONE_SOULBOUND, stack) != 0) break;
+                                if (this.handleCofhSouldbound(stack)) break;
+                                if (!EnchantmentHelper.hasVanishingCurse(stack)) player.dropItem(stack, true, false);
+                                baubles.setStackInSlot(i, ItemStack.EMPTY);
+                                break;
+                            }
+                            break;
+                        }
                     }
                 }
             }

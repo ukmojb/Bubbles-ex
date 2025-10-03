@@ -44,7 +44,7 @@ public interface IBaublesItemHandler extends IItemHandlerModifiable {
 
     ItemStack getStackInSlotNA(int slot);
 
-//    boolean isEventBlocked();
+    boolean isEventBlocked();
 //    void setEventBlock(boolean blockEvents);
 
     void onContentsChanged(int slotIndex);
@@ -59,5 +59,7 @@ public interface IBaublesItemHandler extends IItemHandlerModifiable {
 
     @Deprecated
     default void setPlayer(EntityLivingBase player) {}
+
+    int getRealBaubleSlots();
 
 }

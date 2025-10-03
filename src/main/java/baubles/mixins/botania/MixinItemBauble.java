@@ -16,14 +16,15 @@ public class MixinItemBauble {
     @Inject(method = "getBaubleUUID", at = @At(value = "HEAD", target = "Lvazkii/botania/common/item/equipment/bauble/ItemBauble;getBaubleUUID(Lnet/minecraft/item/ItemStack;)Ljava/util/UUID;"), cancellable = true)
     private static void getBaubleUUID(ItemStack stack, CallbackInfoReturnable<UUID> cir) {
         long most = ItemNBTHelper.getLong(stack, "baubleUUIDMost", 0L);
-        if (most == 0L) {
+        if (most == 0) {
             UUID uuid = UUID.randomUUID();
             ItemNBTHelper.setLong(stack, "baubleUUIDMost", uuid.getMostSignificantBits());
             ItemNBTHelper.setLong(stack, "baubleUUIDLeast", uuid.getLeastSignificantBits());
             cir.setReturnValue(uuid);
-        } else {
-            long least = ItemNBTHelper.getLong(stack, "baubleUUIDLeast", 0L);
-            cir.setReturnValue(new UUID(most, least));
         }
+
+        long least = ItemNBTHelper.getLong(stack, "baubleUUIDLeast", 0L);
+        cir.setReturnValue(new UUID(most, least));
+
     }
 }
