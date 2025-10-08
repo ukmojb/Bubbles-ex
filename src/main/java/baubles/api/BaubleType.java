@@ -115,8 +115,6 @@ public enum BaubleType implements IBaubleType {
         for (int i = 0; i < list.size(); i++) {
             array[i] = list.get(i);
         }
-
-        System.out.println(array.length);
         return array;
     }
 

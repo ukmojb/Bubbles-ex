@@ -105,7 +105,6 @@ public class BaublesContainer implements IBaublesItemHandler, INBTSerializable<N
 
     @Override
     public void setSlot(int slot, SlotDefinition setSlotDefinition) {
-//        System.out.println("setSlot--" + slot + "--" + setSlotDefinition.getTranslationKey(slot));
         this.slots[slot] = setSlotDefinition;
     }
 
@@ -201,6 +200,11 @@ public class BaublesContainer implements IBaublesItemHandler, INBTSerializable<N
         ItemStack stack = this.getStackNA(slot);
         if (stack == null) stack = ItemStack.EMPTY;
         return stack;
+    }
+
+    @Override
+    public boolean isEventBlocked() {
+        return false;
     }
 
 
@@ -329,10 +333,10 @@ public class BaublesContainer implements IBaublesItemHandler, INBTSerializable<N
 
         //SlotDefinition
         NBTTagList list1 = nbt.getTagList("SlotDefinition", Constants.NBT.TAG_COMPOUND);
+        int oldSlotNum = 0;
         for (int i = 0; i < list1.tagCount(); i++) {
             NBTTagCompound slotTag = list1.getCompoundTagAt(i);
             String slot = slotTag.getString("Slot");
-//            SlotDefinition definition;
 
             if (slot != "null") {
                 ResourceLocation location;
@@ -344,6 +348,7 @@ public class BaublesContainer implements IBaublesItemHandler, INBTSerializable<N
                     slots[i] = SlotDefinitions.get(new ResourceLocation(Baubles.MODID, "trinket"));
                 } else {
                     slots[i] = definition;
+                    oldSlotNum++;
                 }
             }
         }
@@ -358,7 +363,7 @@ public class BaublesContainer implements IBaublesItemHandler, INBTSerializable<N
             Item item = Item.getByNameOrId(stackTag.getString("id"));
             if (item == null || item == Items.AIR) continue;
             ItemStack stack = new ItemStack(stackTag);
-            if (slot < getSlots()) {
+            if (slot < getRealBaubleSlots()) {
                 if (this.slots[slot] != null) {
                     if (this.slots[slot].canPutItem(slot, stack)) this.stacks[slot] = stack;
                     else itemsToPuke.add(stack);
